@@ -8,12 +8,12 @@
 import React, { useEffect } from 'react';
 import type {PropsWithChildren} from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-// import SplashScreen from 'react-native-splash-screen';
-// import AppNavigator from './container/AppNavigator';
-// import { ThemeProvider } from "./container/ThemeContext";
-// import 'react-native-gesture-handler';
-import HomeScreen from './src/container/HomeScreen';
-// import { NavigationContainer } from '@react-navigation/native';
+import SplashScreen from 'react-native-splash-screen';
+import AppNavigator from './container/AppNavigator';
+import { ThemeProvider } from "./container/ThemeContext";
+import 'react-native-gesture-handler';
+import HomeScreen from './container/HomeScreen';
+import { NavigationContainer } from '@react-navigation/native';
 import {
   Colors,
   DebugInstructions,
@@ -28,9 +28,9 @@ type SectionProps = PropsWithChildren<{
 
 
 function App(): React.JSX.Element {
-  // useEffect(() => {
-  //   SplashScreen.hide();
-  // },[] )
+  useEffect(() => {
+    SplashScreen.hide();
+  },[] )
   // const isDarkMode = useColorScheme() === 'dark';
 
   // const backgroundStyle = {
@@ -39,7 +39,12 @@ function App(): React.JSX.Element {
 
   return (
     <>
-        <HomeScreen />
+     <ThemeProvider>
+     {/* <NavigationContainer>
+    <AppNavigator />
+    </NavigationContainer> */}
+    <HomeScreen />
+    </ThemeProvider>
     </>
   );
 }
