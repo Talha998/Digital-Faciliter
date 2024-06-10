@@ -95,13 +95,14 @@ const styles = StyleSheet.create({
   },
   serverURL: {
     color: 'white',
-    // textAlign: 'center',
+    textAlign: 'center',
     flex: 1,
     marginLeft: 0, // Ensure text doesn't overlap with the icon
   },
   cancelIcon: {
     width: 24,
     height: 24,
+    
   },
   inputf1: {
     backgroundColor: 'white',
@@ -262,7 +263,57 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
     lineHeight: 20,
     paddingTop: 14
-  }
+  },
+  loginFormContainer: {
+    alignItems: 'center',
+    width:"100%"
+  },
+  button_login: {
+    backgroundColor: '#046357', // Color with 50% opacity
+    paddingVertical: 15,
+    paddingHorizontal: 0,
+    marginHorizontal: 10,
+    marginTop: 20,
+    marginVertical: 10,
+    borderRadius: 10,
+    width: '100%',
+    // shadowColor: '#000000',
+    // shadow/Offset: { width: 0, height: 4 },
+    Opacity: 0.5,
+    // shadowRadius: 4,
+    // elevation: 8, 
+  },
+  buttonText_login: {
+    color: '#ffff',
+    fontWeight: "700",
+    fontSize: 16,
+    textAlign:"center"
+  },
+  input_login_form: {
+    backgroundColor: 'white',
+    width: '100%',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginVertical: 10,
+    borderRadius: 10,
+  },
+    passwordIconContainer: {
+    position: 'absolute',
+    right: 30,
+    top: 140,
+    /* Add styles for icon container */
+  },
+  forgetPasswordContainer: {
+    marginVertical: 0,
+    width:"100%"
+    
+  },
+  forgetPasswordText: {
+    color: 'white',
+    textAlign:"right",
+    fontWeight:"600",
+
+  },
   
 }); 
 

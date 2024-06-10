@@ -4,9 +4,17 @@ import styles from '../styles';
 
 const HomeScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible_forget, setIsModalVisible_forget] = useState(false);
+  const [isLoginFormVisible, setIsLoginFormVisible] = useState(false);
 
+  const toggleLoginForm = () => {
+    setIsLoginFormVisible(!isLoginFormVisible);
+  };
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
+  };
+  const toggleModal_forget = () => {
+    setIsModalVisible_forget(!isModalVisible_forget);
   };
   const [modalVisible, setModalVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(-500)).current; // Initial position off-screen
@@ -50,7 +58,7 @@ const HomeScreen = () => {
             <View style={styles.serverURLContainerf2}>
               <Text style={styles.serverURLf2}>Privacy Policy</Text>
               <TouchableOpacity onPress={closeModal}>
-                <Image source={require('../../assets/images/favicon.png')} style={styles.cancelIcon} />
+                <Image source={require('../../assets/images/cancel-39-39.png')} style={styles.cancelIcon} />
               </TouchableOpacity>
             </View>
 
@@ -177,6 +185,58 @@ const HomeScreen = () => {
           </View>
         </View>
       </Modal>
+
+      {/* ///  Forget Password // */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isModalVisible_forget}
+        onRequestClose={toggleModal_forget}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {/* Server URL Text */}
+            <View style={styles.serverURLContainer}>
+
+              <Text style={styles.serverURL}>Forget Password?</Text>
+            </View>
+
+            {/* Input Field */}
+            <View style={styles.modalContent_rt}>
+              <View>
+                <TextInput
+                  placeholder="Enter Registered Email"
+                  placeholderTextColor="#00544d"
+                  style={styles.inputf1}
+                />
+              </View>
+
+              {/* Text */}
+              <Text style={styles.bottomTextf1}>
+                Please enter your registered email address to reset your password 
+              </Text>
+
+              {/* Buttons */}
+              <View style={styles.buttonContainerf1}>
+                <View>
+                  <TouchableOpacity onPress={toggleModal_forget} style={styles.buttonf1}>
+                    <Text style={styles.buttonTextf1}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+                <View>
+                  <TouchableOpacity style={[styles.buttonf1]}>
+                    <Text style={[styles.buttonTextf2]}>Submit</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Close Button */}
+
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* ///  Forget Password // */}
       <ImageBackground source={require('../../assets/images/abstract1.png')} style={styles.background}>
         <View style={styles.container}>
           {/* Logo */}
@@ -189,10 +249,11 @@ const HomeScreen = () => {
               />
 
             </View>
-            {/* Buttons */}
+          
+            {!isLoginFormVisible && (
             <View style={styles.btn1}>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={toggleLoginForm}>
                   <Text style={styles.buttonText}>Login / Register</Text>
                 </TouchableOpacity>
               </View>
@@ -203,7 +264,34 @@ const HomeScreen = () => {
                 </TouchableOpacity>
               </View>
             </View>
+               )}
+               {isLoginFormVisible && (
+          <View style={styles.loginFormContainer}>
+            <TextInput
+              placeholder="Enter username"
+              style={styles.input_login_form}
+            />
+            <TextInput
+              placeholder="Enter password"
+              secureTextEntry={true}
+              style={styles.input_login_form}
+            />
+            <TouchableOpacity style={styles.passwordIconContainer}>
+              {/* Add icon for password hide/show here */}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.forgetPasswordContainer} onPress={toggleModal_forget} >
+              <Text style={styles.forgetPasswordText}>Forget Password?</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button_login}>
+              <Text style={styles.buttonText_login}>Sign In</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button_login}>
+              <Text style={styles.buttonText_login}>Registration</Text>
+            </TouchableOpacity>
           </View>
+        )}
+          </View>
+          
           <View>
             {/* Bottom Text */}
             <View style={styles.bottomContainer}>
