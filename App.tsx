@@ -7,7 +7,7 @@ import HomeScreen from './src/container/HomeScreen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import Splash from './src/screens/SplashScreen';
-
+import AuthStack from './src/navigation/AuthStack';
 const Stack = createStackNavigator();
 
 function App(): React.JSX.Element {
@@ -28,9 +28,7 @@ function App(): React.JSX.Element {
       ) : (
         <SafeAreaProvider>
         <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen}  options={{ headerShown: false }} />
-          </Stack.Navigator>
+         <AuthStack />
         </NavigationContainer>
         </SafeAreaProvider>
       )}
