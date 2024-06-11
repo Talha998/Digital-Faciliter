@@ -1,12 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, ImageBackground, StyleSheet, Modal, Animated } from 'react-native';
 import styles from '../styles';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import PasswordClose from "../SVG/PasswordClose";
+import PasswordOpen from "../SVG/PasswordOpen";
 
 const HomeScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [isModalVisible_forget, setIsModalVisible_forget] = useState(false);
   const [isLoginFormVisible, setIsLoginFormVisible] = useState(false);
+  const schema = yup.object().shape({
+    username: yup.string().required('Username is required'),
+    password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+  });
+  
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
 
+  const onSubmit = data => {
+    console.log(data);
+  };
   const toggleLoginForm = () => {
     setIsLoginFormVisible(!isLoginFormVisible);
   };
@@ -267,23 +284,51 @@ const HomeScreen = () => {
                )}
                {isLoginFormVisible && (
           <View style={styles.loginFormContainer}>
+            <Controller
+        control={control}
+        name="username"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <>
             <TextInput
               placeholder="Enter username"
               style={styles.input_login_form}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
             />
-            <TextInput
-              placeholder="Enter password"
-              secureTextEntry={true}
-              style={styles.input_login_form}
-            />
-            <TouchableOpacity style={styles.passwordIconContainer}>
-              {/* Add icon for password hide/show here */}
-            </TouchableOpacity>
+            {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
+          </>
+        )}
+      />
+             <Controller
+      control={control}
+      name="password"
+      render={({ field: { onChange, onBlur, value } }) => (
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Enter password"
+            secureTextEntry={!isPasswordVisible}
+            style={styles.input_login_form}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+          />
+          <TouchableOpacity
+            style={styles.passwordIconContainer}
+            onPress={() => setPasswordVisible(!isPasswordVisible)}
+          >
+            {isPasswordVisible ? <PasswordOpen width="30" height="30" color="#00544d" /> : <PasswordClose width="30" height="30" color="#00544d" />}
+          </TouchableOpacity>
+          {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
+        </View>
+      )}
+    />
             <TouchableOpacity style={styles.forgetPasswordContainer} onPress={toggleModal_forget} >
               <Text style={styles.forgetPasswordText}>Forget Password?</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button_login}>
-              <Text style={styles.buttonText_login}>Sign In</Text>
+            
+            <TouchableOpacity style={styles.button_login}  onPress={handleSubmit(onSubmit)} >
+              <Text style={styles.buttonText_login}>Sign In </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button_login}>
               <Text style={styles.buttonText_login}>Registration</Text>

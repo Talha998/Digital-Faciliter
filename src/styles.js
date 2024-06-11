@@ -289,20 +289,27 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign:"center"
   },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  
+  passwordIconContainer: {
+    position: 'absolute',
+    right: 4,
+    padding: 10,
+    top:8
+  },
   input_login_form: {
     backgroundColor: 'white',
     width: '100%',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    marginVertical: 10,
+    marginVertical: 8,
     borderRadius: 10,
   },
-    passwordIconContainer: {
-    position: 'absolute',
-    right: 30,
-    top: 140,
-    /* Add styles for icon container */
-  },
+  
   forgetPasswordContainer: {
     marginVertical: 0,
     width:"100%"
@@ -312,7 +319,13 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign:"right",
     fontWeight:"600",
-
+  },
+  errorText: {
+    color: 'red',
+    // marginBottom: 10,
+    alignSelf: 'flex-start',
+    textAlign: 'left',
+    
   },
   
 }); 
