@@ -304,7 +304,7 @@ const HomeScreen = () => {
       control={control}
       name="password"
       render={({ field: { onChange, onBlur, value } }) => (
-        <View style={styles.inputContainer}>
+        <>
           <TextInput
             placeholder="Enter password"
             secureTextEntry={!isPasswordVisible}
@@ -312,15 +312,16 @@ const HomeScreen = () => {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            
           />
           <TouchableOpacity
             style={styles.passwordIconContainer}
             onPress={() => setPasswordVisible(!isPasswordVisible)}
           >
             {isPasswordVisible ? <PasswordOpen width="30" height="30" color="#00544d" /> : <PasswordClose width="30" height="30" color="#00544d" />}
-          </TouchableOpacity>
+          </TouchableOpacity> 
           {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
-        </View>
+        </>
       )}
     />
             <TouchableOpacity style={styles.forgetPasswordContainer} onPress={toggleModal_forget} >

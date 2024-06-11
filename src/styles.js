@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 4,
     padding: 10,
-    top:8
+    top:"26%"
   },
   input_login_form: {
     backgroundColor: 'white',
