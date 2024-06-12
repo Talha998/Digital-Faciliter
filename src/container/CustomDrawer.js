@@ -143,15 +143,21 @@ const CustomDrawer = (props) => {
               </TouchableOpacity>
             </View>
           )}
-          <TouchableOpacity style={styles.drawerItem}>
+          <TouchableOpacity style={styles.drawerItem} onPress={() => {
+    navigation.navigate('SettingsScreen'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
+  }}>
           <Ionicons name="settings-outline" size={20} color="#333" />
             <Text style={styles.drawerLabel}>Settings</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.drawerItem}>
+          <TouchableOpacity style={styles.drawerItem}  onPress={() => {
+    navigation.navigate('AboutScreen'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
+  }}>
           <Ionicons name="information-circle-outline" size={20} color="#333" />
             <Text style={styles.drawerLabel}>About</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.drawerItem}>
+          <TouchableOpacity style={styles.drawerItem} onPress={() => {
+    navigation.navigate('PrivacyStatments'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
+  }}>
           <Ionicons name="shield-checkmark-outline" size={20} color="#333" />
             <Text style={styles.drawerLabel}>Privacy Statement</Text>
           </TouchableOpacity>
@@ -173,11 +179,15 @@ const CustomDrawer = (props) => {
           </TouchableOpacity>
           {helpDropdown && (
             <View style={styles.dropdownContainer}>
-              <TouchableOpacity style={styles.dropdownItem}>
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => {
+    navigation.navigate('UserGuide'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
+  }}>
                 <FontAwesome5 name="book" size={20} color="#333" />
                 <Text style={styles.dropdownLabel}>User Guide</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}>
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => {
+    navigation.navigate('Feedback'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
+  }}>
                 <FontAwesome5 name="comment-dots" size={20} color="#333" />
                 <Text style={styles.dropdownLabel}>Feedback</Text>
               </TouchableOpacity>
