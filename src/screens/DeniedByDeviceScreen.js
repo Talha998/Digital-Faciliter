@@ -4,7 +4,7 @@ import { View, Text } from 'react-native'
 const DeniedByDeviceScreen = () => {
   return (
     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-      <Text>About</Text>
+      <Text>Denied By Device </Text>
     </View>
   )
 }

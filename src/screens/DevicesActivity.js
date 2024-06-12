@@ -4,7 +4,7 @@ import { View, Text } from 'react-native'
 const DevicesActivity = () => {
   return (
     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-      <Text>DevicesActivity</Text>
+      <Text>Devices Activity</Text>
     </View>
   )
 }
