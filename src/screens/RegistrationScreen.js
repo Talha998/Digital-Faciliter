@@ -38,7 +38,9 @@ const RegistrationScreen = () => {
   };
 
   const handleCamera = () => {
+    console.log('Opening camera...');
     launchCamera({}, (response) => {
+      console.log('Camera response:', response);
       if (response.assets) {
         setImageUri(response.assets[0].uri);
       }
