@@ -85,6 +85,11 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: 'cover',
       },
+      scrollView: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
       container_r1: {
         flex: 1,
         paddingHorizontal: 20,
@@ -96,6 +101,12 @@ const styles = StyleSheet.create({
         width: "90%",
         textAlign: "center",
         marginBottom: 15
+      },
+      heading_r1: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
       },
       input_r1: {
         width: '100%',
@@ -120,17 +131,34 @@ const styles = StyleSheet.create({
       placeholderStyle_r1: {
         color: 'green',
       },
+      imagePickerContainer_r1: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        marginBottom: 20,
+      },
+      imagePickerButton_r1: {
+        flex: 1,
+        backgroundColor: '#ddd',
+        padding: 15,
+        borderRadius: 10,
+        marginHorizontal: 5,
+        alignItems: 'center',
+      },
+      imagePickerText_r1: {
+        color: '#000',
+      },
       imageBox: {
         width: 150,
         height: 150,
         borderRadius: 75,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor:"#ffff",
         borderWidth: 1,
         borderColor: 'green',
         marginBottom: 20,
-        backgroundColor:"#ffff",
-        marginTop:-30
+        // marginTop:
       },
       imagePreview_r1: {
         width: 150,
