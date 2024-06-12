@@ -1,7 +1,7 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomDrawer from '../container/CustomDrawer';
-import ProfileScreen from '../screens/ProfileScreen';
+import Dashboard from '../screens/Dashboard';
 import MessagesScreen from '../screens/MessagesScreen';
 import MomentsScreen from '../screens/MomentsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
@@ -24,7 +24,7 @@ const DrawerNavigator = () => {
         },
       }}
     >
-      <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="Dashboard" component={Dashboard} />
       <Drawer.Screen name="Messages" component={MessagesScreen} />
       <Drawer.Screen name="Moments" component={MomentsScreen} />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
