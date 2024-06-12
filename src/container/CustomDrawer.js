@@ -22,12 +22,17 @@ const CustomDrawer = props => {
         {...props}
         contentContainerStyle={{backgroundColor: '#8200d6'}}>
         <ImageBackground
-          source={require('../../assets/images/favicon.png')}
+          source={require('../../assets/images/drawer.png')}
           style={{padding: 20}}>
-          <Image
-            source={require('../../assets/images/favicon.png')}
-            style={{height: 80, width: 80, borderRadius: 40, marginBottom: 10}}
-          />
+         <Text
+            style={{
+              color: '#fff',
+              fontSize: 18,
+              fontFamily: 'Roboto-Medium',
+              marginBottom: 5,
+            }}>
+            John Doe
+          </Text>
           <Text
             style={{
               color: '#fff',
