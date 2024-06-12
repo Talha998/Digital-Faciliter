@@ -2,9 +2,10 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomDrawer from '../container/CustomDrawer';
 import Dashboard from '../screens/Dashboard';
-import MessagesScreen from '../screens/MessagesScreen';
-import MomentsScreen from '../screens/MomentsScreen';
+import AccessControlsInsights from '../screens/AccessControlsInsights';
+import AttendanceAnalysis from '../screens/AttendanceAnalysis';
 import SettingsScreen from '../screens/SettingsScreen';
+import AboutScreen  from "../screens/AboutScreen";
 
 const Drawer = createDrawerNavigator();
 
@@ -14,20 +15,21 @@ const DrawerNavigator = () => {
       drawerContent={(props) => <CustomDrawer {...props} />}
       screenOptions={{
         headerShown: true,
-        drawerActiveBackgroundColor: '#aa18ea',
+        drawerActiveBackgroundColor: '#00544d',
         drawerActiveTintColor: '#fff',
         drawerInactiveTintColor: '#333',
         drawerLabelStyle: {
-          marginLeft: -25,
+          marginLeft: 0,
           fontFamily: 'Roboto-Medium',
           fontSize: 15,
         },
       }}
     >
       <Drawer.Screen name="Dashboard" component={Dashboard} />
-      <Drawer.Screen name="Messages" component={MessagesScreen} />
-      <Drawer.Screen name="Moments" component={MomentsScreen} />
-      <Drawer.Screen name="Settings" component={SettingsScreen} />
+      {/* <Drawer.Screen name="Access Controls Insights" component={AccessControlsInsights} />
+      <Drawer.Screen name="Attendance Analysis" component={AttendanceAnalysis} /> */}
+      {/* <Drawer.Screen name="Settings" component={SettingsScreen} /> */}
+      {/* <Drawer.Screen name="About" component={AboutScreen} /> */}
     </Drawer.Navigator>
   );
 };

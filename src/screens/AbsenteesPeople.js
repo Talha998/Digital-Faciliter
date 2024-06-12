@@ -1,12 +1,12 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 
-const MessagesScreen = () => {
+const AbsenteesPeople = () => {
   return (
     <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-      <Text>Messages Screen</Text>
+      <Text>Attendance Analysis</Text>
     </View>
   )
 }
 
-export default MessagesScreen
+export default AbsenteesPeople

@@ -8,6 +8,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import Splash from './src/screens/SplashScreen';
 import AuthStack from './src/navigation/AuthStack';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './src/language/i18n';
 import SelectDropdown from "./src/screens/SelectDropdown";
 const Stack = createStackNavigator();
 
@@ -24,6 +26,7 @@ function App(): React.JSX.Element {
 
   return (
     <>
+     <I18nextProvider i18n={i18n}>
       {loading ? (
         <Splash />
       ) : (
@@ -34,6 +37,7 @@ function App(): React.JSX.Element {
         </SafeAreaProvider>
         // <SelectDropdown />
       )}
+      </I18nextProvider>
     </>
   );
 }
