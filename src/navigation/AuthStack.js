@@ -14,27 +14,26 @@ import Feedback from '../screens/Feedback';
 import SettingsScreen from '../screens/SettingsScreen';
 import PrivacyStatments from '../screens/PrivacyStatments';
 import AboutScreen from '../screens/AboutScreen';
-
 const Stack = createStackNavigator();
 
 const AuthStack = () => {
   return (
     
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="SelectDropdown" component={SelectDropdown} />
-      <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
-      <Stack.Screen name="DeniedByDeviceScreen" component={DeniedByDeviceScreen} />
-      <Stack.Screen name="DeniedByCardholder" component={DeniedByCardholder} />
-      <Stack.Screen name="DoorAlarm" component={DoorAlarm} />
-      <Stack.Screen name="DevicesActivity" component={DevicesActivity} />
-      <Stack.Screen name="AttendanceAnalysis" component={AttendanceAnalysis} />
-      <Stack.Screen name="AbsenteesPeople" component={AbsenteesPeople} />
-      <Stack.Screen name="UserGuide" component={UserGuide} />
-      <Stack.Screen name="Feedback" component={Feedback} />
-      <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
-      <Stack.Screen name="PrivacyStatments" component={PrivacyStatments} />
-      <Stack.Screen name="AboutScreen" component={AboutScreen} />
+    <Stack.Navigator >
+      <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="SelectDropdown" component={SelectDropdown} options={{ headerShown: false }} />
+      <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Denied By Device" component={DeniedByDeviceScreen} />
+      <Stack.Screen name="Denied By Cardholder" component={DeniedByCardholder} />
+      <Stack.Screen name="Door Alarm" component={DoorAlarm} />
+      <Stack.Screen name="Devices Activity" component={DevicesActivity} />
+      <Stack.Screen name="Attendance Analysis" component={AttendanceAnalysis} />
+      <Stack.Screen name="Absentees People" component={AbsenteesPeople} />
+      <Stack.Screen name="User Guide" component={UserGuide} />
+      <Stack.Screen name="Feed back" component={Feedback} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="Privacy Statments" component={PrivacyStatments} />
+      <Stack.Screen name="About Screen" component={AboutScreen} />
       {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
     </Stack.Navigator>
   );
