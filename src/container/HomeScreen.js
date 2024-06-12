@@ -6,12 +6,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import PasswordClose from "../SVG/PasswordClose";
 import PasswordOpen from "../SVG/PasswordOpen";
+import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [isModalVisible_forget, setIsModalVisible_forget] = useState(false);
   const [isLoginFormVisible, setIsLoginFormVisible] = useState(false);
+  
   const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
     password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
@@ -21,8 +24,11 @@ const HomeScreen = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = data => {
+  const onSubmit = (data) => {
+     // Handle form data
     console.log(data);
+      // Navigate to SelectDropdown screen
+    navigation.navigate('SelectDropdown');
   };
   const toggleLoginForm = () => {
     setIsLoginFormVisible(!isLoginFormVisible);
@@ -329,7 +335,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.button_login}  onPress={handleSubmit(onSubmit)} >
-              <Text style={styles.buttonText_login}>Sign In </Text>
+              <Text style={styles.buttonText_login}>Sign In</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button_login}>
               <Text style={styles.buttonText_login}>Registration</Text>

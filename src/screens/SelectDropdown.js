@@ -2,8 +2,14 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 import icon from "../../assets/images/abstract1.png";
-const SelectDropown = () => {
+const SelectDropdown = () => {
+  const navigation = useNavigation();
+
+  const handleNext = () => {
+    navigation.navigate('DrawerNavigator');
+  };
   const [selectedRegion, setSelectedRegion] = React.useState();
   const [selectedCity, setSelectedCity] = React.useState();
   const [selectedLocation, setSelectedLocation] = React.useState();
@@ -60,7 +66,7 @@ const SelectDropown = () => {
           </Picker>
           {/* <Icon name="caret-down" size={20} color="#fff" style={styles.arrowIcon_drop_Rt} /> */}
         </View>
-        <TouchableOpacity style={styles.button__drop_Rt}>
+        <TouchableOpacity style={styles.button__drop_Rt} onPress={handleNext} >
           <Text style={styles.buttonText__drop_Rt}>Next</Text>
           <Icon name="arrow-right" size={20} color="#fff" style={styles.buttonIcon_drop_Rt} />
         </TouchableOpacity>
@@ -135,4 +141,4 @@ const styles = StyleSheet.create({
 },
 });
 
-export default SelectDropown;
+export default SelectDropdown;

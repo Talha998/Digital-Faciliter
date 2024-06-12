@@ -27,12 +27,12 @@ function App(): React.JSX.Element {
       {loading ? (
         <Splash />
       ) : (
-        // <SafeAreaProvider>
-        // <NavigationContainer>
-        //  <AuthStack />
-        // </NavigationContainer>
-        // </SafeAreaProvider>
-        <SelectDropdown />
+        <SafeAreaProvider>
+        <NavigationContainer>
+         <AuthStack />
+        </NavigationContainer>
+        </SafeAreaProvider>
+        // <SelectDropdown />
       )}
     </>
   );
