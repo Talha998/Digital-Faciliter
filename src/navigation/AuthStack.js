@@ -14,6 +14,7 @@ import Feedback from '../screens/Feedback';
 import SettingsScreen from '../screens/SettingsScreen';
 import PrivacyStatments from '../screens/PrivacyStatments';
 import AboutScreen from '../screens/AboutScreen';
+import RegistrationScreen  from '../screens/RegistrationScreen';
 const Stack = createStackNavigator();
 
 const AuthStack = () => {
@@ -34,6 +35,7 @@ const AuthStack = () => {
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Privacy Statments" component={PrivacyStatments} />
       <Stack.Screen name="About Screen" component={AboutScreen} />
+      <Stack.Screen name="Request User Registration" component={RegistrationScreen} options={{ headerShown: true }} />
       {/* <Stack.Screen name="Login" component={LoginScreen} /> */}
     </Stack.Navigator>
   );

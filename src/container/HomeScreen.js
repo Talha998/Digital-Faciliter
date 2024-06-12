@@ -337,7 +337,9 @@ const HomeScreen = () => {
             <TouchableOpacity style={styles.button_login}  onPress={handleSubmit(onSubmit)} >
               <Text style={styles.buttonText_login}>Sign In</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button_login}>
+            <TouchableOpacity style={styles.button_login} onPress={() => {
+                navigation.navigate('Request User Registration');
+              }}>
               <Text style={styles.buttonText_login}>Registration</Text>
             </TouchableOpacity>
           </View>
