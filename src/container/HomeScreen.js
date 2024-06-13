@@ -297,9 +297,10 @@ const HomeScreen = () => {
           <>
             <TextInput
               placeholder="Enter username"
-              style={styles.input_login_form}
+              style={[styles.input_login_form, errors.username && styles.errorInput]}
               onBlur={onBlur}
               onChangeText={onChange}
+              placeholderTextColor="green"
               value={value}
             />
             {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
@@ -314,9 +315,10 @@ const HomeScreen = () => {
           <TextInput
             placeholder="Enter password"
             secureTextEntry={!isPasswordVisible}
-            style={styles.input_login_form}
+            style={[styles.input_login_form, errors.password && styles.errorInput]}
             onBlur={onBlur}
             onChangeText={onChange}
+            placeholderTextColor="green"
             value={value}
             
           />

@@ -327,7 +327,9 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     
   },
-  
+  errorInput: {
+    borderColor: 'red',
+  },
 }); 
 
 export default styles;
