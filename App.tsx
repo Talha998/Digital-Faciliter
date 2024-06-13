@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import Splash from './src/screens/SplashScreen';
 import AuthStack from './src/navigation/AuthStack';
+import AppStack from "./src/navigation/AppStack";
 import { I18nextProvider } from 'react-i18next';
 import i18n from './src/language/i18n';
 import SelectDropdown from "./src/screens/SelectDropdown";
@@ -32,7 +33,7 @@ function App(): React.JSX.Element {
       ) : (
         <SafeAreaProvider>
         <NavigationContainer>
-         <AuthStack />
+         <AppStack />
         </NavigationContainer>
         </SafeAreaProvider>
         // <SelectDropdown />
