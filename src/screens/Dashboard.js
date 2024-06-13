@@ -155,6 +155,7 @@ const Dashboard = () => {
           </View>
         </View>
       </Modal>
+
       <View style={[styles.dropdownWrapper, openArea && { zIndex: 3000 }]}>
         <Icon name="globe" size={20} color="#fff" style={styles.icon} />
         <DropDownPicker
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
   topContainer: {
     flexDirection:"row",
     justifyContent:"space-between",
-    marginBottom: 20,
+    marginBottom: 0,
   },
   right_icons: {
     flexDirection:"row",
