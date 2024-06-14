@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, RefreshCon
 import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DeviceStatus from "./DeviceStatus";
 
 const Dashboard = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -207,6 +208,9 @@ const Dashboard = () => {
           
         />
       </View>
+      <View style={styles.device_top}  >
+    <DeviceStatus />
+    </View>
     </View>
     </ScrollView>
   );
@@ -341,7 +345,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // backgroundColor: '#00544d',
     borderRadius: 5,
-    marginVertical: 10,
+    marginVertical: 5,
     paddingHorizontal: 0,
     // paddingVertical: 20,
     width: '100%',
@@ -377,6 +381,9 @@ const styles = StyleSheet.create({
   searchTextInputStyle: {
     color: '#fff', // Color of the search text input
   },
+  device_top: {
+    paddingTop:7
+  }
 });
 
 export default Dashboard;
