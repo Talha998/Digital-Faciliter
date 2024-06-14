@@ -55,8 +55,10 @@ const PeopleEntryPerHour = () => {
             </View>
           </View>
         </View>
-        <Text style={styles.chartText_active}>Active Workforce</Text>
+        <View style={styles.text_inner_grah}>
+        <Text style={styles.chartText_active}>People Entry Per Hour</Text>
         <Text style={styles.chartText_num}>Total: {data.reduce((total, item) => total + item.Values, 0)}</Text>
+        </View>
       </View>
     </View>
   );
@@ -72,6 +74,7 @@ const styles = StyleSheet.create({
     marginTop: 100,
     height: 150, // Adjusted height to accommodate the chart and labels
     marginBottom: 100,
+    // width:"100%",
     borderRadius: 20,
   },
   greenBackground: {
@@ -119,6 +122,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#ffffff',
+    width:"100%"
     // marginTop: 5,
   },
   chartText_num: {
@@ -126,8 +130,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#ffffff',
-    marginTop: 0,
+    marginTop: -12,
   },
+  
 });
 
 export default PeopleEntryPerHour;

@@ -49,7 +49,7 @@ const PeopleExitPerHour = () => {
             <Text style={styles.chartText}>{data[0].value}</Text>
           </View>
         </View>
-        <Text style={styles.chartText_active}>Active Workforce</Text>
+        <Text style={styles.chartText_active}>People Exit Per Hour</Text>
         <Text style={styles.chartText_num}>{data[0].value}</Text>
       </View>
       
