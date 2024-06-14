@@ -1,17 +1,24 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview'; // Import WebView for rendering web content
-
 const AlarmPerChart = () => {
-  // Dummy data for the pie chart
+  // Data for the pie chart
   const data = {
-    series: [59920],
+    series: [5, 6, 7, 8, 9, 10, 11, 12, 1, 3, 4],
     options: {
-      labels: ['Active Person'],
-      colors: ['#808080', '#448EE4'], // Define colors for the slices
+      labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+      colors: ['#808080', '#448EE4', '#FF6347', '#FFD700', '#8A2BE2', '#7FFF00', '#DC143C', '#00FFFF', '#FF8C00', '#00FA9A', '#1E90FF'], // Define colors for the slices
       legend: {
-        show: true, // Show legend
-        position: 'bottom' // Position of the legend
+        show: false, // Hide legend
+      },
+      dataLabels: {
+        enabled: true, // Disable data labels
+        style: {
+          fontSize: '5px', // Set font size of data labels
+        }
+      },
+      tooltip: {
+        enabled: false, // Disable tooltips
       }
     }
   };
@@ -23,13 +30,26 @@ const AlarmPerChart = () => {
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+          <style>
+          body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            margin: 0;
+            
+          }
+          #chart {
+            
+          }
+        </style>
       </head>
       <body>
         <div id="chart"></div>
         <script>
           var options = ${JSON.stringify(data.options)};
           options.series = ${JSON.stringify(data.series)};
-          options.chart = { type: 'pie', height: '200' };
+         options.chart = { type: 'pie', height: 130, width: 130 };
           
           var chart = new ApexCharts(document.querySelector("#chart"), options);
           chart.render();
@@ -46,12 +66,12 @@ const AlarmPerChart = () => {
             <WebView
               originWhitelist={['*']}
               source={{ html: chartHtml }}
-              style={{ height: 100, width: 100 }} // Adjust the height and width as needed
+              style={{ height: 78, width: 100 }} 
             />
           </View>
         </View>
         <Text style={styles.chartText_active}>Active Workforce</Text>
-        <Text style={styles.chartText_num}>{data.series[0]}</Text>
+        <Text style={styles.chartText_num}>Total: {data.series.reduce((a, b) => a + b, 0)}</Text>
       </View>
     </View>
   );
@@ -83,6 +103,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 2,
     marginBottom: 5,
+    
   },
   chartContainer: {
     alignItems: 'center',
