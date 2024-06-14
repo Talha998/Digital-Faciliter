@@ -70,8 +70,8 @@ const AlarmPerChart = () => {
             />
           </View>
         </View>
-        <Text style={styles.chartText_active}>Active Workforce</Text>
-        <Text style={styles.chartText_num}>Total: {data.series.reduce((a, b) => a + b, 0)}</Text>
+        <Text style={styles.chartText_active}>Alarms Per Hour</Text>
+        <Text style={styles.chartText_num}>{data.series.reduce((a, b) => a + b, 0)}</Text>
       </View>
     </View>
   );

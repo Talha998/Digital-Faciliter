@@ -3,15 +3,10 @@ import { View, Text, StyleSheet } from 'react-native';
 import { BarChart, Grid } from 'react-native-svg-charts';
 import { Defs, LinearGradient, Stop } from 'react-native-svg';
 
-const PeopleEntryPerHour = () => {
-  // Data for the bar chart
+const ActiveWorkforce = () => {
+  // Dummy data for the bar chart
   const data = [
-    { Values: 1, Hour: '5 AM' },
-    { Values: 6, Hour: '6 AM' },
-    { Values: 11, Hour: '7 AM' },
-    { Values: 7, Hour: '8 AM' },
-    { Values: 4, Hour: '9 AM' },
-    { Values: 6, Hour: '10 AM' },
+    { label: 'Active Person', value: 59920 }
   ];
 
   // Gradient definitions for different colors
@@ -24,9 +19,14 @@ const PeopleEntryPerHour = () => {
     </Defs>
   );
 
-  // Calculate the maximum value for setting content inset
-  const maxValues = Math.max(...data.map(item => item.Values));
-  const contentInset = { top: 10, bottom: 10 }; // Adjust content inset as needed
+  const GrayGradient = () => (
+    <Defs key={'grayGradient'}>
+      <LinearGradient id={'grayGradient'} x1={'0'} y1={'0'} x2={'0'} y2={'100%'}>
+        <Stop offset={'0%'} stopColor={'rgba(169,169,169,0.8)'} />
+        <Stop offset={'100%'} stopColor={'rgba(192,192,192,0.8)'} />
+      </LinearGradient>
+    </Defs>
+  );
 
   return (
     <View style={styles.container}>
@@ -36,28 +36,23 @@ const PeopleEntryPerHour = () => {
             <BarChart
               style={styles.chart}
               data={data}
-              yAccessor={({ item }) => item.Values}
+              yAccessor={({ item }) => item.value}
               svg={{
                 fill: 'url(#blueGradient)', // Use blue gradient for bars
               }}
-              contentInset={contentInset}
+              contentInset={{ top: 5, bottom: 5 }}
               gridMin={0}
             >
               <Grid />
               <BlueGradient />
             </BarChart>
-            <View style={styles.labelsContainer}>
-              {/* {data.map((item, index) => (
-                <Text key={index} style={styles.chartLabel}>
-                  {item.Hour}
-                </Text>
-              ))} */}
-            </View>
+            <Text style={styles.chartText}>{data[0].value}</Text>
           </View>
         </View>
         <Text style={styles.chartText_active}>Active Workforce</Text>
-        <Text style={styles.chartText_num}>Total: {data.reduce((total, item) => total + item.Values, 0)}</Text>
+        <Text style={styles.chartText_num}>{data[0].value}</Text>
       </View>
+      
     </View>
   );
 };
@@ -78,8 +73,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 20,
     position: "absolute",
-    top: -50,
-    width: '100%', // Ensure full width within the container
+    top: -50
   },
   card: {
     backgroundColor: '#ffffff', // White background color for the card
@@ -89,45 +83,33 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 2,
     marginBottom: 5,
-    width: 120, // Ensure full width within the card
   },
   chartContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%', // Ensure full width within the chart container
   },
   chart: {
-    height: 104, // Adjusted height for the bar chart
+    height: 89,
     width: 100,
   },
-  labelsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-    width: '90%', // 90% of the container width
-    paddingHorizontal: 20, // Add horizontal padding for better spacing
-  },
-  chartLabel: {
-    fontSize: 12,
+  chartText: {
+    fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#000000', // Adjust label color as needed
-    flex: 1, // Allow flex to distribute space evenly
+    marginTop: 5,
   },
   chartText_active: {
     fontSize: 12,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#ffffff',
-    // marginTop: 5,
   },
   chartText_num: {
     fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#ffffff',
-    marginTop: 0,
   },
 });
 
-export default PeopleEntryPerHour;
+export default ActiveWorkforce;

@@ -4,8 +4,10 @@ import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DeviceStatus from "./DeviceStatus";
-import GraphDashboardEntryData from './PeopleEntryPerHour';
+import ActiveWorkforce from './ActiveWorkforce';
 import AlarmPerChart from './AlarmPerChart';
+import PeopleEntryPerHour from './PeopleEntryPerHour';
+import PeopleExitPerHour from './PeopleExitPerHour';
 
 const Dashboard = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -215,10 +217,18 @@ const Dashboard = () => {
     </View>
     <View style={styles.maindash_firstchart} >
     <View style={styles.GraphDashboard}  >
-    <GraphDashboardEntryData />
+    <ActiveWorkforce />
     </View>
     <View style={styles.GraphDashboard}  >
     <AlarmPerChart />
+    </View>
+    </View>
+    <View style={styles.maindash_firstchart} >
+    <View style={styles.GraphDashboard}  >
+    <PeopleEntryPerHour />
+    </View>
+    <View style={styles.GraphDashboard}  >
+    <PeopleExitPerHour />
     </View>
     </View>
     
@@ -403,6 +413,7 @@ const styles = StyleSheet.create({
   },
   maindash_firstchart: {
     flexDirection:"row",
+    marginBottom:-50
     // justifyContent:"space-between"
   }
 });
