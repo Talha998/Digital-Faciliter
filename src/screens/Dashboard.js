@@ -4,6 +4,8 @@ import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DeviceStatus from "./DeviceStatus";
+import GraphDashboardEntryData from './PeopleEntryPerHour';
+import AlarmPerChart from './AlarmPerChart';
 
 const Dashboard = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -211,6 +213,15 @@ const Dashboard = () => {
       <View style={styles.device_top}  >
     <DeviceStatus />
     </View>
+    <View style={styles.maindash_firstchart} >
+    <View style={styles.GraphDashboard}  >
+    <GraphDashboardEntryData />
+    </View>
+    <View style={styles.GraphDashboard}  >
+    <AlarmPerChart />
+    </View>
+    </View>
+    
     </View>
     </ScrollView>
   );
@@ -382,7 +393,17 @@ const styles = StyleSheet.create({
     color: '#fff', // Color of the search text input
   },
   device_top: {
-    paddingTop:7
+    paddingTop:7,
+  },
+  GraphDashboard: {
+// paddingTop:7,
+    width:"48%",
+    // marginVertical:20,
+    marginHorizontal:5,
+  },
+  maindash_firstchart: {
+    flexDirection:"row",
+    // justifyContent:"space-between"
   }
 });
 
