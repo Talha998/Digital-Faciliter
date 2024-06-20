@@ -9,6 +9,10 @@ import AlarmPerChart from './AlarmPerChart';
 import PeopleEntryPerHour from './PeopleEntryPerHour';
 import PeopleExitPerHour from './PeopleExitPerHour';
 import TotalWorkForce from './TotalWorkForce';
+import AccessDenied from './AccessDenied';
+import AccessGranted from './AccessGranted';
+import DeviceAlarm from './DeviceAlarm';
+import InOutComponent from './InOutComponent';
 
 const Dashboard = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -233,16 +237,26 @@ const Dashboard = () => {
     </View>
     
     </View>
-    <View style={styles.maindash_firstchart_second} >
+    <View style={styles.maindash_thirdchart_second} >
     <View style={styles.GraphDashboard}  >
     <TotalWorkForce />
     </View>
     <View style={styles.GraphDashboard}  >
-    <PeopleExitPerHour />
+    <DeviceAlarm />
+    </View>
+    </View>
+    
+  {/* ///  second Half /// */}
+  <View style={styles.maindash_fourthchart_second} >
+    <View style={styles.GraphDashboard}  >
+    <AccessGranted />
+    </View>
+    <View style={styles.GraphDashboard}  >
+    <AccessDenied />
     </View>
     
     </View>
-    
+    <InOutComponent />
     </View>
     </ScrollView>
   );
@@ -433,6 +447,15 @@ const styles = StyleSheet.create({
     // marginBottom:-100,
     // marginTop:-20,
     // justifyContent:"space-between"
+  },
+  maindash_thirdchart_second:{
+    flexDirection:"row",
+    // marginBottom:-120,
+    marginTop:-40,
+  },
+  maindash_fourthchart_second:{
+    flexDirection:"row",
+    marginTop: 50,
   }
 });
 

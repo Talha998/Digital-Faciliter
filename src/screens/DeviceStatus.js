@@ -14,7 +14,7 @@ const DeviceStatus = () => {
       <View style={styles.tableContainer}>
         {/* Table Headers */}
         <View style={styles.tableRow}>
-          <Text style={[styles.headerText, styles.greenText]}>Type</Text>
+          <Text style={[styles.headerText, styles.tableCellHeader]}>Type</Text>
           <Text style={[styles.headerText, styles.greenText]}>Device</Text>
           <Text style={[styles.headerText, styles.greenText]}>Status</Text>
         </View>
@@ -22,12 +22,12 @@ const DeviceStatus = () => {
         {/* Table Rows */}
         {/* Example rows (replace with actual data rendering logic) */}
         <View style={styles.tableRow}>
-          <Text style={styles.cellText}>Mobile</Text>
+          <Text style={styles.tableCell}>Mobile</Text>
           <Text style={styles.cellText}>iPhone</Text>
           <Text style={styles.cellText}>Active</Text>
         </View>
         <View style={styles.tableRow}>
-          <Text style={styles.cellText}>Desktop</Text>
+          <Text style={styles.tableCell}>Desktop</Text>
           <Text style={styles.cellText}>Windows </Text>
           <Text style={styles.cellText}>Inactive</Text>
         </View>
@@ -58,6 +58,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     // alignItems: 'center',
   },
+  tableCellHeader: {
+    // flex: 1,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#004d4d',
+    marginRight:"20%"
+  },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -74,12 +82,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#ffffff', // Header text color
     flex: 1,
-    textAlign: 'center',
+    textAlign: 'left',
+    marginLeft:10
   },
   tableContainer: {
     backgroundColor: '#ffffff', // Table background color
     // borderRadius: 10,
     // borderTopEndRadius:10,
+    width: '100%',
     borderBottomLeftRadius:10,
     borderBottomRightRadius:10,
     borderWidth: 1,
@@ -88,17 +98,22 @@ const styles = StyleSheet.create({
   tableRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd', // Table row separator color
     paddingVertical: 10,
-    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
   cellText: {
     fontSize: 14,
     color: '#00544d', // Cell text color
     flex: 1,
     textAlign: 'center',
+  },
+  tableCell:{
+    fontSize: 14,
+    color: '#00544d', // Cell text color
+    flex: 1,
+    textAlign: 'center',
+     marginRight:"20%"
   },
   greenText: {
     // backgroundColor: '#00544d', // Header and cell background color
