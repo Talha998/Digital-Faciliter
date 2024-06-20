@@ -8,6 +8,7 @@ import ActiveWorkforce from './ActiveWorkforce';
 import AlarmPerChart from './AlarmPerChart';
 import PeopleEntryPerHour from './PeopleEntryPerHour';
 import PeopleExitPerHour from './PeopleExitPerHour';
+import TotalWorkForce from './TotalWorkForce';
 
 const Dashboard = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -223,13 +224,23 @@ const Dashboard = () => {
     <AlarmPerChart />
     </View>
     </View>
-    <View style={styles.maindash_firstchart} >
+    <View style={styles.maindash_firstchart_second} >
     <View style={styles.GraphDashboard}  >
     <PeopleEntryPerHour />
     </View>
     <View style={styles.GraphDashboard}  >
     <PeopleExitPerHour />
     </View>
+    
+    </View>
+    <View style={styles.maindash_firstchart_second} >
+    <View style={styles.GraphDashboard}  >
+    <TotalWorkForce />
+    </View>
+    <View style={styles.GraphDashboard}  >
+    <PeopleExitPerHour />
+    </View>
+    
     </View>
     
     </View>
@@ -413,7 +424,14 @@ const styles = StyleSheet.create({
   },
   maindash_firstchart: {
     flexDirection:"row",
-    marginBottom:-50
+    marginBottom:-120,
+    marginTop:-20,
+    // justifyContent:"space-between"
+  },
+  maindash_firstchart_second: {
+    flexDirection:"row",
+    // marginBottom:-100,
+    // marginTop:-20,
     // justifyContent:"space-between"
   }
 });
