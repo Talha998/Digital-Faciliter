@@ -85,6 +85,15 @@ const CustomDrawer = (props) => {
           </TouchableOpacity>
           {accessControlsDropdown && (
             <View style={styles.dropdownContainer}>
+               <TouchableOpacity
+  onPress={() => {
+    navigation.navigate('Emergency Equation'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
+  }}
+  style={styles.dropdownItem}
+>
+  <FontAwesome5 name="times-circle" size={20} color="#333" />
+  <Text style={styles.dropdownLabel}>Emergency Equation</Text>
+</TouchableOpacity>
               <TouchableOpacity
   onPress={() => {
     navigation.navigate('Denied By Device'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to

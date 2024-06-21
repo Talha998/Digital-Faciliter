@@ -33,7 +33,7 @@ function App(): React.JSX.Element {
       ) : (
         <SafeAreaProvider>
         <NavigationContainer>
-         <AppStack />
+         <AuthStack />
         </NavigationContainer>
         </SafeAreaProvider>
         // <SelectDropdown />
