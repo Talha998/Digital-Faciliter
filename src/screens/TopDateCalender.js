@@ -15,14 +15,9 @@ const DeniedByDeviceScreen = () => {
   const handleCancel = () => {
     setModalVisible(false);
   };
-  const data = [
-    { personName: 'John Doe', accessDenied: '98' },
-    { personName: 'Jane Smith', accessDenied: '45' },
-    { personName: 'Alice Johnson', accessDenied: '55' },
-    { personName: 'Chris Lee', accessDenied: '12' },
-    { personName: 'Patricia Brown', accessDenied: '57' },
-  ];
+
   return (
+    
     <View style={styles.container}>
       <View style={styles.topContainer}>
       <View>
@@ -100,20 +95,6 @@ const DeniedByDeviceScreen = () => {
           </View>
         </View>
       </Modal>
-      <View style={styles.container_grid}>
-      <View style={styles.headerRow}>
-        <Text style={styles.headerText}>Person Name</Text>
-        <Text style={styles.headerText}>Access Denied</Text>
-      </View>
-      <ScrollView>
-        {data.map((item, index) => (
-          <View key={index} style={styles.row}>
-            <Text style={styles.cell}>{item.personName}</Text>
-            <Text style={styles.cell}>{item.accessDenied}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
 
     </View>
   )
@@ -244,32 +225,7 @@ const styles = StyleSheet.create({
     width: 120,
     textAlign: "center",
   },
-  container_grid: {
-    // margin: 20,
-    borderColor: '#000',
-    borderWidth: 1,
-    borderRadius: 5,
-    overflow: 'hidden',
-    width:"100%"
-  },
-  headerRow: {
-    flexDirection: 'row',
-    backgroundColor: '#00695c',
-    justifyContent:"space-between",
-    padding: 10,
-    paddingHorizontal:15
-  },
-  headerText: {
-    // flex: 1,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  row: {
-    flexDirection:"row",
-    justifyContent:"space-between",
-    padding: 10,
-    paddingHorizontal:15
-  },
+ 
  
   
 });
