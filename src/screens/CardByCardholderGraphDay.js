@@ -1,139 +1,107 @@
-import React from 'react';
-import { View, Text, StyleSheet ,  } from 'react-native';
-import { BarChart, Grid } from 'react-native-svg-charts';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity , ScrollView  } from 'react-native';
+// import { BarChart, Grid } from 'react-native-svg-charts';
+import { BarChart } from 'react-native-chart-kit';
 import { Defs, LinearGradient, Stop } from 'react-native-svg';
 
 const CardByCardholderGraphDay = () => {
-  // Data for the bar chart
+  // Original data
   const data = [
-    { Values: 1, Hour: '5 AM' },
-    { Values: 6, Hour: '6 AM' },
-    { Values: 11, Hour: '7 AM' },
-    { Values: 7, Hour: '8 AM' },
-    { Values: 4, Hour: '9 AM' },
-    { Values: 6, Hour: '10 AM' },
+    { Values: 77, Day: 4 },
+    { Values: 1, Day: 1 },
+    { Values: 1, Day: 2 },
+    { Values: 1, Day: 3 },
+    { Values: 2, Day: 10 },
+    { Values: 3, Day: 15 },
+    { Values: 4, Day: 20 },
+    { Values: 5, Day: 19 },
+    { Values: 5, Day: 14 },
+    { Values: 5, Day: 18 },
+    { Values: 5, Day: 23 },
+    { Values: 88, Day: 28 },
+    { Values: 5, Day: 10 },
+    { Values: 55, Day: 30 }
   ];
 
-  // Gradient definitions for different colors
-  const BlueGradient = () => (
-    <Defs key={'blueGradient'}>
-      <LinearGradient id={'blueGradient'} x1={'0'} y1={'0'} x2={'0'} y2={'100%'}>
-        <Stop offset={'50%'} stopColor={'#808080'} />
-        <Stop offset={'50%'} stopColor={'#448EE4'} />
-      </LinearGradient>
-    </Defs>
-  );
+  const chartData = {
+    labels: data.map(item => `Day ${item.Day}`),
+    datasets: [{
+        data: data.map(item => item.Values),
+    }],
+};
 
-  // Calculate the maximum value for setting content inset
-  const maxValues = Math.max(...data.map(item => item.Values));
-  const contentInset = { top: 10, bottom: 10 }; // Adjust content inset as needed
+const chartConfig = {
+    backgroundGradientFrom: '#f0f0f0',
+    backgroundGradientTo: '#f0f0f0',
+    color: (opacity = 0) => '#00544d',
+    strokeWidth: 2, // optional, default 3
+};
 
-  return (
-    <View  style={styles.container}>
-      <View>
-        <View>
-          <View style={styles.chartContainer}>
-            <BarChart
-              style={styles.chart}
-              data={data}
-              yAccessor={({ item }) => item.Values}
-              svg={{
-                fill: 'url(#blueGradient)', // Use blue gradient for bars
-              }}
-              contentInset={contentInset}
-              gridMin={0}
-            >
-              <Grid />
-              <BlueGradient />
-            </BarChart>
-            <View style={styles.labelsContainer}>
-              {/* {data.map((item, index) => (
-                <Text key={index} style={styles.chartLabel}>
-                  {item.Hour}
-                </Text>
-              ))} */}
-            </View>
-          </View>
-        </View>
-        {/* <View style={styles.text_inner_grah}>
-        <Text style={styles.chartText_active}>People Entry Per Hour</Text>
-        <Text style={styles.chartText_num}>Total: {data.reduce((total, item) => total + item.Values, 0)}</Text>
-        </View> */}
-      </View>
-    </View>
-  );
+return (
+  <ScrollView horizontal style={{ flex: 1 }}>
+  <View style={{ alignItems: 'center', justifyContent: 'center' , paddingVertical: 10, paddingHorizontal: 0 }}>
+   
+  <BarChart
+                        style={{ marginBottom: 15 }}
+                        data={chartData}
+                        width={data.length * 50} // Adjust width based on data length
+                        height={220}
+                        yAxisLabel={'Days'}
+                        chartConfig={chartConfig}
+                        fromZero={true} // Ensure bars start from zero
+                        horizontal={true} // Display as horizontal bar chart
+                    />
+      
+  </View>
+</ScrollView>
+);
 };
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // backgroundColor: '#00544d', // Green background color
-    // padding: 20,
-    // marginTop: 100,
-    // height: 150, // Adjusted height to accommodate the chart and labels
-    // marginBottom: 100,
-    // width:"100%",
-    // borderRadius: 20,
-    width:"100%"
-  },
-  greenBackground: {
-    alignItems: 'center',
-    borderRadius: 20,
-    position: "absolute",
-    top: -50,
-    width: '100%', // Ensure full width within the container
-  },
-  card: {
-    backgroundColor: '#ffffff', // White background color for the card
-    borderRadius: 10,
-    padding: 10,
-    alignItems: 'center',
-    elevation: 3,
-    borderWidth: 2,
-    marginBottom: 5,
-    width: 120, // Ensure full width within the card
+    width: '100%',
   },
   chartContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%', // Ensure full width within the chart container
+    width: '100%',
   },
   chart: {
-    height: 250, // Adjusted height for the bar chart
+    height: 250,
     width: '100%',
   },
   labelsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
-    width: '90%', // 90% of the container width
-    paddingHorizontal: 20, // Add horizontal padding for better spacing
+    width: '100%',
+    paddingHorizontal: 5,
   },
   chartLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#000000',
+    flex: 1,
+  },
+  barOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    width: '3%', // Width of each bar
+    backgroundColor: 'transparent',
+  },
+  tooltip: {
+    position: 'absolute',
+    backgroundColor: '#ffffff',
+    padding: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#000000',
+  },
+  tooltipText: {
     fontSize: 12,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#000000', // Adjust label color as needed
-    flex: 1, // Allow flex to distribute space evenly
+    color: '#000000',
   },
-  chartText_active: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#ffffff',
-    width:"100%"
-    // marginTop: 5,
-  },
-  chartText_num: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#ffffff',
-    marginTop: -12,
-  },
-  
 });
 
 export default CardByCardholderGraphDay;

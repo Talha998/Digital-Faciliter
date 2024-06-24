@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
   CardByCardholderGraphDay: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
   },
   topContainer: {
     flexDirection:"row",
