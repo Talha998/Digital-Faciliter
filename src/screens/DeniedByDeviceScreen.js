@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from 'react-native-date-picker';
+import AccessDeniedPerDayHeatMap from './DeniedInnerDevice';
 
 const DeniedByDeviceScreen = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -114,7 +115,7 @@ const DeniedByDeviceScreen = () => {
         ))}
       </ScrollView>
     </View>
-
+<AccessDeniedPerDayHeatMap />
     </View>
   )
 }
