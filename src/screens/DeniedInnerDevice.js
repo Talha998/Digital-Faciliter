@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import Svg, { Rect, Text as SvgText } from 'react-native-svg';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import Svg, { Rect, Text as SvgText, G } from 'react-native-svg';
 
-const DeniedInnerDevice = () => {
+const AccessDeniedPerDayHeatMap = ({ device, onClose }) => {
     // Dummy data to replace data from context
-    const name = "User";
+    const name = device ? device.Eqpt_Title : "User";
     const loading = false;
     const dummyData = [
         { Group: 'ID card no longer valid', Day: 4, Values: 1 },
@@ -18,6 +18,8 @@ const DeniedInnerDevice = () => {
         { Group: 'Access not allowed', Day: 6, Values: 7 },
         // Add more dummy data as needed
     ];
+
+    const [tooltip, setTooltip] = useState(null);
 
     const getDatasource = () => {
         let temp = {};
@@ -37,12 +39,12 @@ const DeniedInnerDevice = () => {
 
             for (let x = 0; x < xLabels.length; x++) {
                 const item = dummyData.find((d) => d.Day === xLabels[x] && d.Group === yLabels[y]);
-                temp.dataSource[y].push(item ? item.Values : '');
+                temp.dataSource[y].push(item ? item : { Values: '' });
             }
         }
 
         return temp;
-    }
+    };
 
     const data = getDatasource();
 
@@ -52,6 +54,25 @@ const DeniedInnerDevice = () => {
         if (value <= 20) return '#7EDCA2';
         if (value <= 30) return '#DCD57E';
         return '#DCD57E';  // Adjust as needed
+    };
+
+    const handlePress = (item, x, y) => {
+        if (item.Values !== '') {
+            setTooltip({ ...item, x, y });
+        } else {
+            setTooltip(null);
+        }
+    };
+
+    const renderTooltip = () => {
+        if (!tooltip) return null;
+        return (
+            <View style={[styles.tooltip, { top: tooltip.y * 40 + 50, left: tooltip.x * 40 + 10 }]}>
+                <Text>Group: {tooltip.Group}</Text>
+                <Text>Day: {tooltip.Day}</Text>
+                <Text>Values: {tooltip.Values}</Text>
+            </View>
+        );
     };
 
     return (
@@ -64,30 +85,35 @@ const DeniedInnerDevice = () => {
                     <ScrollView horizontal>
                         <Svg height={data.yAis.length * 40} width={data.xAis.length * 40}>
                             {data.yAis.map((y, i) => (
-                                data.xAis.map((x, j) => (
-                                    <React.Fragment key={`${i}-${j}`}>
-                                        <Rect
-                                            x={j * 40}
-                                            y={i * 40}
-                                            width="40"
-                                            height="40"
-                                            fill={getColor(data.dataSource[i][j])}
-                                            stroke="lightgreen"
-                                            strokeWidth="0.5"
-                                        />
-                                        {data.dataSource[i][j] ? (
-                                            <SvgText
-                                                x={(j * 40) + 20}
-                                                y={(i * 40) + 25}
-                                                fontSize="12"
-                                                fill="#000"
-                                                textAnchor="middle"
-                                            >
-                                                {data.dataSource[i][j]}
-                                            </SvgText>
-                                        ) : null}
-                                    </React.Fragment>
-                                ))
+                                data.xAis.map((x, j) => {
+                                    const item = data.dataSource[i][j];
+                                    return (
+                                        <TouchableWithoutFeedback key={`${i}-${j}`} onPress={() => handlePress(item, j, i)}>
+                                            <G>
+                                                <Rect
+                                                    x={j * 40}
+                                                    y={i * 40}
+                                                    width="40"
+                                                    height="40"
+                                                    fill={getColor(item.Values)}
+                                                    stroke="lightgreen"
+                                                    strokeWidth="0.5"
+                                                />
+                                                {item.Values ? (
+                                                    <SvgText
+                                                        x={(j * 40) + 20}
+                                                        y={(i * 40) + 25}
+                                                        fontSize="12"
+                                                        fill="#000"
+                                                        textAnchor="middle"
+                                                    >
+                                                        {item.Values}
+                                                    </SvgText>
+                                                ) : null}
+                                            </G>
+                                        </TouchableWithoutFeedback>
+                                    );
+                                })
                             ))}
                         </Svg>
                     </ScrollView>
@@ -97,6 +123,10 @@ const DeniedInnerDevice = () => {
                     <Text>No Data</Text>
                 </View>
             )}
+            {renderTooltip()}
+            {/* <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity> */}
         </View>
     );
 }
@@ -121,6 +151,30 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    tooltip: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 5,
+        borderColor: 'black',
+        borderWidth: 1,
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 5,
+    },
+    closeButton: {
+        marginTop: 20,
+        backgroundColor: '#00544d',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    closeButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
 });
 
-export default DeniedInnerDevice;
+export default AccessDeniedPerDayHeatMap;

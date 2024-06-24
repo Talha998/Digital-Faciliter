@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, RefreshControl } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from 'react-native-date-picker';
 import AccessDeniedPerDayHeatMap from './DeniedInnerDevice';
@@ -8,7 +8,14 @@ const DeniedByDeviceScreen = () => {
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
   const [modalVisible, setModalVisible] = useState(false);
-  
+  const [selectedDevice, setSelectedDevice] = useState(null); // Track selected device
+  const [showDetails, setShowDetails] = useState(false); // Control visibility of details
+
+  const handleRowPress = (index) => {
+    setSelectedDevice(data[index]); // Store selected device data
+    setShowDetails(true); // Show detailed view
+  };
+
   const handleConfirm = () => {
     setModalVisible(false);
   };
@@ -16,40 +23,37 @@ const DeniedByDeviceScreen = () => {
   const handleCancel = () => {
     setModalVisible(false);
   };
+
   const data = [
-    { personName: 'John Doe', accessDenied: '98' },
-    { personName: 'Jane Smith', accessDenied: '45' },
-    { personName: 'Alice Johnson', accessDenied: '55' },
-    { personName: 'Chris Lee', accessDenied: '12' },
-    { personName: 'Patricia Brown', accessDenied: '57' },
+    { Eqpt_ID: '1', Eqpt_Title: 'G1 ENTRY 1', Access_Denied: '98' },
+    { Eqpt_ID: '3', Eqpt_Title: 'G1 ENTRY 2', Access_Denied: '45' },
+    
+    
   ];
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-      <View>
-        <View style={styles.dateContainer}>
-          <Text style={styles.label_from}>From : </Text>
-          <Text style={styles.dateText}>{`${fromDate.toLocaleDateString()} ${fromDate.toLocaleTimeString()}`}</Text>
+        <View>
+          <View style={styles.dateContainer}>
+            <Text style={styles.label_from}>From : </Text>
+            <Text style={styles.dateText}>{`${fromDate.toLocaleDateString()} ${fromDate.toLocaleTimeString()}`}</Text>
+          </View>
+          <View style={styles.dateContainer}>
+            <Text style={styles.label_To}>To : </Text>
+            <Text style={styles.dateText}>{`${toDate.toLocaleDateString()} ${toDate.toLocaleTimeString()}`}</Text>
+          </View>
         </View>
-        <View style={styles.dateContainer}>
-          <Text style={styles.label_To}>To : </Text>
-          <Text style={styles.dateText}>{`${toDate.toLocaleDateString()} ${toDate.toLocaleTimeString()}`}</Text>
-        </View>
-        </View>
-          <View style={styles.right_icons}>
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          style={styles.openModalButton}
-        >
-          <Icon name="calendar" size={28} color="#00544d" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          // onPress={handleRefresh}
-          // style={styles.iconButton}
-        >
-          <Icon name="refresh" size={28} color="#00544d" />
-        </TouchableOpacity>
+        <View style={styles.right_icons}>
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            style={styles.openModalButton}
+          >
+            <Icon name="calendar" size={28} color="#00544d" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Icon name="refresh" size={28} color="#00544d" />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -101,25 +105,28 @@ const DeniedByDeviceScreen = () => {
           </View>
         </View>
       </Modal>
-      <View style={styles.container_grid}>
-      <View style={styles.headerRow}>
-        <Text style={styles.headerText}>Person Name</Text>
-        <Text style={styles.headerText}>Access Denied</Text>
-      </View>
-      <ScrollView>
-        {data.map((item, index) => (
-          <View key={index} style={styles.row}>
-            <Text style={styles.cell}>{item.personName}</Text>
-            <Text style={styles.cell}>{item.accessDenied}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
-<AccessDeniedPerDayHeatMap />
-    </View>
-  )
-}
 
+      <View style={styles.container_grid}>
+        <View style={styles.headerRow}>
+          <Text style={styles.headerText}>Device Name</Text>
+          <Text style={styles.headerText}>Access Denied</Text>
+        </View>
+        <ScrollView style={styles.scrollView}>
+          {data.map((item, index) => (
+            <TouchableOpacity key={index} style={styles.row} onPress={() => handleRowPress(index)}>
+              <Text style={styles.cell}>{item.Eqpt_Title}</Text>
+              <Text style={styles.cell}>{item.Access_Denied}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {showDetails && selectedDevice && (
+        <AccessDeniedPerDayHeatMap device={selectedDevice} onClose={() => setShowDetails(false)} />
+      )}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -128,34 +135,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
   topContainer: {
-    flexDirection:"row",
-    justifyContent:"space-between",
-    marginBottom: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
   },
   right_icons: {
-    flexDirection:"row",
-    marginTop:8
-    
-    // justifyContent:"space-between",
-    // marginBottom: 20,
+    flexDirection: "row",
+    marginTop: 8,
   },
-  
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
   },
-  label: {
-    fontSize: 16,
-    marginRight: 10,
-     fontWeight: "700"
+  label_from: {
+    fontSize: 14,
+    marginRight: 5,
+    fontWeight: "700",
+    color: "#00544d"
+  },
+  label_To: {
+    fontSize: 14,
+    marginRight: 22,
+    fontWeight: "700",
+    color: "#00544d"
   },
   dateText: {
     fontSize: 15,
     color: '#00544d',
   },
   openModalButton: {
-    paddingRight:15
+    paddingRight: 15
   },
   modalBackground: {
     flex: 1,
@@ -198,20 +208,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontWeight: "700"
   },
-  label_from: {
-    fontSize: 14,
-    marginRight: 5,
-    fontWeight: "700",
-    color:"#00544d"
-  },
-  label_To: {
-    fontSize: 14,
-    marginRight: 22,
-    fontWeight: "700",
-     color:"#00544d"
-  },
-  
-  
   datePicker: {
     flex: 1,
   },
@@ -220,7 +216,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     paddingVertical: 20,
-    
   },
   modalButton: {
     padding: 10,
@@ -246,33 +241,33 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   container_grid: {
-    // margin: 20,
+    height: 250, // Fixed height for the grid container
     borderColor: '#000',
     borderWidth: 1,
     borderRadius: 5,
     overflow: 'hidden',
-    width:"100%"
+    width: "100%",
   },
   headerRow: {
     flexDirection: 'row',
     backgroundColor: '#00695c',
-    justifyContent:"space-between",
+    justifyContent: "space-between",
     padding: 10,
-    paddingHorizontal:15
+    paddingHorizontal: 15
   },
   headerText: {
-    // flex: 1,
     color: '#fff',
     fontWeight: 'bold',
   },
-  row: {
-    flexDirection:"row",
-    justifyContent:"space-between",
-    padding: 10,
-    paddingHorizontal:15
+  scrollView: {
+    flex: 1, // Ensure the scroll view takes the available space
   },
- 
-  
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 10,
+    paddingHorizontal: 15
+  },
 });
 
-export default DeniedByDeviceScreen
+export default DeniedByDeviceScreen;
