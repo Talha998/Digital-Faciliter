@@ -113,12 +113,12 @@ const DoorAlarm = () => {
       </View>
       <ScrollView>
         {data.map((item, index) => (
-          <View key={index} style={styles.row}>
-            <Text style={styles.cell}>{item.doorName}</Text>
-            <Text style={styles.cell}>{item.doorId}</Text>
-            <Text style={styles.cell}>{item.forced}</Text>
-            <Text style={styles.cell}>{item.held}</Text>
-          </View>
+         <View key={index} style={styles.row}>
+         <Text style={[styles.cell, styles.cellWidth]}>{item.doorName}</Text>
+         <Text style={[styles.cell, styles.cellWidth1]}>{item.doorId}</Text>
+         <Text style={[styles.cell, styles.cellWidth2]}>{item.forced}</Text>
+         <Text style={[styles.cell, styles.cellWidth3]}>{item.held}</Text>
+       </View>
         ))}
       </ScrollView>
     </View>
@@ -133,6 +133,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
     paddingHorizontal: 18,
+  },
+  scrollViewContainer: {
+    flexGrow: 1,
   },
   topContainer: {
     flexDirection:"row",
@@ -253,30 +256,58 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   container_grid: {
-    // margin: 20,
     borderColor: '#000',
     borderWidth: 1,
     borderRadius: 5,
     overflow: 'hidden',
-    width:"100%"
+    width: "100%"
   },
   headerRow: {
     flexDirection: 'row',
     backgroundColor: '#00695c',
-    justifyContent:"space-between",
+    justifyContent: "space-between",
     padding: 10,
-    paddingHorizontal:15
+    paddingHorizontal: 15
   },
   headerText: {
-    // flex: 1,
-    color: '#fff',
+    color: '#ffffff',
     fontWeight: 'bold',
+    // flex: 1,
+    textAlign: 'center',
   },
   row: {
-    flexDirection:"row",
-    justifyContent:"space-between",
-    padding: 10,
-    paddingHorizontal:15
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    paddingBottom: 10,
+    // borderBottomWidth:1,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 5,
+  },
+  cell: {
+    flex: 1,
+    textAlign: 'center',
+  },
+  cellWidth: {
+    minWidth: 50,
+    
+     // Adjust as needed for your content
+  },
+  cellWidth1: {
+    minWidth: 50,
+    
+     // Adjust as needed for your content
+  },
+  cellWidth2: {
+    minWidth: 30,
+    
+     // Adjust as needed for your content
+  },
+  cellWidth3: {
+    minWidth: 0,
+    
+     // Adjust as needed for your content
   },
   Summary: {
     color:'#00544d',
