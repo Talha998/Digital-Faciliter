@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from 'react-native-date-picker';
@@ -10,6 +10,14 @@ const DeniedByDeviceScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null); // Track selected device
   const [showDetails, setShowDetails] = useState(false); // Control visibility of details
+
+  useEffect(() => {
+    // Select the first item in data array initially
+    if (data.length > 0) {
+      setSelectedDevice(data[0]);
+      setShowDetails(true); // Show detailed view initially
+    }
+  }, []);
 
   const handleRowPress = (index) => {
     setSelectedDevice(data[index]); // Store selected device data
@@ -27,8 +35,7 @@ const DeniedByDeviceScreen = () => {
   const data = [
     { Eqpt_ID: '1', Eqpt_Title: 'G1 ENTRY 1', Access_Denied: '98' },
     { Eqpt_ID: '3', Eqpt_Title: 'G1 ENTRY 2', Access_Denied: '45' },
-    
-    
+    // Add more data items as needed
   ];
 
   return (
@@ -241,7 +248,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   container_grid: {
-    height: 250, // Fixed height for the grid container
+    height: 240, // Fixed height for the grid container
     borderColor: '#000',
     borderWidth: 1,
     borderRadius: 5,

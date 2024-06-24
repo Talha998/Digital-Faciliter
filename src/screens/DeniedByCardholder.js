@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from 'react-native-date-picker';
+import CardByCardholderGraph from './CardByCardholderGraph';
+import CardByCardholderGraphDay from './CardByCardholderGraphDay';
 
 const DeniedByCardholder = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -100,6 +102,7 @@ const DeniedByCardholder = () => {
           </View>
         </View>
       </Modal>
+     
       <View style={styles.container_grid}>
       <View style={styles.headerRow}>
         <Text style={styles.headerText}>Person Name</Text>
@@ -114,7 +117,12 @@ const DeniedByCardholder = () => {
         ))}
       </ScrollView>
     </View>
-
+    <ScrollView>
+  <CardByCardholderGraph />
+  <View style={styles.CardByCardholderGraphDay}>
+  <CardByCardholderGraphDay />
+  </View>
+  </ScrollView>
     </View>
   )
 }
@@ -125,6 +133,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
     paddingHorizontal: 18,
+  },
+  CardByCardholderGraphDay: {
+    paddingHorizontal: 16,
   },
   topContainer: {
     flexDirection:"row",
@@ -245,12 +256,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   container_grid: {
-    // margin: 20,
+    height: 240, // Fixed height for the grid container
     borderColor: '#000',
     borderWidth: 1,
     borderRadius: 5,
     overflow: 'hidden',
-    width:"100%"
+    width: "100%",
   },
   headerRow: {
     flexDirection: 'row',
