@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DatePicker from 'react-native-date-picker';
+import DoorDayGraph from './DoorAlarmDatesGraph';
+import DoorAlarmHourGraph from './DoorAlarmHourGraph';
 
 const DoorAlarm = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -122,7 +124,11 @@ const DoorAlarm = () => {
         ))}
       </ScrollView>
     </View>
+    <ScrollView>
+<DoorDayGraph />
 
+<DoorAlarmHourGraph />
+</ScrollView>
     </View>
   )
 }
@@ -282,7 +288,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingBottom: 10,
     // borderBottomWidth:1,
-    backgroundColor: '#e0e0e0',
+    // backgroundColor: '#e0e0e0',
     borderRadius: 5,
   },
   cell: {
