@@ -25,6 +25,7 @@ const SettingsScreen = () => {
   };
 
   return (
+    <>
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.option}
@@ -45,9 +46,7 @@ const SettingsScreen = () => {
         <Text style={styles.optionText}>Modify Password</Text>
       </TouchableOpacity>
 
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>SAM Controls 2024. All rights reserved</Text>
-      </View>
+      
 
       <LanguageModal
         visible={languageModalVisible}
@@ -60,7 +59,12 @@ const SettingsScreen = () => {
         onSave={handleSavePassword}
       />
         <ServerURLModal visible={isModalVisible} onClose={toggleModal} />
+        
     </View>
+    <View style={styles.footer}>
+        <Text style={styles.footerText}>SAM Controls 2024. All rights reserved</Text>
+      </View>
+      </>
   );
 };
 
@@ -71,7 +75,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   option: {
-    flexDirection: 'row',
+  flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 16,
     borderBottomWidth: 1,
@@ -86,10 +90,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   footer: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    padding: 16,
+   padding: 16,
     backgroundColor: '#004d40',
     alignItems: 'center',
   },
