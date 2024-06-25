@@ -8,7 +8,7 @@ import i18n from './src/language/i18n';
 import Splash from './src/screens/SplashScreen';
 import AuthStack from './src/navigation/AuthStack';
 import AppStack from "./src/navigation/AppStack";
-import { AppProvider } from "./src/Context/AppContext"; // Import the context provider
+import AppProvider from "./src/Context/AppContext"; // Import the context provider
 
 const Stack = createStackNavigator();
 

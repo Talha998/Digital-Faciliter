@@ -1,15 +1,24 @@
 import React, { createContext, useState } from 'react';
 
-const AppContext = createContext();
+export const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+    const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
+    const [isServerURLModalVisible, setServerURLModalVisible] = useState(false);
+    const [isModifyPasswordModalVisible, setModifyPasswordModalVisible] = useState(false);
 
-  return (
-    <AppContext.Provider value={{ user, setUser }}>
-      {children}
-    </AppContext.Provider>
-  );
+    return (
+        <AppContext.Provider value={{
+            isLanguageModalVisible,
+            setLanguageModalVisible,
+            isServerURLModalVisible,
+            setServerURLModalVisible,
+            isModifyPasswordModalVisible,
+            setModifyPasswordModalVisible,
+        }}>
+            {children}
+        </AppContext.Provider>
+    );
 };
 
-export { AppContext, AppProvider };
+export default AppProvider;

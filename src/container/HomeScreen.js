@@ -7,14 +7,22 @@ import * as yup from 'yup';
 import PasswordClose from "../SVG/PasswordClose";
 import PasswordOpen from "../SVG/PasswordOpen";
 import { useNavigation } from '@react-navigation/native';
+import ServerURLModal from '../screens/ServerURLModal';
+import LanguageModal from '../screens/LanguageModal';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [isModalVisible_forget, setIsModalVisible_forget] = useState(false);
   const [isLoginFormVisible, setIsLoginFormVisible] = useState(false);
-  
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
+
+  const handleSelectLanguage = (language) => {
+    setSelectedLanguage(language);
+    // Add any additional logic for changing the app language
+  };
   const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
     password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
@@ -159,56 +167,12 @@ const HomeScreen = () => {
           </Animated.View>
         </View>
       </Modal>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={toggleModal}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            {/* Server URL Text */}
-            <View style={styles.serverURLContainer}>
-
-              <Text style={styles.serverURL}>Server URL</Text>
-            </View>
-
-            {/* Input Field */}
-            <View style={styles.modalContent_rt}>
-              <View>
-                <TextInput
-                  placeholder="Server URL"
-                  placeholderTextColor="#00544d"
-                  style={styles.inputf1}
-                />
-              </View>
-
-              {/* Text */}
-              <Text style={styles.bottomTextf1}>
-                Please refer to the email you have received with your login credentials or contact your administrator for the server URL.
-              </Text>
-
-              {/* Buttons */}
-              <View style={styles.buttonContainerf1}>
-                <View>
-                  <TouchableOpacity onPress={toggleModal} style={styles.buttonf1}>
-                    <Text style={styles.buttonTextf1}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-                <View>
-                  <TouchableOpacity style={[styles.buttonf1]}>
-                    <Text style={[styles.buttonTextf2]}>Submit</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              {/* Close Button */}
-
-            </View>
-          </View>
-        </View>
-      </Modal>
-
+      <ServerURLModal visible={isModalVisible} onClose={toggleModal} />
+      <LanguageModal
+        visible={languageModalVisible}
+        onClose={() => setLanguageModalVisible(false)}
+        onSelectLanguage={handleSelectLanguage}
+      />
       {/* ///  Forget Password // */}
       <Modal
         animationType="fade"
@@ -360,7 +324,9 @@ const HomeScreen = () => {
                   <Text style={styles.bottomLinkText}>Privacy Policy</Text>
                 </TouchableOpacity>
                 <Text style={styles.bottomLinkText}> | </Text>
+                <TouchableOpacity  onPress={() => setLanguageModalVisible(true)}>
                 <Text style={styles.bottomLinkText}>Language</Text>
+                </TouchableOpacity>
               </View>
               <Text style={styles.bottomText}>SAM Controls 2024. All rights reserved</Text>
             </View>
