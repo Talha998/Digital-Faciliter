@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect , useRef } from 'react';
 import {
   View,
   Text,
   ImageBackground,
   TouchableOpacity,
   StyleSheet,
+  Modal,
+  Animated,
+  Image
 } from 'react-native';
 import {
   DrawerContentScrollView,
@@ -20,10 +23,77 @@ const CustomDrawer = (props) => {
   const { t } = useTranslation();
   const [accessControlsDropdown, setAccessControlsDropdown] = useState(false);
   const [attendanceDropdown, setAttendanceDropdown] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [helpDropdown, setHelpDropdown] = useState(false);
+  const openModal = () => {
+    setModalVisible(true);
+  };
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+  const handleYes = () => {
+    // Handle Yes action here
+    closeModal();
+  };
 
+  const handleNo = () => {
+    closeModal();
+  };
+
+  const slideAnim = useRef(new Animated.Value(-500)).current; // Initial position off-screen
+
+  useEffect(() => {
+    if (modalVisible) {
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(slideAnim, {
+        toValue: -500,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [modalVisible, slideAnim]);
   return (
     <View style={{ flex: 1 }}>
+        <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <Animated.View style={[styles.modalContentf2, { transform: [{ translateY: slideAnim }] }]}>
+
+            {/* Top Header */}
+            <View style={styles.serverURLContainerf2}>
+              <Text style={styles.serverURLf2}>Log Out</Text>
+              <TouchableOpacity onPress={closeModal}>
+                <Image source={require('../../assets/images/cancel-39-39.png')} style={styles.cancelIcon} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Scrollable Content */}
+            <View style={styles.contentContainer}>
+          <Text style={styles.logoutText}>Are you sure you want to logout?</Text>
+          <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleNo}>
+            <Ionicons name="close-circle" size={24} color="white" style={styles.icon} />
+              <Text style={styles.buttonText}>No</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={handleYes}>
+            <Ionicons name="checkmark-circle" size={24} color="white" style={styles.icon} />
+              <Text style={styles.buttonText}>Yes</Text>
+            </TouchableOpacity>
+          
+          </View>
+        </View>
+          </Animated.View>
+        </View>
+      </Modal>
       <DrawerContentScrollView
         {...props}
         contentContainerStyle={{ marginTop: -4 }}
@@ -211,7 +281,7 @@ const CustomDrawer = (props) => {
         <TouchableOpacity onPress={() => {}} style={{ paddingVertical: 15 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Ionicons name="log-out-outline" size={22} />
-            <Text style={{ fontSize: 15, fontFamily: 'Roboto-Medium', marginLeft: 5 }}>
+            <Text style={{ fontSize: 15, fontFamily: 'Roboto-Medium', marginLeft: 5 }} onPress={openModal}  >
               Log Out
             </Text>
           </View>
@@ -263,6 +333,71 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Roboto-Medium',
     marginLeft: 10,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center', // Center the modal vertically
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContentf2: {
+    width: '80%',
+    height: 170,
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
+  serverURLContainerf2: {
+    backgroundColor: '#00544d',
+    paddingVertical: 18,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  serverURLf2: {
+    color: 'white',
+    // textAlign: 'center',
+    fontWeight: "700",
+    fontSize: 16,
+    flex: 1,
+    marginLeft: 0,
+  },
+  cancelIcon: {
+    width: 24,
+    height: 24,
+  },
+  contentContainer: {
+    alignItems: 'center',
+  },
+  logoutText: {
+    fontSize: 16,
+    marginBottom: 20,
+    marginTop:10
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#00544d',
+    borderRadius: 10,
+    marginHorizontal: 10,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginRight: 10,
+  },
+  buttonText: {
+    fontSize: 16,
+    color:'#fff'
   },
 });
 
