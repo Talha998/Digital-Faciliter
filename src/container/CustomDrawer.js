@@ -121,6 +121,12 @@ const CustomDrawer = (props) => {
                 <FontAwesome5 name="clipboard-list" size={20} color="#333" />
                 <Text style={styles.dropdownLabel}>Devices Activity</Text>
               </TouchableOpacity>
+              <TouchableOpacity style={styles.dropdownItem}  onPress={() => {
+    navigation.navigate('Door Management'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
+  }}  >
+                <FontAwesome5 name="clipboard-list" size={20} color="#333" />
+                <Text style={styles.dropdownLabel}>Door Management</Text>
+              </TouchableOpacity>
             </View>
           )}
 

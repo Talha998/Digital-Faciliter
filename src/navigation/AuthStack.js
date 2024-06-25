@@ -16,6 +16,7 @@ import PrivacyStatments from '../screens/PrivacyStatments';
 import AboutScreen from '../screens/AboutScreen';
 import RegistrationScreen  from '../screens/RegistrationScreen';
 import EmergencyEquationComponent from '../screens/EmergencyEquationComponent';
+import DoorManagement from '../screens/DoorManagement';
 const Stack = createStackNavigator();
 
 const AuthStack = () => {
@@ -26,6 +27,7 @@ const AuthStack = () => {
       <Stack.Screen name="SelectDropdown" component={SelectDropdown} options={{ headerShown: false }} />
       <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="Emergency Equation" component={EmergencyEquationComponent} />
+      <Stack.Screen name="Door Management" component={DoorManagement} />
       <Stack.Screen name="Denied By Device" component={DeniedByDeviceScreen} />
       <Stack.Screen name="Denied By Cardholder" component={DeniedByCardholder} />
       <Stack.Screen name="Door Alarm" component={DoorAlarm} />
