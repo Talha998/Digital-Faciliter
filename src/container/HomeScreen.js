@@ -320,30 +320,30 @@ const HomeScreen = () => {
                     </>
                   )}
                 />
-         <Controller
-                  control={control}
-                  name="password"
-                  render={({ field: { onChange, onBlur, value } }) => (
-                    <>
-                      <TextInput
-                        placeholder="Enter password"
-                        secureTextEntry={!isPasswordVisible}
-                        style={[styles.input_login_form, errors.password && styles.errorInput]}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        placeholderTextColor="green"
-                        value={value}
-                      />
-                      <TouchableOpacity
-                        style={styles.passwordIconContainer}
-                        onPress={() => setPasswordVisible(!isPasswordVisible)}
-                      >
-                        {isPasswordVisible ? <PasswordOpen width="30" height="30" color="#00544d" /> : <PasswordClose width="30" height="30" color="#00544d" />}
-                      </TouchableOpacity> 
-                      {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
-                    </>
-                  )}
-                />
+       <Controller
+  control={control}
+  name="password"
+  render={({ field: { onChange, onBlur, value } }) => (
+    <View style={styles.inputContainer}>
+      <TextInput
+        placeholder="Enter password"
+        secureTextEntry={!isPasswordVisible}
+        style={[styles.input_login_form, errors.password && styles.errorInput]}
+        onBlur={onBlur}
+        onChangeText={onChange}
+        placeholderTextColor="green"
+        value={value}
+      />
+      <TouchableOpacity
+        style={styles.passwordIconContainer}
+        onPress={() => setPasswordVisible(!isPasswordVisible)}
+      >
+        {isPasswordVisible ? <PasswordOpen width="30" height="30" color="#00544d" /> : <PasswordClose width="30" height="30" color="#00544d" />}
+      </TouchableOpacity>
+      {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
+    </View>
+  )}
+/>
             <TouchableOpacity style={styles.forgetPasswordContainer} onPress={toggleModal_forget} >
               <Text style={styles.forgetPasswordText}>Forget Password?</Text>
             </TouchableOpacity>

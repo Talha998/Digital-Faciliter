@@ -304,13 +304,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
+    width: '100%',
+
   },
   
   passwordIconContainer: {
     position: 'absolute',
-    right: 4,
-    padding: 10,
-    top:"26%"
+    right: 10,
+    justifyContent: 'center',
+    height: '100%',
   },
   input_login_form: {
     backgroundColor: 'white',
