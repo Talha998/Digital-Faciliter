@@ -1,9 +1,18 @@
-// ServerURLModal.js
-import React from 'react';
-import styles from '../styles';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import styles from '../styles';
 
-const ServerURLModal = ({ visible, onClose }) => {
+const ServerURLModal = ({ visible, onClose, onSave }) => {
+  const [url, setURL] = useState('');
+
+  const handleSave = () => {
+    console.log(url, "url");
+    if (url) {
+      onSave(url);
+      onClose(); // Close the modal after saving
+    }
+  };
+
   return (
     <Modal
       animationType="fade"
@@ -25,6 +34,8 @@ const ServerURLModal = ({ visible, onClose }) => {
                 placeholder="Server URL"
                 placeholderTextColor="#00544d"
                 style={styles.inputf1}
+                value={url}
+                onChangeText={setURL}
               />
             </View>
 
@@ -41,20 +52,16 @@ const ServerURLModal = ({ visible, onClose }) => {
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity style={[styles.buttonf1]}>
-                  <Text style={[styles.buttonTextf2]}>Submit</Text>
+                <TouchableOpacity onPress={handleSave} style={styles.buttonf1}>
+                  <Text style={styles.buttonTextf2}>Submit</Text>
                 </TouchableOpacity>
               </View>
             </View>
-
-            {/* Close Button */}
           </View>
         </View>
       </View>
     </Modal>
   );
 };
-
-    
 
 export default ServerURLModal;

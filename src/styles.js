@@ -7,6 +7,17 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "center"
   },
+  loadingIndicator: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },  
+  companyLogo: {
+    marginTop: 20, // Adjust as per your layout needs
+    width: 50,
+    height: 50,
+    marginLeft:100
+  },
   container: {
     flex: 1,
     paddingVertical: 20, // top and bottom padding

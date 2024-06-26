@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, ImageBackground, StyleSheet, Modal, Animated } from 'react-native';
+import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, ImageBackground, StyleSheet, Modal, Animated, Alert, ActivityIndicator } from 'react-native';
 import styles from '../styles';
+import axios from "axios";
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -9,6 +10,7 @@ import PasswordOpen from "../SVG/PasswordOpen";
 import { useNavigation } from '@react-navigation/native';
 import ServerURLModal from '../screens/ServerURLModal';
 import LanguageModal from '../screens/LanguageModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -18,37 +20,14 @@ const HomeScreen = () => {
   const [isModalVisible_forget, setIsModalVisible_forget] = useState(false);
   const [isLoginFormVisible, setIsLoginFormVisible] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('English');
-
-  const handleSelectLanguage = (language) => {
-    setSelectedLanguage(language);
-    // Add any additional logic for changing the app language
-  };
-  const schema = yup.object().shape({
-    username: yup.string().required('Username is required'),
-    password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
-  });
-  
-  const { control, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(schema),
-  });
-
-  const onSubmit = (data) => {
-     // Handle form data
-    console.log(data);
-      // Navigate to SelectDropdown screen
-    navigation.navigate('SelectDropdown');
-  };
-  const toggleLoginForm = () => {
-    setIsLoginFormVisible(!isLoginFormVisible);
-  };
-  const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
-  };
-  const toggleModal_forget = () => {
-    setIsModalVisible_forget(!isModalVisible_forget);
-  };
+  const [baseURL, setBaseURL] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const slideAnim = useRef(new Animated.Value(-500)).current; // Initial position off-screen
+  const slideAnim = useRef(new Animated.Value(-500)).current;
+  const [loading, setLoading] = useState(false); // State for API loading indicator
+
+  useEffect(() => {
+    checkBaseURL();
+  }, []);
 
   useEffect(() => {
     if (modalVisible) {
@@ -66,6 +45,67 @@ const HomeScreen = () => {
     }
   }, [modalVisible, slideAnim]);
 
+  const checkBaseURL = async () => {
+    const storedBaseURL = await AsyncStorage.getItem('baseURL');
+    if (!storedBaseURL) {
+      setIsModalVisible(true);
+    } else {
+      setBaseURL(storedBaseURL);
+    }
+  };
+
+  const handleSelectLanguage = (language) => {
+    setSelectedLanguage(language);
+  };
+
+  const schema = yup.object().shape({
+    username: yup.string().required('Username is required'),
+    password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+  });
+
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = async (data) => {
+    if (!baseURL) {
+      Alert.alert("Error", "Please set the Server URL before logging in.");
+      setIsModalVisible(true);
+      return;
+    }
+
+    try {
+      setLoading(true); // Start loading indicator
+      const response = await axios.get(`${baseURL}/api/LoginUser`, {
+        params: { UserId: data.username, UserPwd: data.password }
+      });
+
+      if (response.status === 200) {
+        Alert.alert("Success", "Login successful!");
+        navigation.navigate('SelectDropdown');
+      } else {
+        Alert.alert("user name or password is invalid");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Login failed. Please check your credentials.");
+      console.error('Error during login:', error);
+    } finally {
+      setLoading(false); // Stop loading indicator
+    }
+  };
+
+  const toggleLoginForm = () => {
+    setIsLoginFormVisible(!isLoginFormVisible);
+  };
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
+  const toggleModal_forget = () => {
+    setIsModalVisible_forget(!isModalVisible_forget);
+  };
+
   const openModal = () => {
     setModalVisible(true);
   };
@@ -73,6 +113,13 @@ const HomeScreen = () => {
   const closeModal = () => {
     setModalVisible(false);
   };
+
+  const handleSaveBaseURL = async (url) => {
+    await AsyncStorage.setItem('baseURL', url);
+    setBaseURL(url);
+    setIsModalVisible(false);
+  };
+
 
   return (
     <>
@@ -167,7 +214,8 @@ const HomeScreen = () => {
           </Animated.View>
         </View>
       </Modal>
-      <ServerURLModal visible={isModalVisible} onClose={toggleModal} />
+      <ServerURLModal visible={isModalVisible} onClose={toggleModal} onSave={handleSaveBaseURL} />
+      {/* <ServerURLModal onClose={toggleModal} onSave={handleSaveBaseURL} /> */}
       <LanguageModal
         visible={languageModalVisible}
         onClose={() => setLanguageModalVisible(false)}
@@ -224,6 +272,7 @@ const HomeScreen = () => {
         </View>
       </Modal>
       {/* ///  Forget Password // */}
+      {loading ? <ActivityIndicator style={styles.loadingIndicator} size="large" color="#00544d" /> : 
       <ImageBackground source={require('../../assets/images/abstract1.png')} style={styles.background}>
         <View style={styles.container}>
           {/* Logo */}
@@ -254,48 +303,47 @@ const HomeScreen = () => {
                )}
                {isLoginFormVisible && (
           <View style={styles.loginFormContainer}>
-            <Controller
-        control={control}
-        name="username"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <>
-            <TextInput
-              placeholder="Enter username"
-              style={[styles.input_login_form, errors.username && styles.errorInput]}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              placeholderTextColor="green"
-              value={value}
-            />
-            {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
-          </>
-        )}
-      />
-             <Controller
-      control={control}
-      name="password"
-      render={({ field: { onChange, onBlur, value } }) => (
-        <>
-          <TextInput
-            placeholder="Enter password"
-            secureTextEntry={!isPasswordVisible}
-            style={[styles.input_login_form, errors.password && styles.errorInput]}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            placeholderTextColor="green"
-            value={value}
-            
-          />
-          <TouchableOpacity
-            style={styles.passwordIconContainer}
-            onPress={() => setPasswordVisible(!isPasswordVisible)}
-          >
-            {isPasswordVisible ? <PasswordOpen width="30" height="30" color="#00544d" /> : <PasswordClose width="30" height="30" color="#00544d" />}
-          </TouchableOpacity> 
-          {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
-        </>
-      )}
-    />
+           <Controller
+                  control={control}
+                  name="username"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <>
+                      <TextInput
+                        placeholder="Enter username"
+                        style={[styles.input_login_form, errors.username && styles.errorInput]}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        placeholderTextColor="green"
+                        value={value}
+                      />
+                      {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
+                    </>
+                  )}
+                />
+         <Controller
+                  control={control}
+                  name="password"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <>
+                      <TextInput
+                        placeholder="Enter password"
+                        secureTextEntry={!isPasswordVisible}
+                        style={[styles.input_login_form, errors.password && styles.errorInput]}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        placeholderTextColor="green"
+                        value={value}
+                      />
+                      <TouchableOpacity
+                        style={styles.passwordIconContainer}
+                        onPress={() => setPasswordVisible(!isPasswordVisible)}
+                      >
+                        {isPasswordVisible ? <PasswordOpen width="30" height="30" color="#00544d" /> : <PasswordClose width="30" height="30" color="#00544d" />}
+                      </TouchableOpacity> 
+                      {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
+                    </>
+                  )}
+                />
             <TouchableOpacity style={styles.forgetPasswordContainer} onPress={toggleModal_forget} >
               <Text style={styles.forgetPasswordText}>Forget Password?</Text>
             </TouchableOpacity>
@@ -308,6 +356,7 @@ const HomeScreen = () => {
               }}>
               <Text style={styles.buttonText_login}>Registration</Text>
             </TouchableOpacity>
+           
           </View>
         )}
           </View>
@@ -333,45 +382,10 @@ const HomeScreen = () => {
           </View>
         </View>
       </ImageBackground>
+}
     </>
   );
 };
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: 'green',
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   logo: {
-//     width: 100,  // apne logo ke dimension yahan adjust karen
-//     height: 100,  // apne logo ke dimension yahan adjust karen
-//     marginBottom: 20,
-//   },
-//   button: {
-//     backgroundColor: 'white',
-//     paddingVertical: 10,
-//     paddingHorizontal: 20,
-//     marginVertical: 10,
-//     borderRadius: 5,
-//   },
-//   buttonText: {
-//     color: 'green',
-//     fontSize: 16,
-//   },
-//   bottomContainer: {
-//     position: 'absolute',
-//     bottom: 20,
-//     alignItems: 'center',
-//   },
-//   bottomLinks: {
-//     flexDirection: 'row',
-//     marginBottom: 10,
-//   },
-//   bottomText: {
-//     color: 'white',
-//   },
-// });
 
 export default HomeScreen;
