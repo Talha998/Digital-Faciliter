@@ -3,21 +3,30 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, I
 import DropDownPicker from 'react-native-dropdown-picker';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios'; // Make sure to import axios
+import axios from 'axios';
 
 const RegistrationScreen = () => {
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const navigation = useNavigation();
+  const { control, handleSubmit, formState: { errors }, setValue  } = useForm({
     defaultValues: {
-      userId: '',
-      fullName: '',
-      email: '',
-      mobileNumber: '',
-      designation: null,
-      password: '',
-      confirmPassword: '',
-      image: null
+      Role_ID: 1,
+      User_Account_Type: 'L',
+      User_ID: '',
+      User_Password: '',
+      Full_Name: '',
+      User_Email: '',
+      Mobile_No: '',
+      Desig_ID: 1,
+      Expiry_Date: '2023-06-06T22:03:35',
+      Is_Active: '1',
+      Is_Sys_Admin_User: '0',
+      User_Image: 'null',
+      Is_Login: '1',
+      Last_Update_On: '2023-05-07T22:03:35',
+      userLocations: [],
     },
   });
   const [designation, setDesignation] = useState(null);
@@ -29,7 +38,6 @@ const RegistrationScreen = () => {
     const getList = async () => {
       try {
         const baseURL = await AsyncStorage.getItem('baseURL');
-        console.log(baseURL ,"baseURLbaseURL")
         const response = await axios.get(`${baseURL}/api/GetDesignation`);
         const responseData = response.data.Data.map(item => ({
           label: item.Desig_Title_P,
@@ -37,17 +45,34 @@ const RegistrationScreen = () => {
         }));
         setItems(responseData);
       } catch (error) {
-        console.error(error , "error");
+        console.error(error);
       }
     };
 
     getList();
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setValue('User_ID', '');
+      setValue('Full_Name', '');
+      setValue('User_Email', '');
+      setValue('Mobile_No', '');
+      setValue('designation', 'ZTE Manager');
+      setValue('User_Password', '');
+      setValue('confirmPassword', '');
+      setValue('User_Image', null);
+
+      return () => {};
+    }, [])
+  );
+
   const handleImagePicker = () => {
     launchImageLibrary({}, (response) => {
       if (response.assets) {
-        setImageUri(response.assets[0].uri);
+        const imageUri = response.assets[0].uri;
+        setImageUri(imageUri);
+        convertImageToBase64(imageUri);
       }
     });
   };
@@ -55,20 +80,51 @@ const RegistrationScreen = () => {
   const handleCamera = () => {
     launchCamera({}, (response) => {
       if (response.assets) {
-        setImageUri(response.assets[0].uri);
+        const imageUri = response.assets[0].uri;
+        setImageUri(imageUri);
+        convertImageToBase64(imageUri);
       }
     });
   };
 
-  const onSubmit = (data) => {
-    console.log(data); // Replace with your submission logic
+  const convertImageToBase64 = (imageUri) => {
+    fetch(imageUri)
+      .then(response => response.blob())
+      .then(blob => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          setValue('User_Image', base64data);
+        };
+        reader.readAsDataURL(blob);
+      })
+      .catch(error => {
+        console.error('Error converting image to base64:', error);
+      });
+  };
+
+
+  const onSubmit = async (data) => {
+    console.log(data , "dataonSubmit")
+    try {
+      const baseURL = await AsyncStorage.getItem('baseURL');
+      console.log(baseURL , "baseURL")
+      const response = await axios.post(`http://18.226.185.31:8081/api/CreateUser`, data);
+      if (response.data.StatusCode === 201) {
+        navigation.navigate('HomeScreen');
+      } else {
+        console.error('Failed to create user:', response.data.Message);
+      }
+    } catch (error) {
+      console.error('Error creating user:', error);
+    }
   };
 
   return (
     <ImageBackground source={require('../../assets/images/abstract1.png')} style={styles.background_r1}>
       <ScrollView>
         <View style={styles.container_r1}>
-          <Controller
+          {/* <Controller
             control={control}
             rules={{ required: 'Image is required' }}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -81,7 +137,7 @@ const RegistrationScreen = () => {
               </View>
             )}
             name="image"
-          />
+          /> */}
           <View style={styles.imagePickerContainer_r1}>
             <TouchableOpacity style={styles.imagePickerButton_r1} onPress={handleImagePicker}>
               <Text style={styles.imagePickerText_r1}>Upload Image</Text>
@@ -96,17 +152,17 @@ const RegistrationScreen = () => {
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
-                  style={[styles.input_r1, errors.userId && styles.errorInput]}
+                  style={[styles.input_r1, errors.User_ID && styles.errorInput]}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                   placeholder="User ID"
                   placeholderTextColor="green"
                 />
-                {errors.userId && <Text style={styles.errorText}>{errors.userId.message}</Text>}
+                {errors.User_ID && <Text style={styles.errorText}>{errors.User_ID.message}</Text>}
               </>
             )}
-            name="userId"
+            name="User_ID"
           />
           <Controller
             control={control}
@@ -114,17 +170,17 @@ const RegistrationScreen = () => {
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
-                  style={[styles.input_r1, errors.fullName && styles.errorInput]}
+                  style={[styles.input_r1, errors.Full_Name && styles.errorInput]}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                   placeholder="Full Name"
                   placeholderTextColor="green"
                 />
-                {errors.fullName && <Text style={styles.errorText}>{errors.fullName.message}</Text>}
+                {errors.Full_Name && <Text style={styles.errorText}>{errors.Full_Name.message}</Text>}
               </>
             )}
-            name="fullName"
+            name="Full_Name"
           />
           <Controller
             control={control}
@@ -132,17 +188,17 @@ const RegistrationScreen = () => {
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
-                  style={[styles.input_r1, errors.email && styles.errorInput]}
+                  style={[styles.input_r1, errors.User_Email && styles.errorInput]}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                   placeholder="Email ID"
                   placeholderTextColor="green"
                 />
-                {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
+                {errors.User_Email && <Text style={styles.errorText}>{errors.User_Email.message}</Text>}
               </>
             )}
-            name="email"
+            name="User_Email"
           />
           <Controller
             control={control}
@@ -150,42 +206,17 @@ const RegistrationScreen = () => {
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
-                  style={[styles.input_r1, errors.mobileNumber && styles.errorInput]}
+                  style={[styles.input_r1, errors.Mobile_No && styles.errorInput]}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                   placeholder="Mobile Number"
                   placeholderTextColor="green"
                 />
-                {errors.mobileNumber && <Text style={styles.errorText}>{errors.mobileNumber.message}</Text>}
+                {errors.Mobile_No && <Text style={styles.errorText}>{errors.Mobile_No.message}</Text>}
               </>
             )}
-            name="mobileNumber"
-          />
-          <Controller
-            control={control}
-            rules={{ required: 'Designation is required' }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <View>
-               <DropDownPicker
-  open={open}
-  value={value}
-  items={items}
-  setOpen={setOpen}
-  setValue={onChange}
-  setItems={setItems}
-  placeholder="Select Designation"
-  searchable={true}
-  style={[styles.dropdown_r1, errors.designation && styles.errorDropdown]}
-  dropDownContainerStyle={[styles.dropdownContainer_r1, { maxHeight: 200 }]} // Adjust the height as needed
-  placeholderStyle={styles.placeholderStyle_r1}
-  searchPlaceholder="Search..."
-  onBlur={onBlur}
-/>
-                {errors.designation && <Text style={styles.errorText}>{errors.designation.message}</Text>}
-              </View>
-            )}
-            name="designation"
+            name="Mobile_No"
           />
           <Controller
             control={control}
@@ -193,27 +224,28 @@ const RegistrationScreen = () => {
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
-                  style={[styles.input_r1, errors.password && styles.errorInput]}
+                  style={[styles.input_r1, errors.User_Password && styles.errorInput]}
                   onBlur={onBlur}
                   onChangeText={onChange}
                   placeholder="Enter Password"
                   placeholderTextColor="green"
                   secureTextEntry
                 />
-                {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
+                {errors.User_Password && <Text style={styles.errorText}>{errors.User_Password.message}</Text>}
               </>
             )}
-            name="password"
+            name="User_Password"
           />
           <Controller
             control={control}
-            rules={{ required: 'Confirm Password is required' }}
+            rules={{ required: 'Confirm is required' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
                   style={[styles.input_r1, errors.confirmPassword && styles.errorInput]}
                   onBlur={onBlur}
                   onChangeText={onChange}
+                  value={value}
                   placeholder="Confirm Password"
                   placeholderTextColor="green"
                   secureTextEntry
@@ -223,6 +255,25 @@ const RegistrationScreen = () => {
             )}
             name="confirmPassword"
           />
+          {/* <Controller
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DropDownPicker
+                open={open}
+                value={value}
+                items={items}
+                setOpen={setOpen}
+                setValue={onChange}
+                setItems={setItems}
+                onBlur={onBlur}
+                placeholder="Select designation"
+                style={[styles.input_r1, { zIndex: 1000 }]}
+                placeholderStyle={{ color: 'green' }}
+                dropDownContainerStyle={{ zIndex: 1000 }}
+              />
+            )}
+            name="Desig_ID"
+          /> */}
           <TouchableOpacity style={styles.submitButton_r1} onPress={handleSubmit(onSubmit)}>
             <Text style={styles.submitButtonText_r1}>Submit</Text>
           </TouchableOpacity>
