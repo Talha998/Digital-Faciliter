@@ -23,7 +23,7 @@ const RegistrationScreen = () => {
       Expiry_Date: '2023-06-06T22:03:35',
       Is_Active: '1',
       Is_Sys_Admin_User: '0',
-      User_Image: 'null',
+      // User_Image: 'null',
       Is_Login: '1',
       Last_Update_On: '2023-05-07T22:03:35',
       userLocations: [],
@@ -61,7 +61,8 @@ const RegistrationScreen = () => {
       setValue('designation', 'ZTE Manager');
       setValue('User_Password', '');
       setValue('confirmPassword', '');
-      setValue('User_Image', null);
+      setImageUri(null)
+      // setValue('User_Image', null);
 
       return () => {};
     }, [])
@@ -124,7 +125,7 @@ const RegistrationScreen = () => {
     <ImageBackground source={require('../../assets/images/abstract1.png')} style={styles.background_r1}>
       <ScrollView>
         <View style={styles.container_r1}>
-          {/* <Controller
+          <Controller
             control={control}
             rules={{ required: 'Image is required' }}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -136,8 +137,8 @@ const RegistrationScreen = () => {
                 )}
               </View>
             )}
-            name="image"
-          /> */}
+            name="User_Image"
+          />
           <View style={styles.imagePickerContainer_r1}>
             <TouchableOpacity style={styles.imagePickerButton_r1} onPress={handleImagePicker}>
               <Text style={styles.imagePickerText_r1}>Upload Image</Text>
