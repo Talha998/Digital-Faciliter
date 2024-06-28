@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, ScrollView , Alert } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -129,7 +129,7 @@ const RegistrationScreen = () => {
     <ImageBackground source={require('../../assets/images/abstract1.png')} style={styles.background_r1}>
       <ScrollView>
         <View style={styles.container_r1}>
-          <Controller
+          {/* <Controller
             control={control}
             rules={{ required: 'Image is required' }}
             render={({ field: { onChange, onBlur, value } }) => (
@@ -142,18 +142,24 @@ const RegistrationScreen = () => {
               </View>
             )}
             name="User_Image"
-          />
-          <View style={styles.imagePickerContainer_r1}>
+          /> */}
+          {/* <View style={styles.imagePickerContainer_r1}>
             <TouchableOpacity style={styles.imagePickerButton_r1} onPress={handleImagePicker}>
               <Text style={styles.imagePickerText_r1}>Upload Image</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.imagePickerButton_r1} onPress={handleCamera}>
               <Text style={styles.imagePickerText_r1}>Capture Image</Text>
             </TouchableOpacity>
-          </View>
-          <Controller
+          </View> */}
+           <Controller
             control={control}
-            rules={{ required: 'User ID is required' }}
+            rules={{ 
+              required: 'User ID is required', 
+              minLength: {
+                value: 8,
+                message: 'Field value cannot be less than 8 characters',
+              }
+            }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
@@ -171,7 +177,13 @@ const RegistrationScreen = () => {
           />
           <Controller
             control={control}
-            rules={{ required: 'Full Name is required' }}
+            rules={{ 
+              required: 'Full Name is required',
+              minLength: {
+                value: 8,
+                message: 'First name cannot be less than 8 characters',
+              }
+            }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
@@ -189,7 +201,13 @@ const RegistrationScreen = () => {
           />
           <Controller
             control={control}
-            rules={{ required: 'Email ID is required' }}
+            rules={{ 
+              required: 'Email ID is required',
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                message: 'The User Email field is not a valid e-mail address',
+              }
+            }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
@@ -205,16 +223,21 @@ const RegistrationScreen = () => {
             )}
             name="User_Email"
           />
-           <CustomDropdown items={items} loading={loading} 
-          //  loading={false}
-           control={control}
-           name="Desig_ID"
-           
-           />
-
-          <Controller
+           <CustomDropdown 
+            items={items} 
+            loading={loading} 
             control={control}
-            rules={{ required: 'Mobile Number is required' }}
+            name="Desig_ID"
+          />
+<Controller
+            control={control}
+            rules={{ 
+              required: 'Mobile Number is required',
+              minLength: {
+                value: 11,
+                message: 'Mobile No cannot be less than 11 characters e.g +1 306 7004950',
+              }
+            }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
@@ -230,16 +253,22 @@ const RegistrationScreen = () => {
             )}
             name="Mobile_No"
           />
-           
-          <Controller
+         <Controller
             control={control}
-            rules={{ required: 'Password is required' }}
+            rules={{ 
+              required: 'Password is required',
+              minLength: {
+                value: 8,
+                message: 'The User Password value cannot be less than 8 characters',
+              }
+            }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
                 <TextInput
                   style={[styles.input_r1, errors.User_Password && styles.errorInput]}
                   onBlur={onBlur}
                   onChangeText={onChange}
+                  value={value}
                   placeholder="Enter Password"
                   placeholderTextColor="green"
                   secureTextEntry
