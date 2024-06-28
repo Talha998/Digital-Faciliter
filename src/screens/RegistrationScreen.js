@@ -52,6 +52,9 @@ console.log(image ,"imageimage")
         value: item.Desig_ID,
       }));
       setItems(responseData);
+      if (responseData.length > 0) {
+        setValue('Desig_ID', responseData[0].value);
+      }
       setLoading(false);
     } catch (error) {
       console.error(error);

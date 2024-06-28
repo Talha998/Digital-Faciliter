@@ -5,7 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 // import axios from 'axios';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CustomDropdown = ({ items, loading, control, name }) => {
+const CustomDropdown = ({ items, loading, control, name  }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
