@@ -108,18 +108,20 @@ const RegistrationScreen = () => {
 
 
   const onSubmit = async (data) => {
-    console.log(data , "dataonSubmit")
+    console.log(data, "dataonSubmit");
     try {
       const baseURL = await AsyncStorage.getItem('baseURL');
-      console.log(baseURL , "baseURL")
+      console.log(baseURL, "baseURL");
       const response = await axios.post(`http://18.226.185.31:8081/api/CreateUser`, data);
       if (response.data.StatusCode === 201) {
+        Alert.alert('Success', 'User created successfully');
         navigation.navigate('HomeScreen');
       } else {
-        console.error('Failed to create user:', response.data.Message);
+        Alert.alert('Error', `Failed to create user: ${response.data.Message}`);
       }
     } catch (error) {
       console.error('Error creating user:', error);
+      Alert.alert('Error', 'Error creating user');
     }
   };
 
@@ -203,7 +205,12 @@ const RegistrationScreen = () => {
             )}
             name="User_Email"
           />
-           <CustomDropdown items={items} loading={loading} />
+           <CustomDropdown items={items} loading={loading} 
+          //  loading={false}
+           control={control}
+           name="Desig_ID"
+           
+           />
 
           <Controller
             control={control}
