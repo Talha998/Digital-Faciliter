@@ -37,7 +37,7 @@ const RegistrationScreen = () => {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [imageUri, setImageUri] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
 console.log(image ,"imageimage")

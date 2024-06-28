@@ -26,7 +26,7 @@ const CustomDropdown = ({ items, loading, control, name }) => {
               onPress={() => setDropdownVisible(!dropdownVisible)}
             >
               <Text style={styles.input}>
-                {selectedItem ? selectedItem.label : 'Select Location'}
+                {selectedItem ? selectedItem.label : 'Select Designation'}
               </Text>
               <Icon name="arrow-drop-down" size={24} color="black" />
             </TouchableOpacity>
@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginLeft: 10,
+    color:"green"
   },
   dropdownContent: {
     // marginTop: 5,
