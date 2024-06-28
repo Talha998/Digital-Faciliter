@@ -5,6 +5,8 @@ import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
+import PasswordClose from "../SVG/PasswordClose";
+import PasswordOpen from "../SVG/PasswordOpen";
 import CustomDropdown from '../container/Customdropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -37,6 +39,7 @@ const RegistrationScreen = () => {
   const [imageUri, setImageUri] = useState(null);
   const [loading, setLoading] = useState(true);
   const [image, setImage] = useState(null);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 console.log(image ,"imageimage")
   const getList = async () => {
     try {
@@ -295,7 +298,7 @@ console.log(image ,"imageimage")
             )}
             name="Mobile_No"
           />
-         <Controller
+        <Controller
             control={control}
             rules={{ 
               required: 'Password is required',
@@ -306,15 +309,21 @@ console.log(image ,"imageimage")
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
-                <TextInput
-                  style={[styles.input_r1, errors.User_Password && styles.errorInput]}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Enter Password"
-                  placeholderTextColor="green"
-                  secureTextEntry
-                />
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={[styles.input_r1, errors.User_Password && styles.errorInput]}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="Enter Password"
+                    placeholderTextColor="green"
+                    secureTextEntry={!passwordVisible}
+                  />
+                  <TouchableOpacity style={styles.passwordIconContainer} onPress={() => setPasswordVisible(!passwordVisible)}>
+                    {/* <Ionicons name={passwordVisible ? "eye-off" : "eye"} size={24} color="black" /> */}
+                    {passwordVisible ? <PasswordOpen width="30" height="30" color="#00544d" /> : <PasswordClose width="30" height="30" color="#00544d" />}
+                  </TouchableOpacity>
+                </View>
                 {errors.User_Password && <Text style={styles.errorText}>{errors.User_Password.message}</Text>}
               </>
             )}
@@ -478,6 +487,19 @@ const styles = StyleSheet.create({
       submitButtonText_r1: {
         color: '#fff',
         fontSize: 16,
+      },
+      passwordContainer: {
+        flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
+    width: '100%',
+      },
+      passwordIconContainer: {
+        position: 'absolute',
+        bottom:7,
+        right: 10,
+        justifyContent: 'center',
+        height: '100%',
       },
 });
 
