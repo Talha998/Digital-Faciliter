@@ -7,6 +7,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Customdropdown from '../container/Customdropdown';
 
 const RegistrationScreen = () => {
   const navigation = useNavigation();
@@ -60,7 +61,6 @@ const RegistrationScreen = () => {
       setValue('Mobile_No', '');
       setValue('designation', 'ZTE Manager');
       setValue('User_Password', '');
-      setValue('confirmPassword', '');
       setImageUri(null)
       // setValue('User_Image', null);
 
@@ -219,6 +219,7 @@ const RegistrationScreen = () => {
             )}
             name="Mobile_No"
           />
+             <Customdropdown />
           <Controller
             control={control}
             rules={{ required: 'Password is required' }}
@@ -237,25 +238,7 @@ const RegistrationScreen = () => {
             )}
             name="User_Password"
           />
-          <Controller
-            control={control}
-            rules={{ required: 'Confirm is required' }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <>
-                <TextInput
-                  style={[styles.input_r1, errors.confirmPassword && styles.errorInput]}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  placeholder="Confirm Password"
-                  placeholderTextColor="green"
-                  secureTextEntry
-                />
-                {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>}
-              </>
-            )}
-            name="confirmPassword"
-          />
+       
           {/* <Controller
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
