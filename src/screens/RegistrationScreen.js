@@ -36,23 +36,22 @@ const RegistrationScreen = () => {
   const [imageUri, setImageUri] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const getList = async () => {
+    try {
+      const baseURL = await AsyncStorage.getItem('baseURL');
+      const response = await axios.get(`http://18.226.185.31:8081/api/GetDesignation`);
+      const responseData = response.data.Data.map(item => ({
+        label: item.Desig_Title_P,
+        value: item.Desig_ID,
+      }));
+      setItems(responseData);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const getList = async () => {
-      try {
-        const baseURL = await AsyncStorage.getItem('baseURL');
-        const response = await axios.get(`http://18.226.185.31:8081/api/GetDesignation`);
-        const responseData = response.data.Data.map(item => ({
-          label: item.Desig_Title_P,
-          value: item.Desig_ID,
-        }));
-        setItems(responseData);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     getList();
   }, []);
 
