@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, ScrollView , Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, Image, ScrollView , Alert , ActivityIndicator } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -8,6 +8,7 @@ import { useForm, Controller } from 'react-hook-form';
 import CustomDropdown from '../container/Customdropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import RNFS from 'react-native-fs';
 
 const RegistrationScreen = () => {
   const navigation = useNavigation();
@@ -35,9 +36,11 @@ const RegistrationScreen = () => {
   const [items, setItems] = useState([]);
   const [imageUri, setImageUri] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [image, setImage] = useState(null);
+console.log(image ,"imageimage")
   const getList = async () => {
     try {
+      setLoading(true);
       const baseURL = await AsyncStorage.getItem('baseURL');
       const response = await axios.get(`http://18.226.185.31:8081/api/GetDesignation`);
       const responseData = response.data.Data.map(item => ({
@@ -45,6 +48,7 @@ const RegistrationScreen = () => {
         value: item.Desig_ID,
       }));
       setItems(responseData);
+      setLoading(false);
     } catch (error) {
       console.error(error);
     } finally {
@@ -61,7 +65,7 @@ const RegistrationScreen = () => {
       setValue('Full_Name', '');
       setValue('User_Email', '');
       setValue('Mobile_No', '');
-      setValue('designation', 'ZTE Manager');
+      setValue('Desig_ID', '');
       setValue('User_Password', '');
       setImageUri(null)
       // setValue('User_Image', null);
@@ -74,83 +78,121 @@ const RegistrationScreen = () => {
     launchImageLibrary({}, (response) => {
       if (response.assets) {
         const imageUri = response.assets[0].uri;
-        setImageUri(imageUri);
-        convertImageToBase64(imageUri);
+        setImage(imageUri);
+        setValue('User_Image', imageUri);
+        // convertImageToBase64(imageUri);
       }
     });
   };
+  // const handleImagePicker = () => {
+  //   launchImageLibrary({ mediaType: 'photo' }, (response) => {
+  //     handleImageResponse(response);
+  //   });
+  // };
+  
 
   const handleCamera = () => {
-    launchCamera({}, (response) => {
-      if (response.assets) {
-        const imageUri = response.assets[0].uri;
-        setImageUri(imageUri);
-        convertImageToBase64(imageUri);
+    launchCamera({ mediaType: 'photo' }, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = response.assets[0].uri;
+        setImage(source);
+        setValue('User_Image', source); // Set the value in react-hook-form
       }
     });
   };
 
-  const convertImageToBase64 = (imageUri) => {
-    fetch(imageUri)
-      .then(response => response.blob())
-      .then(blob => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64data = reader.result;
-          setValue('User_Image', base64data);
-        };
-        reader.readAsDataURL(blob);
-      })
-      .catch(error => {
-        console.error('Error converting image to base64:', error);
-      });
+  const convertImageToBase64 = async (uri) => {
+    try {
+      const base64String = await RNFS.readFile(uri, 'base64');
+      return base64String;
+    } catch (error) {
+      console.error('Error converting image to base64:', error);
+      return null;
+    }
   };
-
 
   const onSubmit = async (data) => {
     console.log(data, "dataonSubmit");
+
     try {
+      setLoading(true); // Set loading state to true before API call
       const baseURL = await AsyncStorage.getItem('baseURL');
       console.log(baseURL, "baseURL");
-      const response = await axios.post(`http://18.226.185.31:8081/api/CreateUser`, data);
+
+      const base64Image = await convertImageToBase64(data.User_Image);
+      if (!base64Image) {
+        Alert.alert('Error', 'Error converting image to base64');
+        return;
+      }
+      const payload = {
+        Role_ID: data.Role_ID,
+      User_Account_Type: data.User_Account_Type,
+      User_ID: data.User_ID,
+      User_Password: data.User_Password,
+      Full_Name: data.Full_Name,
+      User_Email: data.User_Email,
+      Mobile_No: data.Mobile_No,
+      Desig_ID: data.Desig_ID,
+      Expiry_Date: '2023-06-06T22:03:35',
+      Is_Active: '1',
+      Is_Sys_Admin_User: '0',
+      // User_Image: 'null',
+      Is_Login: '1',
+      Last_Update_On: '2023-05-07T22:03:35',
+      userLocations: [],
+        User_Image: base64Image,
+      };
+      // const baseURL = await AsyncStorage.getItem('baseURL');
+      // console.log(baseURL, "baseURL");
+      const response = await axios.post(`http://18.226.185.31:8081/api/CreateUser`, payload );
       if (response.data.StatusCode === 201) {
         Alert.alert('Success', 'User created successfully');
         navigation.navigate('HomeScreen');
       } else {
         Alert.alert('Error', `Failed to create user: ${response.data.Message}`);
       }
+      setLoading(false);
     } catch (error) {
+      setLoading(false); // Ensure loading state is false in case of error
       console.error('Error creating user:', error);
       Alert.alert('Error', 'Error creating user');
     }
   };
 
   return (
+    <>
+    {loading ? <ActivityIndicator style={styles.scrollView} size="large" color="#00544d" /> : 
     <ImageBackground source={require('../../assets/images/abstract1.png')} style={styles.background_r1}>
       <ScrollView>
         <View style={styles.container_r1}>
-          {/* <Controller
+          <Controller
             control={control}
             rules={{ required: 'Image is required' }}
             render={({ field: { onChange, onBlur, value } }) => (
               <View style={[styles.imageBox, errors.image && styles.errorImageBox]}>
-                {value || imageUri ? (
-                  <Image source={{ uri: value || imageUri }} style={styles.imagePreview_r1} />
+                {value ? (
+                  <Image source={{ uri:  value}} style={styles.imagePreview_r1} />
                 ) : (
                   <Ionicons name="person" size={50} color="#999" style={styles.iconPlaceholder} />
                 )}
               </View>
             )}
             name="User_Image"
-          /> */}
-          {/* <View style={styles.imagePickerContainer_r1}>
+          /> 
+           <View style={styles.imagePickerContainer_r1}>
             <TouchableOpacity style={styles.imagePickerButton_r1} onPress={handleImagePicker}>
               <Text style={styles.imagePickerText_r1}>Upload Image</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.imagePickerButton_r1} onPress={handleCamera}>
               <Text style={styles.imagePickerText_r1}>Capture Image</Text>
             </TouchableOpacity>
-          </View> */}
+          </View>
            <Controller
             control={control}
             rules={{ 
@@ -298,12 +340,14 @@ const RegistrationScreen = () => {
             )}
             name="Desig_ID"
           /> */}
-          <TouchableOpacity style={styles.submitButton_r1} onPress={handleSubmit(onSubmit)}>
+          <TouchableOpacity style={styles.submitButton_r1} disabled={loading} onPress={handleSubmit(onSubmit)}>
             <Text style={styles.submitButtonText_r1}>Submit</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
     </ImageBackground>
+}
+</>
   );
 };
 
