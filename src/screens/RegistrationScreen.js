@@ -5,9 +5,9 @@ import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
+import CustomDropdown from '../container/Customdropdown';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Customdropdown from '../container/Customdropdown';
 
 const RegistrationScreen = () => {
   const navigation = useNavigation();
@@ -20,7 +20,7 @@ const RegistrationScreen = () => {
       Full_Name: '',
       User_Email: '',
       Mobile_No: '',
-      Desig_ID: 1,
+      Desig_ID: '',
       Expiry_Date: '2023-06-06T22:03:35',
       Is_Active: '1',
       Is_Sys_Admin_User: '0',
@@ -34,12 +34,13 @@ const RegistrationScreen = () => {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [imageUri, setImageUri] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getList = async () => {
       try {
         const baseURL = await AsyncStorage.getItem('baseURL');
-        const response = await axios.get(`${baseURL}/api/GetDesignation`);
+        const response = await axios.get(`http://18.226.185.31:8081/api/GetDesignation`);
         const responseData = response.data.Data.map(item => ({
           label: item.Desig_Title_P,
           value: item.Desig_ID,
@@ -47,6 +48,8 @@ const RegistrationScreen = () => {
         setItems(responseData);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -201,6 +204,8 @@ const RegistrationScreen = () => {
             )}
             name="User_Email"
           />
+           <CustomDropdown items={items} loading={loading} />
+
           <Controller
             control={control}
             rules={{ required: 'Mobile Number is required' }}
@@ -219,7 +224,7 @@ const RegistrationScreen = () => {
             )}
             name="Mobile_No"
           />
-             <Customdropdown />
+           
           <Controller
             control={control}
             rules={{ required: 'Password is required' }}
@@ -296,8 +301,11 @@ const styles = StyleSheet.create({
         marginBottom: 20,
       },
       input_r1: {
+        // height:50,
         width: '100%',
-        padding: 15,
+        // padding: 15,
+        paddingHorizontal:10,
+    paddingVertical:10,
         borderWidth: 1,
         borderColor: 'green',
         borderRadius: 10,
@@ -345,12 +353,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
-        marginBottom: 20,
+        marginBottom: 15,
       },
       imagePickerButton_r1: {
         flex: 1,
         backgroundColor: '#ddd',
-        padding: 15,
+        // padding: 15,
+        paddingHorizontal:10,
+        paddingVertical:10,
         borderRadius: 10,
         marginHorizontal: 5,
         alignItems: 'center',
@@ -359,8 +369,8 @@ const styles = StyleSheet.create({
         color: '#000',
       },
       imageBox: {
-        width: 150,
-        height: 150,
+        width: 125,
+        height: 125,
         borderRadius: 75,
         justifyContent: 'center',
         alignItems: 'center',
