@@ -8,6 +8,7 @@ import { useForm, Controller } from 'react-hook-form';
 import PasswordClose from "../SVG/PasswordClose";
 import PasswordOpen from "../SVG/PasswordOpen";
 import CustomDropdown from '../container/Customdropdown';
+import PhoneInput from 'react-native-phone-input';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import RNFS from 'react-native-fs';
@@ -274,7 +275,7 @@ console.log(image ,"imageimage")
             control={control}
             name="Desig_ID"
           />
-<Controller
+  <Controller
             control={control}
             rules={{ 
               required: 'Mobile Number is required',
@@ -285,13 +286,12 @@ console.log(image ,"imageimage")
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <>
-                <TextInput
+                <PhoneInput
                   style={[styles.input_r1, errors.Mobile_No && styles.errorInput]}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
+                  initialCountry="ca"
                   value={value}
-                  placeholder="Mobile Number"
-                  placeholderTextColor="green"
+                  onChangePhoneNumber={onChange}
+                  onBlur={onBlur}
                 />
                 {errors.Mobile_No && <Text style={styles.errorText}>{errors.Mobile_No.message}</Text>}
               </>
