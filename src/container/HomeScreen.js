@@ -24,6 +24,9 @@ const HomeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(-500)).current;
   const [loading, setLoading] = useState(false); // State for API loading indicator
+  const [email, setEmail] = useState('');
+  const [emailErr, setEmailErr] = useState('');
+  const [responseMessage, setResponseMessage] = useState('');
 
   useEffect(() => {
     checkBaseURL();
@@ -91,6 +94,60 @@ const HomeScreen = () => {
       console.error('Error during login:', error);
     } finally {
       setLoading(false); // Stop loading indicator
+    }
+  };
+
+  const handleEmail = async () => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regular expression for email validation
+    if (email === '') {
+      setEmailErr('Please enter your email');
+      return;
+    } else if (!re.test(email)) {
+      setEmailErr('Invalid Email');
+      return;
+    } else {
+      setEmailErr('');
+      setLoading(true);
+    }
+
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.post(`${baseURL}/api/ForgetPassword?email=${email}`, { headers });
+      const responseData = response;
+
+      if (responseData.status === 200) {
+        setResponseMessage(responseData.data.Message);
+        setIsModalVisible_forget(false);
+        Alert.alert('Success', responseData.data.Message);
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (error) {
+      console.error(error);
+
+      let errorMessage = 'An error occurred. Please try again later.';
+      if (error.response) {
+        // The request was made and the server responded with a status code outside the range of 2xx
+        if (error.response.status === 400) {
+          errorMessage = `Email [${email}] not found.`;
+        } else {
+          errorMessage = error.response.data.message || errorMessage;
+        }
+      }
+      //  else if (error.request) {
+      //   // The request was made but no response was received
+      //   errorMessage = 'Network error. Please check your internet connection.';
+      // }
+
+      setResponseMessage(errorMessage);
+      
+      Alert.alert('Error', errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -223,53 +280,54 @@ const HomeScreen = () => {
       />
       {/* ///  Forget Password // */}
       <Modal
-        animationType="fade"
+        animationType="slide"
         transparent={true}
         visible={isModalVisible_forget}
         onRequestClose={toggleModal_forget}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            {/* Server URL Text */}
-            <View style={styles.serverURLContainer}>
+            <View style={styles.modalContainer}>
+              
+        <View style={styles.modalContent}>
+          {/* Server URL Text */}
+          <View style={styles.serverURLContainer}>
+            <Text style={styles.serverURL}>Forget Password?</Text>
+          </View>
 
-              <Text style={styles.serverURL}>Forget Password?</Text>
+          {/* Input Field */}
+          <View style={styles.modalContent_rt}>
+            <View>
+              <TextInput
+                placeholder="Enter Registered Email"
+                placeholderTextColor="#00544d"
+                style={styles.inputf1}
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+              />
+              {emailErr ? <Text style={styles.errorText}>{emailErr}</Text> : null}
             </View>
 
-            {/* Input Field */}
-            <View style={styles.modalContent_rt}>
+            {/* Text */}
+            <Text style={styles.bottomTextf1}>
+              Please enter your registered email address to reset your password 
+            </Text>
+
+            {/* Buttons */}
+            <View style={styles.buttonContainerf1}>
               <View>
-                <TextInput
-                  placeholder="Enter Registered Email"
-                  placeholderTextColor="#00544d"
-                  style={styles.inputf1}
-                />
+                <TouchableOpacity onPress={toggleModal_forget} style={styles.buttonf1}>
+                  <Text style={styles.buttonTextf1}>Cancel</Text>
+                </TouchableOpacity>
               </View>
-
-              {/* Text */}
-              <Text style={styles.bottomTextf1}>
-                Please enter your registered email address to reset your password 
-              </Text>
-
-              {/* Buttons */}
-              <View style={styles.buttonContainerf1}>
-                <View>
-                  <TouchableOpacity onPress={toggleModal_forget} style={styles.buttonf1}>
-                    <Text style={styles.buttonTextf1}>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-                <View>
-                  <TouchableOpacity style={[styles.buttonf1]}>
-                    <Text style={[styles.buttonTextf2]}>Submit</Text>
-                  </TouchableOpacity>
-                </View>
+              <View>
+                <TouchableOpacity onPress={handleEmail} style={[styles.buttonf1]}>
+                  <Text style={[styles.buttonTextf2]}>Submit</Text>
+                </TouchableOpacity>
               </View>
-
-              {/* Close Button */}
-
             </View>
           </View>
         </View>
+      </View>
+
       </Modal>
       {/* ///  Forget Password // */}
       {loading ? <ActivityIndicator style={styles.loadingIndicator} size="large" color="#00544d" /> : 
