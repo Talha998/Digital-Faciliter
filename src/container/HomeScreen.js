@@ -400,10 +400,10 @@ const HomeScreen = () => {
       >
         {isPasswordVisible ? <PasswordOpen width="30" height="30" color="#00544d" /> : <PasswordClose width="30" height="30" color="#00544d" />}
       </TouchableOpacity>
-      {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
     </View>
   )}
 />
+  {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
             <TouchableOpacity style={styles.forgetPasswordContainer} onPress={toggleModal_forget} >
               <Text style={styles.forgetPasswordText}>Forget Password?</Text>
             </TouchableOpacity>
