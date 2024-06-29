@@ -40,6 +40,7 @@ const RegistrationScreen = () => {
   const [imageUri, setImageUri] = useState(null);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
+  const [selectedDesign, setSelectedDesign] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   
 console.log(image ,"imageimage")
@@ -52,10 +53,12 @@ console.log(image ,"imageimage")
         label: item.Desig_Title_P,
         value: item.Desig_ID,
       }));
+      const design = response.data.Data;
       setItems(responseData);
-      if (responseData.length > 0) {
-        setValue('Desig_ID', responseData[0].value);
-      }
+      // if (responseData.length > 0) {
+        setValue('Desig_ID', design[0].Desig_ID);
+        setSelectedDesign(design[0].Desig_ID)
+      // }
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -278,6 +281,8 @@ console.log(image ,"imageimage")
             loading={loading} 
             control={control}
             name="Desig_ID"
+           setSelectedDesign={setSelectedDesign}
+         selectedDesign={selectedDesign}
           />
   <Controller
             control={control}

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity, TextInput, ActivityIndicator, FlatList } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, TextInput, ActivityIndicator, Alert , FlatList  } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useForm, Controller } from 'react-hook-form';
+// import axios from 'axios';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CustomDropdown = ({ items, loading, control, name }) => {
+const CustomDropdown = ({ items, loading, control, name  }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -40,7 +42,7 @@ const CustomDropdown = ({ items, loading, control, name }) => {
                   <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
                 ) : (
                   <ScrollView nestedScrollEnabled={true}>
-                  <FlatList
+                    <FlatList
                     data={filteredItems}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
@@ -55,7 +57,7 @@ const CustomDropdown = ({ items, loading, control, name }) => {
                       >
                         <Text style={styles.listItemText}>{item.label}</Text>
                         {selectedItem && selectedItem.value === item.value && (
-                          <Icon name="check" size={24} color="blue" />
+                          <Icon name="check" size={24} color="green" />
                         )}
                       </TouchableOpacity>
                     )}
@@ -71,31 +73,37 @@ const CustomDropdown = ({ items, loading, control, name }) => {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: 15,
+    // padding: 20,
+    marginBottom:15,
+    
     justifyContent: 'center',
   },
   inputContainer: {
-    width: "100%",
-    flexDirection: 'row',
+    width:"100%"
+,    flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'green',
-    paddingRight: 5,
-    paddingVertical: 10,
+    color:'green',
+    paddingRight:5,
+    paddingVertical:10,
     borderRadius: 10,
     backgroundColor: 'white',
   },
   input: {
     flex: 1,
     marginLeft: 10,
-    color: "green"
+    color:"green"
   },
   dropdownContent: {
+    // marginTop: 5,
     borderWidth: 1,
     borderColor: 'green',
+    color:'green',
     backgroundColor: 'white',
     borderRadius: 5,
     maxHeight: 200,
