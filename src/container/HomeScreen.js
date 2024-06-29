@@ -72,13 +72,13 @@ const HomeScreen = () => {
 
   const onSubmit = async (data) => {
     try {
-      
       setLoading(true); // Start loading indicator
       const response = await axios.get(`${baseURL}/api/LoginUser`, {
         params: { UserId: data.username, UserPwd: data.password }
       });
-
+      const token = response.data?.Data?.token;
       if (response.status === 200) {
+        AsyncStorage.setItem('userToken', token);
         Alert.alert("Success", "Login successful!");
         navigation.navigate('SelectDropdown');
       } else {
