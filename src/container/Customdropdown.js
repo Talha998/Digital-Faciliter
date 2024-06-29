@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, TouchableOpacity, TextInput, ActivityIndicator, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useForm, Controller } from 'react-hook-form';
-// import axios from 'axios';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CustomDropdown = ({ items, loading, control, name  }) => {
+const CustomDropdown = ({ items, loading, control, name }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -42,9 +40,11 @@ const CustomDropdown = ({ items, loading, control, name  }) => {
                   <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
                 ) : (
                   <ScrollView nestedScrollEnabled={true}>
-                    {filteredItems.map((item, index) => (
+                  <FlatList
+                    data={filteredItems}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
                       <TouchableOpacity
-                        key={index}
                         style={styles.listItem}
                         onPress={() => {
                           setSelectedItem(item);
@@ -58,7 +58,8 @@ const CustomDropdown = ({ items, loading, control, name  }) => {
                           <Icon name="check" size={24} color="blue" />
                         )}
                       </TouchableOpacity>
-                    ))}
+                    )}
+                  />
                   </ScrollView>
                 )}
               </View>
@@ -70,37 +71,31 @@ const CustomDropdown = ({ items, loading, control, name  }) => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // padding: 20,
-    marginBottom:15,
-    
+    marginBottom: 15,
     justifyContent: 'center',
   },
   inputContainer: {
-    width:"100%"
-,    flexDirection: 'row',
+    width: "100%",
+    flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'green',
-    color:'green',
-    paddingRight:5,
-    paddingVertical:10,
+    paddingRight: 5,
+    paddingVertical: 10,
     borderRadius: 10,
     backgroundColor: 'white',
   },
   input: {
     flex: 1,
     marginLeft: 10,
-    color:"green"
+    color: "green"
   },
   dropdownContent: {
-    // marginTop: 5,
     borderWidth: 1,
     borderColor: 'green',
-    color:'green',
     backgroundColor: 'white',
     borderRadius: 5,
     maxHeight: 200,

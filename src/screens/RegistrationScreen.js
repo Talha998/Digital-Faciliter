@@ -41,6 +41,7 @@ const RegistrationScreen = () => {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  
 console.log(image ,"imageimage")
   const getList = async () => {
     try {
