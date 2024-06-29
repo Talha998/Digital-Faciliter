@@ -71,12 +71,6 @@ const HomeScreen = () => {
   });
 
   const onSubmit = async (data) => {
-    if (!baseURL) {
-      Alert.alert("Error", "Please set the Server URL before logging in.");
-      setIsModalVisible(true);
-      return;
-    }
-
     try {
       
       setLoading(true); // Start loading indicator
@@ -98,16 +92,6 @@ const HomeScreen = () => {
     }
   };
 
-  
-  const RequestRegistration = async () => {
-    if (!baseURL) {
-      Alert.alert("Error", "Please set the Server URL before Request User Registration.");
-      setIsModalVisible(true);
-      
-    }else {
-      navigation.navigate('Request User Registration');
-    }
-  }
   const handleEmail = async () => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regular expression for email validation
     if (email === '') {
@@ -164,7 +148,13 @@ const HomeScreen = () => {
   };
 
   const toggleLoginForm = () => {
-    setIsLoginFormVisible(!isLoginFormVisible);
+    if (!baseURL) {
+      Alert.alert("Error", "Please set the Server URL before Login / Register");
+      setIsModalVisible(true);
+     
+    }else {
+      setIsLoginFormVisible(!isLoginFormVisible);
+    }
   };
 
   const toggleModal = () => {
@@ -172,14 +162,7 @@ const HomeScreen = () => {
   };
 
   const toggleModal_forget = () => {
-    if (!baseURL) {
-      Alert.alert("Error", "Please set the Server URL before Forget password");
-      setIsModalVisible(true);
-      
-    }else {
-      setIsModalVisible_forget(!isModalVisible_forget);
-    }
-    
+    setIsModalVisible_forget(!isModalVisible_forget);
   };
 
   const openModal = () => {
@@ -417,10 +400,10 @@ const HomeScreen = () => {
       >
         {isPasswordVisible ? <PasswordOpen width="30" height="30" color="#00544d" /> : <PasswordClose width="30" height="30" color="#00544d" />}
       </TouchableOpacity>
+      {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
     </View>
   )}
 />
-  {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
             <TouchableOpacity style={styles.forgetPasswordContainer} onPress={toggleModal_forget} >
               <Text style={styles.forgetPasswordText}>Forget Password?</Text>
             </TouchableOpacity>
@@ -428,11 +411,9 @@ const HomeScreen = () => {
             <TouchableOpacity style={styles.button_login}  onPress={handleSubmit(onSubmit)} >
               <Text style={styles.buttonText_login}>Sign In</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button_login} onPress={RequestRegistration}
-            //  onPress={() => {
-            //     navigation.navigate('Request User Registration');
-            //   }}
-              >
+            <TouchableOpacity style={styles.button_login} onPress={() => {
+                navigation.navigate('Request User Registration');
+              }}>
               <Text style={styles.buttonText_login}>Registration</Text>
             </TouchableOpacity>
            
