@@ -76,7 +76,7 @@ const SelectDropdown = () => {
       const token = await AsyncStorage.getItem('userToken');
       const response = await axios.get(`${baseUrl}/api/GetLevelList`, {
         params: {
-          List_Name: 'Level4',
+          List_Name: 'Level3',
           language: 'P',
           UserId: '1',
           Parent_Id: cityId,
