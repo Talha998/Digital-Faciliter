@@ -210,6 +210,9 @@ const Dashboard = () => {
           iconName="globe"
           isOpen={isOpenDropdown4}
           setOpen={toggleDropdown4}
+          style={styles.dropcontainer} // Apply additional styles here
+          color="white"
+          style2={styles.input} // Apply additional styles here
         />
       </View>
 
@@ -245,6 +248,10 @@ const Dashboard = () => {
           iconName="tags"
           isOpen={isOpenDropdown5}
           setOpen={toggleDropdown5}
+          style={styles.dropcontainer} // Apply additional styles here
+          color="white"
+          style2={styles.input} // Apply additional styles here
+          
         />
       </View>
       <View style={styles.device_top}  >
@@ -298,10 +305,27 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingHorizontal: 18,
   },
+  dropcontainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#00544d',
+    paddingRight: 5,
+    marginVertical: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: '#00544d',
+  },
   topContainer: {
     flexDirection:"row",
     justifyContent:"space-between",
     marginBottom: 0,
+  },
+  input: {
+    flex: 1,
+    marginLeft: 10,
+    color: 'white',
   },
   right_icons: {
     flexDirection:"row",

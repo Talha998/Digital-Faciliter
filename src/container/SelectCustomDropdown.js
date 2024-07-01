@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
-const CustomDropdown = ({ items, selectedValue, setSelectedValue, placeholder, iconName, isOpen, setOpen }) => {
+const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeholder, iconName, isOpen, setOpen, style, style2 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -26,15 +26,15 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, placeholder, i
 
   return (
     <View style={[styles.container, { zIndex: isOpen ? 1 : 0 }]}>
-      <TouchableOpacity style={styles.inputContainer} onPress={setOpen}>
-        <Icon name={iconName} size={20} color="black" style={styles.icon} />
-        <Text style={styles.input}>
+      <TouchableOpacity style={[style]} onPress={setOpen}>
+        <Icon name={iconName} size={20} color={color} style={styles.icon} />
+        <Text style={[style2]}>
           {selectedValue !== null ?
             (items.find(item => item.value === selectedValue)?.label || selectedValue) :
             placeholder
           }
         </Text>
-        <Icons name="arrow-drop-down" size={24} color="black" />
+        <Icons name="arrow-drop-down" size={24} color={color} />
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.dropdownList}>
@@ -44,26 +44,28 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, placeholder, i
             onChangeText={setSearchQuery}
             style={styles.searchInput}
           />
-          <FlatList
-            data={filteredItems}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.dropdownItem}
-                onPress={() => {
-                  setSelectedItem(item);
-                  setOpen(false);
-                  setSearchQuery('');
-                  handleSelect(item.value);
-                }}
-              >
-                <Text style={styles.dropdownItemText}>{item.label}</Text>
-                {selectedItem && selectedItem.value === item.value && (
-                  <Icon name="check" size={24} color="green" />
-                )}
-              </TouchableOpacity>
-            )}
-          />
+          <ScrollView style={{ maxHeight: 200 }}>
+            <FlatList
+              data={filteredItems}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    setSelectedItem(item);
+                    setOpen(false);
+                    setSearchQuery('');
+                    handleSelect(item.value);
+                  }}
+                >
+                  <Text style={styles.dropdownItemText}>{item.label}</Text>
+                  {selectedItem && selectedItem.value === item.value && (
+                    <Icon name="check" size={24} color="green" />
+                  )}
+                </TouchableOpacity>
+              )}
+            />
+          </ScrollView>
         </View>
       )}
     </View>
@@ -74,23 +76,6 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     position: 'relative', // Ensure proper stacking context
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'green',
-    paddingRight: 5,
-    marginVertical: 10,
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    backgroundColor: 'white',
-  },
-  input: {
-    flex: 1,
-    marginLeft: 10,
-    color: 'green',
   },
   icon: {
     marginRight: 10,

@@ -142,6 +142,9 @@ const SelectDropdown = () => {
           iconName="globe"
           isOpen={isOpenDropdown1}
           setOpen={toggleDropdown1}
+          style={styles.inputContainer} // Apply additional styles here
+             color="black"
+             style2={styles.input} // Apply additional styles here
         />
         <CustomDropdown
           items={cities}
@@ -151,6 +154,9 @@ const SelectDropdown = () => {
           iconName="building"
           isOpen={isOpenDropdown2}
         setOpen={toggleDropdown2}
+        style={styles.inputContainer} // Apply additional styles here
+           color="black"
+           style2={styles.input} // Apply additional styles here
         />
         <CustomDropdown
           items={locations}
@@ -160,6 +166,9 @@ const SelectDropdown = () => {
           iconName="map-marker"
           isOpen={isOpenDropdown3}
           setOpen={toggleDropdown3}
+          style={styles.inputContainer} // Apply additional styles here
+             color="black"
+             style2={styles.input} // Apply additional styles here
         />
         <TouchableOpacity style={styles.button__drop_Rt} onPress={handleNext}>
           <Text style={styles.buttonText__drop_Rt}>Next</Text>
@@ -179,6 +188,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
     paddingTop: 50,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'green',
+    paddingRight: 5,
+    marginVertical: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: 'white',
+  },
+  input: {
+    flex: 1,
+    marginLeft: 10,
+    color: 'green',
   },
   dropdownWrapper_drop_Rt: {
     flexDirection: 'row',
