@@ -1,53 +1,62 @@
-// CustomDropdown.js
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, TextInput ,  StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
 const CustomDropdown = ({ items, selectedValue, setSelectedValue, placeholder, iconName }) => {
+  console.log( selectedValue, setSelectedValue , "fff123")
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
+  
+  // Filter items based on search query
+  const filteredItems = items.filter(item =>
+    item.label && item.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
+  // Handle selection of an item
   const handleSelect = (value) => {
     setSelectedValue(value);
     setOpen(false);
   };
-  const filteredItems = items.filter(item =>
-    item.label.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.inputContainer} onPress={() => setOpen(!open)}>
         <Icon name={iconName} size={20} color="black" style={styles.icon} />
         <Text style={styles.input}>
-          {selectedValue ? items.find(item => item.value === selectedValue).label : placeholder}
+        {selectedValue !== null ? 
+    (items.find(item => item.value === selectedValue)?.label || selectedValue) :
+    placeholder
+  }
         </Text>
         <Icons name="arrow-drop-down" size={24} color="black" />
       </TouchableOpacity>
       {open && (
         <View style={styles.dropdownList}>
-              <TextInput
-                  placeholder="Type something..."
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  style={styles.searchInput}
-                />
+          <TextInput
+            placeholder="Type something..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            style={styles.searchInput}
+          />
           <FlatList
             data={filteredItems}
-            keyExtractor={(item ,index) => index.toString()}
+            keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
-              <TouchableOpacity style={styles.dropdownItem} onPress={() => {
-                setSelectedItem(item);
-                setOpen(false);
-                setSearchQuery(''); 
-                handleSelect(item.value)
-                 }}>
+              <TouchableOpacity
+                style={styles.dropdownItem}
+                onPress={() => {
+                  setSelectedItem(item);
+                  setOpen(false);
+                  setSearchQuery('');
+                  handleSelect(item.value);
+                }}
+              >
                 <Text style={styles.dropdownItemText}>{item.label}</Text>
                 {selectedItem && selectedItem.value === item.value && (
-                          <Icon name="check" size={24} color="green" />
-                        )}
+                  <Icon name="check" size={24} color="green" />
+                )}
               </TouchableOpacity>
             )}
           />
@@ -58,28 +67,17 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, placeholder, i
 };
 
 const styles = StyleSheet.create({
-    
-  dropdownWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#00544d',
-    borderRadius: 5,
-    marginVertical: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 20,
+  container: {
     width: '100%',
   },
-  
   inputContainer: {
-    width:"100%"
-,    flexDirection: 'row',
+    flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'green',
-    color:'green',
-    paddingRight:5,
+    paddingRight: 5,
     marginVertical: 10,
-    paddingVertical:14,
+    paddingVertical: 14,
     paddingHorizontal: 10,
     borderRadius: 10,
     backgroundColor: 'white',
@@ -87,7 +85,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginLeft: 10,
-    color:"green"
+    color: 'green',
   },
   icon: {
     marginRight: 10,
@@ -95,24 +93,18 @@ const styles = StyleSheet.create({
   searchInput: {
     borderWidth: 1,
     borderColor: 'green',
-    // padding: 10,
-    paddingHorizontal:10,
-    paddingVertical:8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     borderRadius: 5,
-    marginVertical:5,
-    marginHorizontal:5
-  },
-  dropdownText: {
-    color: '#fff',
+    marginVertical: 5,
+    marginHorizontal: 5,
   },
   dropdownList: {
-    //   marginTop: 0,
-      borderWidth: 1,
-      borderColor: 'green',
-      color:'green',
-      backgroundColor: 'white',
-      borderRadius: 5,
-      maxHeight: 200,
+    borderWidth: 1,
+    borderColor: 'green',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    maxHeight: 200,
   },
   dropdownItem: {
     flexDirection: 'row',

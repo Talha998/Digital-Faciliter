@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useContext  } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import CustomDropdown from '../container/SelectCustomDropdown';
+import { AppContext } from '../Context/AppContext';
 
 const SelectDropdown = () => {
+  const { getLevel4 } = useContext(AppContext);
   const navigation = useNavigation();
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
@@ -89,6 +91,7 @@ const SelectDropdown = () => {
       const level3Data = response.data.Data;
       setLocations(level3Data.map(item => ({ label: item.Title, value: item.ID })));
       setSelectedLocation(level3Data[0].ID);
+      getLevel4(level3Data[0].ID)
     } catch (error) {
       console.error('Error fetching Level 3 data:', error);
     }

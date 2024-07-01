@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef , useEffect , useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, RefreshControl } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -9,17 +9,34 @@ import AlarmPerChart from './AlarmPerChart';
 import PeopleEntryPerHour from './PeopleEntryPerHour';
 import PeopleExitPerHour from './PeopleExitPerHour';
 import TotalWorkForce from './TotalWorkForce';
+import axios from 'axios';
 import AccessDenied from './AccessDenied';
 import AccessGranted from './AccessGranted';
 import DeviceAlarm from './DeviceAlarm';
+import CustomDropdown from '../container/SelectCustomDropdown';
 import InOutComponent from './InOutComponent';
+import { AppContext } from '../Context/AppContext';
 
 const Dashboard = () => {
+  const { getEqptGroup , area , brand , selectedArea , setSelectedArea ,  selectedBrand , setSelectedBrand } = useContext(AppContext);
+  console.log(selectedArea ,  "brandbrand")
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshBackgroundColor, setRefreshBackgroundColor] = useState('#ffffff'); // State for background color
   const scrollViewRef = useRef(null); // Ref for ScrollView
+
+  // useEffect(() => {
+  
+  //   getEqptGroup();
+    
+  // }, [selectedArea]);
+
+  // useEffect(() => {
+  //   if (selectedLevel4) {
+  //     GetEqptGroup(selectedLevel4);
+  //   }
+  // }, [selectedLevel4]);
 
   // Handle refresh action
   const handleRefresh = () => {
@@ -46,22 +63,7 @@ const Dashboard = () => {
     setModalVisible(false);
   };
 
-  const [openArea, setOpenArea] = useState(false);
-  const [selectedArea, setSelectedArea] = useState(null);
-  const [areas, setAreas] = useState([
-    { label: 'Area 1', value: 'area1' },
-    { label: 'Area 2', value: 'area2' },
-    // Add more areas as needed
-  ]);
-
-  const [openBrand, setOpenBrand] = useState(false);
-  const [selectedBrand, setSelectedBrand] = useState(null);
-  const [brands, setBrands] = useState([
-    { label: 'Brand 1', value: 'brand1' },
-    { label: 'Brand 2', value: 'brand2' },
-    // Add more brands as needed
-  ]);
-
+  
   const CustomArrowUpIcon = () => (
     <Icon name="chevron-up" size={16} color="#fff" />
   );
@@ -70,15 +72,15 @@ const Dashboard = () => {
     <Icon name="chevron-down" size={16} color="#fff" />
   );
 
-  const handleOpenArea = (isOpen) => {
-    setOpenArea(isOpen);
-    if (isOpen) setOpenBrand(false); // Close Brand dropdown when Area dropdown is opened
-  };
+  // const handleOpenArea = (isOpen) => {
+  //   setOpenArea(isOpen);
+  //   if (isOpen) setOpenBrand(false); // Close Brand dropdown when Area dropdown is opened
+  // };
 
-  const handleOpenBrand = (isOpen) => {
-    setOpenBrand(isOpen);
-    if (isOpen) setOpenArea(false); // Close Area dropdown when Brand dropdown is opened
-  };
+  // const handleOpenBrand = (isOpen) => {
+  //   setOpenBrand(isOpen);
+  //   if (isOpen) setOpenArea(false); // Close Area dropdown when Brand dropdown is opened
+  // };
 
   return (
     <ScrollView
@@ -166,9 +168,9 @@ const Dashboard = () => {
         </View>
       </Modal>
 
-      <View style={[styles.dropdownWrapper, openArea && { zIndex: 3000 }]}>
-        <Icon name="globe" size={20} color="#fff" style={styles.icon} />
-        <DropDownPicker
+      <View style={[styles.dropdownWrapper, { zIndex: 3000 }]}>
+        {/* <Icon name="globe" size={20} color="#fff" style={styles.icon} /> */}
+        {/* <DropDownPicker
           open={openArea}
           value={selectedArea}
           items={areas}
@@ -189,12 +191,19 @@ const Dashboard = () => {
           dropDownContainerStyle={styles.dropDownContainerStyle}
           zIndex={3000}
           zIndexInverse={1000}
+        /> */}
+          <CustomDropdown
+          items={area}
+          selectedValue={selectedArea}
+          setSelectedValue={setSelectedArea}
+          placeholder="Select Area"
+          iconName="globe"
         />
       </View>
 
-      <View style={[styles.dropdownWrapper, openBrand && { zIndex: 2000 }]}>
-        <Icon name="tags" size={20} color="#ffff" style={styles.icon} />
-        <DropDownPicker
+      <View style={[styles.dropdownWrapper, { zIndex: 2000 }]}>
+        {/* <Icon name="tags" size={20} color="#ffff" style={styles.icon} /> */}
+        {/* <DropDownPicker
            open={openBrand}
            value={selectedBrand}
            items={brands}
@@ -215,6 +224,13 @@ const Dashboard = () => {
           zIndex={2000}
           zIndexInverse={1000}
           
+        /> */}
+          <CustomDropdown
+          items={brand}
+          selectedValue={selectedBrand}
+          setSelectedValue={setSelectedBrand}
+          placeholder="Select Brand"
+          iconName="tags"
         />
       </View>
       <View style={styles.device_top}  >
@@ -387,15 +403,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   dropdownWrapper: {
-    flexDirection: 'row',
     alignItems: 'center',
-    // backgroundColor: '#00544d',
-    borderRadius: 5,
-    marginVertical: 5,
-    paddingHorizontal: 0,
-    // paddingVertical: 20,
-    width: '100%',
-    zIndex: 1, // Ensure initial zIndex is set
+    justifyContent: 'center',
+    // paddingHorizontal: 20,
+    // paddingTop: 50,// Ensure initial zIndex is set
+    width:"100%"
   },
   icon: {
     position: 'absolute',
