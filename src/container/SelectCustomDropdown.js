@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
-const CustomDropdown = ({ items, selectedValue, setSelectedValue, placeholder, iconName }) => {
-  console.log( selectedValue, setSelectedValue , "fff123")
-  const [open, setOpen] = useState(false);
+const CustomDropdown = ({ items, selectedValue, setSelectedValue, placeholder, iconName, isOpen, setOpen }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
-  
+
   // Filter items based on search query
   const filteredItems = items.filter(item =>
     item.label && item.label.toLowerCase().includes(searchQuery.toLowerCase())
@@ -20,19 +18,25 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, placeholder, i
     setOpen(false);
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchQuery('');
+    }
+  }, [isOpen]);
+
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.inputContainer} onPress={() => setOpen(!open)}>
+    <View style={[styles.container, { zIndex: isOpen ? 1 : 0 }]}>
+      <TouchableOpacity style={styles.inputContainer} onPress={setOpen}>
         <Icon name={iconName} size={20} color="black" style={styles.icon} />
         <Text style={styles.input}>
-        {selectedValue !== null ? 
-    (items.find(item => item.value === selectedValue)?.label || selectedValue) :
-    placeholder
-  }
+          {selectedValue !== null ?
+            (items.find(item => item.value === selectedValue)?.label || selectedValue) :
+            placeholder
+          }
         </Text>
         <Icons name="arrow-drop-down" size={24} color="black" />
       </TouchableOpacity>
-      {open && (
+      {isOpen && (
         <View style={styles.dropdownList}>
           <TextInput
             placeholder="Type something..."
@@ -69,6 +73,7 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, placeholder, i
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    position: 'relative', // Ensure proper stacking context
   },
   inputContainer: {
     flexDirection: 'row',
@@ -105,6 +110,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 5,
     maxHeight: 200,
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    zIndex: 1000, // Ensure the dropdown is above other content
   },
   dropdownItem: {
     flexDirection: 'row',

@@ -25,7 +25,8 @@ const Dashboard = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshBackgroundColor, setRefreshBackgroundColor] = useState('#ffffff'); // State for background color
   const scrollViewRef = useRef(null); // Ref for ScrollView
-
+  const [isOpenDropdown4, setIsOpenDropdown4] = useState(false);
+  const [isOpenDropdown5, setIsOpenDropdown5] = useState(false);
   // useEffect(() => {
   
   //   getEqptGroup();
@@ -71,7 +72,16 @@ const Dashboard = () => {
   const CustomArrowDownIcon = () => (
     <Icon name="chevron-down" size={16} color="#fff" />
   );
+  const toggleDropdown4 = () => {
+    setIsOpenDropdown4(!isOpenDropdown4);
+    setIsOpenDropdown5(false); // Close other dropdowns
+   
+  };
 
+  const toggleDropdown5 = () => {
+    setIsOpenDropdown5(!isOpenDropdown5);
+    setIsOpenDropdown4(false); // Close other dropdowns
+  };
   // const handleOpenArea = (isOpen) => {
   //   setOpenArea(isOpen);
   //   if (isOpen) setOpenBrand(false); // Close Brand dropdown when Area dropdown is opened
@@ -198,6 +208,8 @@ const Dashboard = () => {
           setSelectedValue={setSelectedArea}
           placeholder="Select Area"
           iconName="globe"
+          isOpen={isOpenDropdown4}
+          setOpen={toggleDropdown4}
         />
       </View>
 
@@ -231,6 +243,8 @@ const Dashboard = () => {
           setSelectedValue={setSelectedBrand}
           placeholder="Select Brand"
           iconName="tags"
+          isOpen={isOpenDropdown5}
+          setOpen={toggleDropdown5}
         />
       </View>
       <View style={styles.device_top}  >

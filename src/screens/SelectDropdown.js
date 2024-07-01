@@ -10,6 +10,7 @@ import { AppContext } from '../Context/AppContext';
 const SelectDropdown = () => {
   const { getLevel4 } = useContext(AppContext);
   const navigation = useNavigation();
+  const [isOpen, setOpen] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -18,7 +19,11 @@ const SelectDropdown = () => {
   const [locations, setLocations] = useState([]);
 
   const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk3NTEzNjUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIwMC8iLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjQyMDAvIn0.KDAPZYa2qAZqgVUFmG7VBKElQkNrbREZ4SP67YBf5bg';
+  const [isOpenDropdown1, setIsOpenDropdown1] = useState(false);
+  const [isOpenDropdown2, setIsOpenDropdown2] = useState(false);
+  const [isOpenDropdown3, setIsOpenDropdown3] = useState(false);
 
+  
   useEffect(() => {
     getLevel1();
   }, []);
@@ -96,7 +101,23 @@ const SelectDropdown = () => {
       console.error('Error fetching Level 3 data:', error);
     }
   };
+  const toggleDropdown1 = () => {
+    setIsOpenDropdown1(!isOpenDropdown1);
+    setIsOpenDropdown2(false); // Close other dropdowns
+    setIsOpenDropdown3(false); // Close other dropdowns
+  };
 
+  const toggleDropdown2 = () => {
+    setIsOpenDropdown2(!isOpenDropdown2);
+    setIsOpenDropdown1(false); // Close other dropdowns
+    setIsOpenDropdown3(false); // Close other dropdowns
+  };
+
+  const toggleDropdown3 = () => {
+    setIsOpenDropdown3(!isOpenDropdown3);
+    setIsOpenDropdown1(false); // Close other dropdowns
+    setIsOpenDropdown2(false); // Close other dropdowns
+  };
   const handleNext = () => {
     navigation.navigate('DrawerNavigator');
   };
@@ -119,6 +140,8 @@ const SelectDropdown = () => {
           setSelectedValue={setSelectedRegion}
           placeholder="Select Region"
           iconName="globe"
+          isOpen={isOpenDropdown1}
+          setOpen={toggleDropdown1}
         />
         <CustomDropdown
           items={cities}
@@ -126,6 +149,8 @@ const SelectDropdown = () => {
           setSelectedValue={setSelectedCity}
           placeholder="Select City"
           iconName="building"
+          isOpen={isOpenDropdown2}
+        setOpen={toggleDropdown2}
         />
         <CustomDropdown
           items={locations}
@@ -133,6 +158,8 @@ const SelectDropdown = () => {
           setSelectedValue={setSelectedLocation}
           placeholder="Select Location"
           iconName="map-marker"
+          isOpen={isOpenDropdown3}
+          setOpen={toggleDropdown3}
         />
         <TouchableOpacity style={styles.button__drop_Rt} onPress={handleNext}>
           <Text style={styles.buttonText__drop_Rt}>Next</Text>
