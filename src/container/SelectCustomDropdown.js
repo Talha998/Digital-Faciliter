@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, FlatList, TextInput, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
@@ -44,7 +44,7 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeho
             onChangeText={setSearchQuery}
             style={styles.searchInput}
           />
-          <ScrollView style={{ maxHeight: 200 }}>
+          <ScrollView nestedScrollEnabled={true}>
             <FlatList
               data={filteredItems}
               keyExtractor={(item, index) => index.toString()}
@@ -90,16 +90,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   dropdownList: {
-    borderWidth: 1,
-    borderColor: 'green',
-    backgroundColor: 'white',
-    borderRadius: 5,
-    maxHeight: 200,
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    right: 0,
-    zIndex: 1000, // Ensure the dropdown is above other content
+   // marginTop: 5,
+   borderWidth: 1,
+   borderColor: 'green',
+   color:'green',
+   backgroundColor: 'white',
+   borderRadius: 5,
+   maxHeight: 200,
   },
   dropdownItem: {
     flexDirection: 'row',

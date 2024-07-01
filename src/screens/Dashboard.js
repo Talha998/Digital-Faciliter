@@ -93,13 +93,13 @@ const Dashboard = () => {
   // };
 
   return (
-    <ScrollView
-      ref={scrollViewRef}
-      contentContainerStyle={{ flexGrow: 1, backgroundColor: refreshBackgroundColor }}
-      refreshControl={
-        <RefreshControl refreshing={false} onRefresh={handleRefresh} />
-      }
-  >
+  //   <ScrollView
+  //     ref={scrollViewRef}
+  //     contentContainerStyle={{ flexGrow: 1, backgroundColor: refreshBackgroundColor }}
+  //     refreshControl={
+  //       <RefreshControl refreshing={false} onRefresh={handleRefresh} />
+  //     }
+  // >
     <View style={styles.container}>
       <View style={styles.topContainer}>
       <View>
@@ -295,7 +295,7 @@ const Dashboard = () => {
     </View>
     <InOutComponent />
     </View>
-    </ScrollView>
+    //  </ScrollView> */}
   );
 };
 
