@@ -18,8 +18,7 @@ import InOutComponent from './InOutComponent';
 import { AppContext } from '../Context/AppContext';
 
 const Dashboard = () => {
-  const { getEqptGroup , area , brand , selectedArea , setSelectedArea ,  selectedBrand , setSelectedBrand } = useContext(AppContext);
-  console.log(selectedArea ,  "brandbrand")
+  const { area, brand, selectedArea, setSelectedArea, selectedBrand, setSelectedBrand } = useContext(AppContext);
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
   const [modalVisible, setModalVisible] = useState(false);
@@ -27,17 +26,6 @@ const Dashboard = () => {
   const scrollViewRef = useRef(null); // Ref for ScrollView
   const [isOpenDropdown4, setIsOpenDropdown4] = useState(false);
   const [isOpenDropdown5, setIsOpenDropdown5] = useState(false);
-  // useEffect(() => {
-  
-  //   getEqptGroup();
-    
-  // }, [selectedArea]);
-
-  // useEffect(() => {
-  //   if (selectedLevel4) {
-  //     GetEqptGroup(selectedLevel4);
-  //   }
-  // }, [selectedLevel4]);
 
   // Handle refresh action
   const handleRefresh = () => {
@@ -64,7 +52,6 @@ const Dashboard = () => {
     setModalVisible(false);
   };
 
-  
   const CustomArrowUpIcon = () => (
     <Icon name="chevron-up" size={16} color="#fff" />
   );
@@ -72,34 +59,25 @@ const Dashboard = () => {
   const CustomArrowDownIcon = () => (
     <Icon name="chevron-down" size={16} color="#fff" />
   );
+
   const toggleDropdown4 = () => {
     setIsOpenDropdown4(!isOpenDropdown4);
     setIsOpenDropdown5(false); // Close other dropdowns
-   
   };
 
   const toggleDropdown5 = () => {
     setIsOpenDropdown5(!isOpenDropdown5);
     setIsOpenDropdown4(false); // Close other dropdowns
-  };
-  // const handleOpenArea = (isOpen) => {
-  //   setOpenArea(isOpen);
-  //   if (isOpen) setOpenBrand(false); // Close Brand dropdown when Area dropdown is opened
-  // };
-
-  // const handleOpenBrand = (isOpen) => {
-  //   setOpenBrand(isOpen);
-  //   if (isOpen) setOpenArea(false); // Close Area dropdown when Brand dropdown is opened
-  // };
+  };;
 
   return (
-  //   <ScrollView
-  //     ref={scrollViewRef}
-  //     contentContainerStyle={{ flexGrow: 1, backgroundColor: refreshBackgroundColor }}
-  //     refreshControl={
-  //       <RefreshControl refreshing={false} onRefresh={handleRefresh} />
-  //     }
-  // >
+    <ScrollView
+      ref={scrollViewRef}
+      contentContainerStyle={{ flexGrow: 1, backgroundColor: refreshBackgroundColor }}
+      refreshControl={
+        <RefreshControl refreshing={false} onRefresh={handleRefresh} />
+      }
+  >
     <View style={styles.container}>
       <View style={styles.topContainer}>
       <View>
@@ -295,7 +273,7 @@ const Dashboard = () => {
     </View>
     <InOutComponent />
     </View>
-    //  </ScrollView> */}
+     </ScrollView> 
   );
 };
 

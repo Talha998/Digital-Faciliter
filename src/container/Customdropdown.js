@@ -1,128 +1,107 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, TouchableOpacity, TextInput, ActivityIndicator, Alert , FlatList  } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useForm, Controller } from 'react-hook-form';
-// import axios from 'axios';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, FlatList, TextInput, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Icons from 'react-native-vector-icons/MaterialIcons';
 
-const CustomDropdown = ({ items, loading, control, name  }) => {
+const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeholder, iconName, isOpen, setOpen, style, style2 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
+  // Filter items based on search query
   const filteredItems = items.filter(item =>
-    item.label.toLowerCase().includes(searchQuery.toLowerCase())
+    item.label && item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Handle selection of an item
+  const handleSelect = (value) => {
+    setSelectedValue(value);
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchQuery('');
+    }
+  }, [isOpen]);
+
   return (
-    <View style={styles.container}>
-      <Controller
-        control={control}
-        name={name}
-        render={({ field: { onChange, value } }) => (
-          <>
-            <TouchableOpacity
-              style={styles.inputContainer}
-              onPress={() => setDropdownVisible(!dropdownVisible)}
-            >
-              <Text style={styles.input}>
-                {selectedItem ? selectedItem.label : 'Select Designation'}
-              </Text>
-              <Icon name="arrow-drop-down" size={24} color="black" />
-            </TouchableOpacity>
-            {dropdownVisible && (
-              <View style={styles.dropdownContent}>
-                <TextInput
-                  placeholder="Type something..."
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  style={styles.searchInput}
-                />
-                {loading ? (
-                  <ActivityIndicator size="large" color="green" style={styles.loadingIndicator} />
-                ) : (
-                  <ScrollView nestedScrollEnabled={true}>
-                    <FlatList
-                    data={filteredItems}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        style={styles.listItem}
-                        onPress={() => {
-                          setSelectedItem(item);
-                          setDropdownVisible(false);
-                          setSearchQuery('');
-                          onChange(item.value);
-                        }}
-                      >
-                        <Text style={styles.listItemText}>{item.label}</Text>
-                        {selectedItem && selectedItem.value === item.value && (
-                          <Icon name="check" size={24} color="green" />
-                        )}
-                      </TouchableOpacity>
-                    )}
-                  />
-                  </ScrollView>
+    <View style={[styles.container, { zIndex: isOpen ? 1 : 0 }]}>
+      <TouchableOpacity style={[style]} onPress={setOpen}>
+        <Icon name={iconName} size={20} color={color} style={styles.icon} />
+        <Text style={[style2]}>
+          {selectedValue !== null ?
+            (items.find(item => item.value === selectedValue)?.label || selectedValue) :
+            placeholder
+          }
+        </Text>
+        <Icons name="arrow-drop-down" size={24} color={color} />
+      </TouchableOpacity>
+      {isOpen && (
+        <ScrollView style={styles.dropdownList}>
+          <TextInput
+            placeholder="Type something..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            style={styles.searchInput}
+          />
+          <FlatList
+            data={filteredItems}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.dropdownItem}
+                onPress={() => {
+                  setSelectedItem(item);
+                  setOpen(false);
+                  setSearchQuery('');
+                  handleSelect(item.value);
+                }}
+              >
+                <Text style={styles.dropdownItemText}>{item.label}</Text>
+                {selectedItem && selectedItem.value === item.value && (
+                  <Icon name="check" size={24} color="green" />
                 )}
-              </View>
+              </TouchableOpacity>
             )}
-          </>
-        )}
-      />
+          />
+        </ScrollView>
+      )}
     </View>
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    // padding: 20,
-    marginBottom:15,
-    
-    justifyContent: 'center',
+    width: '100%',
+    position: 'relative', // Ensure proper stacking context
   },
-  inputContainer: {
-    width:"100%"
-,    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'green',
-    color:'green',
-    paddingRight:5,
-    paddingVertical:10,
-    borderRadius: 10,
-    backgroundColor: 'white',
-  },
-  input: {
-    flex: 1,
-    marginLeft: 10,
-    color:"green"
-  },
-  dropdownContent: {
-    // marginTop: 5,
-    borderWidth: 1,
-    borderColor: 'green',
-    color:'green',
-    backgroundColor: 'white',
-    borderRadius: 5,
-    maxHeight: 200,
+  icon: {
+    marginRight: 10,
   },
   searchInput: {
     borderWidth: 1,
     borderColor: 'green',
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     borderRadius: 5,
-    margin: 5,
+    marginVertical: 5,
+    marginHorizontal: 5,
   },
-  listItem: {
+  dropdownList: {
+    borderWidth: 1,
+    borderColor: 'green',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    maxHeight: 200,
+  },
+  dropdownItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
-  listItemText: {
+  dropdownItemText: {
     fontSize: 16,
   },
 });
