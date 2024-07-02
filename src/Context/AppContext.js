@@ -5,22 +5,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
-    const currentDate = new Date();
-  
-    const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
-    const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
-  
-    const [fromDate, setFromDate] = useState(fromDateTime);
-    const [toDate, setToDate] = useState(toDateTime);
-  
-    const convertToLocalTime = (date) => {
-      const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
-      return localDate.toISOString().slice(0, 19).replace('T', ' ');
-    };
-    const startDate = convertToLocalTime(fromDate)
-    const endDate = convertToLocalTime(toDate)
-    const [StartDatefd, setStartDatefd] = useState(startDate);
-    const [EndDatetd, setEndDatetd] = useState(endDate);
     const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
     const [isServerURLModalVisible, setServerURLModalVisible] = useState(false);
     const [isModifyPasswordModalVisible, setModifyPasswordModalVisible] = useState(false);
@@ -122,8 +106,8 @@ const AppProvider = ({ children }) => {
                 alarmType: "0",
                 proceName_Device: "DeviceStatus",
                 proceName_FilterBy: selectedButton,
-                startDT: StartDatefd,
-                endDT: EndDatetd,
+                startDT: fromDate,
+                endDT: toDate,
             };
     
             console.log(data, "Request Data"); // Log the request data for debugging
@@ -157,7 +141,8 @@ const AppProvider = ({ children }) => {
     };
     useEffect(() =>{
         getSummary();
-      }, [selectedRegion , selectedCity , selectedLocation , selectedArea , selectedBrand , StartDatefd , EndDatetd ] )
+      }, [selectedRegion , selectedCity , selectedLocation , selectedArea , selectedBrand] )
+    
     return (
         <AppContext.Provider value={{
             isLanguageModalVisible,
@@ -193,15 +178,7 @@ const AppProvider = ({ children }) => {
      selectedLocation, 
      setSelectedLocation,
      selectedButton,
-      setSelectedButton,
-      StartDatefd,
-      setStartDatefd,
-      EndDatetd, 
-      setEndDatetd,
-      setFromDate,
-      setToDate,
-      fromDate,
-      toDate
+      setSelectedButton
         }}>
             {children}
         </AppContext.Provider>

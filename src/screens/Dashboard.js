@@ -18,11 +18,25 @@ import InOutComponent from './InOutComponent';
 import { AppContext } from '../Context/AppContext';
 
 const Dashboard = () => {
- 
-  // const [StartDatefd, setStartDatefd] = useState(StartDatefd);
-  // const [EndDatetd, setEndDatetd] = useState(EndDatetd);
-  const { area, brand, selectedArea, setSelectedArea, selectedBrand, setSelectedBrand , summary, StartDatefd , EndDatetd ,
-    getSummary, entryDataSearch ,  setFromDate, setToDate ,   fromDate, toDate } = useContext(AppContext);
+  const currentDate = new Date();
+  
+  const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
+  const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+
+  const [fromDate, setFromDate] = useState(fromDateTime);
+  const [toDate, setToDate] = useState(toDateTime);
+
+  const convertToLocalTime = (date) => {
+    const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    return localDate.toISOString().slice(0, 19).replace('T', ' ');
+  };
+
+  const startDate = convertToLocalTime(fromDate)
+  const endDate = convertToLocalTime(toDate)
+
+  const { area, brand, selectedArea, setSelectedArea, selectedBrand, setSelectedBrand , summary,
+    loading,
+    getSummary, entryDataSearch } = useContext(AppContext);
   
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshBackgroundColor, setRefreshBackgroundColor] = useState('#ffffff'); // State for background color
@@ -45,7 +59,9 @@ const Dashboard = () => {
   // const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
   // const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
 
-  
+  // useEffect(() =>{
+  //   getSummary(startDate, endDate);
+  // }, [] )
   const handleRefresh = () => {
     // Set background color to indicate refresh
     setRefreshBackgroundColor('#f0f0f0');
@@ -65,7 +81,7 @@ const Dashboard = () => {
 
   
   const handleConfirm = () => {
-    getSummary(StartDatefd, EndDatetd);
+    getSummary(startDate, endDate);
     setModalVisible(false);
   };
 
@@ -104,11 +120,11 @@ const Dashboard = () => {
       <View>
         <View style={styles.dateContainer}>
           <Text style={styles.label_from}>From : </Text>
-          <Text style={styles.dateText}>{StartDatefd}</Text>
+          <Text style={styles.dateText}>{startDate}</Text>
         </View>
         <View style={styles.dateContainer}>
           <Text style={styles.label_To}>To : </Text>
-          <Text style={styles.dateText}>{EndDatetd}</Text>
+          <Text style={styles.dateText}>{endDate}</Text>
           
         </View>
         </View>
