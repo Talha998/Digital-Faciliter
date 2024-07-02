@@ -18,11 +18,26 @@ import InOutComponent from './InOutComponent';
 import { AppContext } from '../Context/AppContext';
 
 const Dashboard = () => {
+  const currentDate = new Date();
+  
+  const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
+  const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+
+  const [fromDate, setFromDate] = useState(fromDateTime);
+  const [toDate, setToDate] = useState(toDateTime);
+
+  const convertToLocalTime = (date) => {
+    const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    return localDate.toISOString().slice(0, 19).replace('T', ' ');
+  };
+
+  const startDate = convertToLocalTime(fromDate)
+  const endDate = convertToLocalTime(toDate)
+
   const { area, brand, selectedArea, setSelectedArea, selectedBrand, setSelectedBrand , summary,
     loading,
     getSummary, entryDataSearch } = useContext(AppContext);
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
+  
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshBackgroundColor, setRefreshBackgroundColor] = useState('#ffffff'); // State for background color
   const scrollViewRef = useRef(null); // Ref for ScrollView
@@ -33,14 +48,20 @@ const Dashboard = () => {
     // getSummary(selectedArea, null, null, selectedBrand, null, null, null, null, null);
   };
   // Handle refresh action
-  const currentDate = new Date();
+  // const currentDate = new Date();
 
   // Set the time to 12:00 AM for the From date
-  const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
-  const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+  // const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
+  // const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+  // const currentDate = new Date();
+
+  // Ensure fromDate and toDate are correctly set to today's date at the specified times
+  // const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
+  // const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+
   useEffect(() =>{
-    getSummary(fromDate, toDate);
-  }, [fromDate , toDate] )
+    getSummary(startDate, endDate);
+  }, [] )
   const handleRefresh = () => {
     // Set background color to indicate refresh
     setRefreshBackgroundColor('#f0f0f0');
@@ -60,7 +81,7 @@ const Dashboard = () => {
 
   
   const handleConfirm = () => {
-    getSummary(fromDate, toDate);
+    getSummary(startDate, endDate);
     setModalVisible(false);
   };
 
@@ -99,11 +120,12 @@ const Dashboard = () => {
       <View>
         <View style={styles.dateContainer}>
           <Text style={styles.label_from}>From : </Text>
-          <Text style={styles.dateText}>{`${fromDateTime.toLocaleDateString()} ${fromDateTime.toLocaleTimeString([])}`}</Text>
+          <Text style={styles.dateText}>{startDate}</Text>
         </View>
         <View style={styles.dateContainer}>
           <Text style={styles.label_To}>To : </Text>
-          <Text style={styles.dateText}>{`${toDateTime.toLocaleDateString()} ${toDateTime.toLocaleTimeString([])}`}</Text>
+          <Text style={styles.dateText}>{endDate}</Text>
+          
         </View>
         </View>
           <View style={styles.right_icons}>
@@ -138,8 +160,12 @@ const Dashboard = () => {
             <Text style={styles.label_dash}>From: </Text>
             <DatePicker
               date={fromDate}
-              onDateChange={setFromDate}
-              mode="datetime" // Allows selection of date and time
+              onDateChange={(date) => {
+                const newDate = new Date(date);
+                setFromDate(newDate);
+                console.log(convertToLocalTime(newDate), "Selected fromDate");
+              }}
+              mode="datetime"
               style={styles.datePicker}
               is24hourSource="locale"
             />
@@ -148,8 +174,12 @@ const Dashboard = () => {
             <Text style={styles.label_dash}>To: </Text>
             <DatePicker
               date={toDate}
-              onDateChange={setToDate}
-              mode="datetime" // Allows selection of date and time
+              onDateChange={(date) => {
+                const newDate = new Date(date);
+                setToDate(newDate);
+                console.log(convertToLocalTime(newDate), "Selected toDate");
+              }}
+              mode="datetime"
               style={styles.datePicker}
               is24hourSource="locale"
             />

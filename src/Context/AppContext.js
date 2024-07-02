@@ -19,6 +19,7 @@ const AppProvider = ({ children }) => {
   const [alarmData, setAlarmData] = useState([]);
   const [dashDeviceData, setDashDeviceData] = useState([]);
   const [filter, setFilter] = useState([]);
+  console.log(dashDeviceData , "dashDeviceData")
   const [deviceLoc, setDeviceLoc] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -79,11 +80,12 @@ const AppProvider = ({ children }) => {
         }
     };
     const getSummary = async (fromDate, toDate) => {
-        fromDate.setHours(0, 0, 0, 0);
+        console.log(fromDate , toDate ,"toDate" )
+        // fromDate.setHours(0, 0, 0, 0);
 
-        // Set time for toDate to 23:59:59 (end of day)
-        toDate.setHours(23, 59, 59, 999);
-        console.log(fromDate.toISOString(), toDate.toISOString(), selectedRegion, selectedCity, selectedLocation, selectedArea, selectedBrand, "selectedRegion");
+        // // Set time for toDate to 23:59:59 (end of day)
+        // toDate.setHours(23, 59, 59, 999);
+        // console.log(fromDate.toISOString(), toDate.toISOString(), selectedRegion, selectedCity, selectedLocation, selectedArea, selectedBrand, "selectedRegion");
         try {
             setLoading(true);
             const baseUrl = await AsyncStorage.getItem('baseURL');
@@ -104,8 +106,8 @@ const AppProvider = ({ children }) => {
                 alarmType: "0",
                 proceName_Device: "DeviceStatus",
                 proceName_FilterBy: "All",
-                startDT: fromDate.toISOString(),
-                endDT: toDate.toISOString(),
+                startDT: fromDate,
+                endDT: toDate,
             };
     
             console.log(data, "Request Data"); // Log the request data for debugging
