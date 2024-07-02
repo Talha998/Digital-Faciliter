@@ -1,7 +1,6 @@
-import React, { useState, useRef , useEffect , useContext } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, RefreshControl } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DeviceStatus from "./DeviceStatus";
 import ActiveWorkforce from './ActiveWorkforce';
@@ -9,7 +8,6 @@ import AlarmPerChart from './AlarmPerChart';
 import PeopleEntryPerHour from './PeopleEntryPerHour';
 import PeopleExitPerHour from './PeopleExitPerHour';
 import TotalWorkForce from './TotalWorkForce';
-import axios from 'axios';
 import AccessDenied from './AccessDenied';
 import AccessGranted from './AccessGranted';
 import DeviceAlarm from './DeviceAlarm';
@@ -31,55 +29,37 @@ const Dashboard = () => {
     return localDate.toISOString().slice(0, 19).replace('T', ' ');
   };
 
-  const startDate = convertToLocalTime(fromDate)
-  const endDate = convertToLocalTime(toDate)
+  const startDate = convertToLocalTime(fromDate);
+  const endDate = convertToLocalTime(toDate);
 
-  const { area, brand, selectedArea, setSelectedArea, selectedBrand, setSelectedBrand , summary,
-    loading,
-    getSummary, entryDataSearch } = useContext(AppContext);
+  const { area, brand, selectedArea, setSelectedArea, selectedBrand, setSelectedBrand, summary, getSummary } = useContext(AppContext);
   
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshBackgroundColor, setRefreshBackgroundColor] = useState('#ffffff'); // State for background color
   const scrollViewRef = useRef(null); // Ref for ScrollView
   const [isOpenDropdown4, setIsOpenDropdown4] = useState(false);
   const [isOpenDropdown5, setIsOpenDropdown5] = useState(false);
-  const fetchSummaryData = () => {
-    // Replace with actual selected values
-    // getSummary(selectedArea, null, null, selectedBrand, null, null, null, null, null);
-  };
-  // Handle refresh action
-  // const currentDate = new Date();
-
-  // Set the time to 12:00 AM for the From date
-  // const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
-  // const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
-  // const currentDate = new Date();
-
-  // Ensure fromDate and toDate are correctly set to today's date at the specified times
-  // const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
-  // const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
-
-  // useEffect(() =>{
-  //   getSummary(startDate, endDate);
-  // }, [] )
+ 
   const handleRefresh = () => {
     // Set background color to indicate refresh
     setRefreshBackgroundColor('#f0f0f0');
 
-    // Perform your refresh logic here
-    // For example, resetting data or fetching new data
+    // Reset the date range to current date
+    const newFromDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
+    const newToDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+    setFromDate(newFromDate);
+    setToDate(newToDate);
 
     // After refresh, scroll to top
     scrollViewRef.current.scrollTo({ y: 0, animated: true });
 
     // Reset background color after a short delay
     setTimeout(() => {
-      setRefreshBackgroundColor('#ffffff'); // Reset to original background color4
-      getSummary()
+      setRefreshBackgroundColor('#ffffff'); // Reset to original background color
+      getSummary(convertToLocalTime(newFromDate), convertToLocalTime(newToDate));
     }, 1000); // Adjust delay as needed
   };
 
-  
   const handleConfirm = () => {
     getSummary(startDate, endDate);
     setModalVisible(false);
@@ -88,6 +68,10 @@ const Dashboard = () => {
   const handleCancel = () => {
     setModalVisible(false);
   };
+
+  useEffect(() => {
+    getSummary(startDate, endDate);
+  }, []);
 
   const CustomArrowUpIcon = () => (
     <Icon name="chevron-up" size={16} color="#fff" />
@@ -105,7 +89,7 @@ const Dashboard = () => {
   const toggleDropdown5 = () => {
     setIsOpenDropdown5(!isOpenDropdown5);
     setIsOpenDropdown4(false); // Close other dropdowns
-  };;
+  };
 
   return (
     <ScrollView
@@ -146,61 +130,47 @@ const Dashboard = () => {
       </View>
 
       <Modal
-      transparent={true}
-      visible={modalVisible}
-      animationType="slide"
-      onRequestClose={() => setModalVisible(false)}
-    >
-      <View style={styles.modalBackground}>
-        <View style={styles.modalContainer}>
-          <View style={styles.serverURLContainerf2}>
-            <Text style={styles.modalTitle}>Select Dates</Text>
+          transparent={true}
+          visible={modalVisible}
+          animationType="slide"
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <View style={styles.serverURLContainerf2}>
+                <Text style={styles.modalTitle}>Select Dates</Text>
+              </View>
+              <View style={styles.datePickerContainer}>
+                <Text style={styles.label_dash}>From: </Text>
+                <DatePicker
+                  date={fromDate}
+                  onDateChange={(date) => setFromDate(new Date(date))}
+                  mode="datetime"
+                  style={styles.datePicker}
+                  is24hourSource="locale"
+                />
+              </View>
+              <View style={styles.datePickerContainer}>
+                <Text style={styles.label_dash}>To: </Text>
+                <DatePicker
+                  date={toDate}
+                  onDateChange={(date) => setToDate(new Date(date))}
+                  mode="datetime"
+                  style={styles.datePicker}
+                  is24hourSource="locale"
+                />
+              </View>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity onPress={handleCancel} style={[styles.modalButton, styles.cancelButton]}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleConfirm} style={[styles.modalButton, styles.confirmButton]}>
+                  <Text style={styles.confirmButtonText}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-          <View style={styles.datePickerContainer}>
-            <Text style={styles.label_dash}>From: </Text>
-            <DatePicker
-              date={fromDate}
-              onDateChange={(date) => {
-                const newDate = new Date(date);
-                setFromDate(newDate);
-                console.log(convertToLocalTime(newDate), "Selected fromDate");
-              }}
-              mode="datetime"
-              style={styles.datePicker}
-              is24hourSource="locale"
-            />
-          </View>
-          <View style={styles.datePickerContainer}>
-            <Text style={styles.label_dash}>To: </Text>
-            <DatePicker
-              date={toDate}
-              onDateChange={(date) => {
-                const newDate = new Date(date);
-                setToDate(newDate);
-                console.log(convertToLocalTime(newDate), "Selected toDate");
-              }}
-              mode="datetime"
-              style={styles.datePicker}
-              is24hourSource="locale"
-            />
-          </View>
-          <View style={styles.modalButtons}>
-            <TouchableOpacity
-              onPress={handleCancel}
-              style={[styles.modalButton, styles.cancelButton]}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleConfirm}
-              style={[styles.modalButton, styles.confirmButton]}
-            >
-              <Text style={styles.confirmButtonText}>Confirm</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </Modal>
+        </Modal>
 
       <View style={[styles.dropdownWrapper, { zIndex: 3000 }]}>
         {/* <Icon name="globe" size={20} color="#fff" style={styles.icon} /> */}

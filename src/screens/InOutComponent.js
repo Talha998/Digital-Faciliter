@@ -26,7 +26,9 @@ const InOutComponent = () => {
   const { deviceLoc, setDeviceLoc, setDashDeviceData ,  selectedButton , setSelectedButton , getSummary } = useContext(AppContext);
   
   const [loading, setLoading] = useState(false);
-  
+  // useEffect(() => {
+  //   getSummary(selectedButton);
+  // }, [selectedButton]);
 
   const handleRadioButtonPress = (value) => {
     setSelectedButton(value);

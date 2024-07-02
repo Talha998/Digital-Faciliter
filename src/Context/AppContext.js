@@ -80,7 +80,7 @@ const AppProvider = ({ children }) => {
             console.error('Error fetching Equipment Group data:', error);
         }
     };
-    const getSummary = async (fromDate, toDate) => {
+    const getSummary = async (startDate, endDate) => {
         // fromDate.setHours(0, 0, 0, 0);
 
         // // Set time for toDate to 23:59:59 (end of day)
@@ -106,8 +106,8 @@ const AppProvider = ({ children }) => {
                 alarmType: "0",
                 proceName_Device: "DeviceStatus",
                 proceName_FilterBy: selectedButton,
-                startDT: fromDate,
-                endDT: toDate,
+                startDT: startDate,
+                endDT: endDate,
             };
     
             console.log(data, "Request Data"); // Log the request data for debugging
