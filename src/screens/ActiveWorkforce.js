@@ -1,12 +1,14 @@
-import React from 'react';
+import React , { useContext }  from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { BarChart, Grid } from 'react-native-svg-charts';
 import { Defs, LinearGradient, Stop } from 'react-native-svg';
+import { AppContext } from '../Context/AppContext';
 
 const ActiveWorkforce = () => {
   // Dummy data for the bar chart
+  const { summary , exitData } = useContext(AppContext);
   const data = [
-    { label: 'Active Person', value: 59920 }
+    {  value: summary?.Active_Person }
   ];
 
   // Gradient definitions for different colors
@@ -50,7 +52,7 @@ const ActiveWorkforce = () => {
           </View>
         </View>
         <Text style={styles.chartText_active}>Active Workforce</Text>
-        <Text style={styles.chartText_num}>{data[0].value}</Text>
+        <Text style={styles.chartText_num}>{summary?.Active_Person}</Text>
       </View>
       
     </View>
@@ -83,6 +85,8 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 2,
     marginBottom: 5,
+    height: 135,
+    width:125,
   },
   chartContainer: {
     alignItems: 'center',

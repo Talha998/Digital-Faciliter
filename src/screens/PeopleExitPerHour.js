@@ -158,12 +158,14 @@
 // });
 
 // export default PeopleEntryPerHour;
-import React from 'react';
+import React , { useContext }  from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { BarChart, Grid } from 'react-native-svg-charts';
 import { Defs, LinearGradient, Stop } from 'react-native-svg';
+import { AppContext } from '../Context/AppContext';
 
 const PeopleExitPerHour = () => {
+  const { summary , exitData } = useContext(AppContext);
   // Data for the bar chart
   const data = [
     { Values: 1, Hour: '5 AM' },
@@ -185,7 +187,7 @@ const PeopleExitPerHour = () => {
   );
 
   // Calculate the maximum value for setting content inset
-  const maxValues = Math.max(...data.map(item => item.Values));
+  // const maxValues = Math.max(...data.map(item => item.Values));
   const contentInset = { top: 10, bottom: 10 }; // Adjust content inset as needed
 
   return (
@@ -195,7 +197,7 @@ const PeopleExitPerHour = () => {
           <View style={styles.chartContainer}>
             <BarChart
               style={styles.chart}
-              data={data}
+              data={exitData}
               yAccessor={({ item }) => item.Values}
               svg={{
                 fill: 'url(#blueGradient)', // Use blue gradient for bars
@@ -216,8 +218,8 @@ const PeopleExitPerHour = () => {
           </View>
         </View>
         <View style={styles.text_inner_grah}>
-        <Text style={styles.chartText_active}>People Entry Per Hour</Text>
-        <Text style={styles.chartText_num}>Total: {data.reduce((total, item) => total + item.Values, 0)}</Text>
+        <Text style={styles.chartText_active}>People Exit Per Hour</Text>
+        <Text style={styles.chartText_num}>{summary?.Total_Exit}</Text>
         </View>
       </View>
     </View>
@@ -252,7 +254,9 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 2,
     marginBottom: 5,
-    width: 120, // Ensure full width within the card
+    height: 135,
+    width:125,
+    // width: 120, // Ensure full width within the card
   },
   chartContainer: {
     alignItems: 'center',
@@ -290,7 +294,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#ffffff',
-    marginTop: -12,
+    // marginTop: -12,
   },
   
 });

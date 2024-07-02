@@ -1,8 +1,10 @@
-import React from 'react';
+import React , { useContext }  from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Change the icon library if needed
+import { AppContext } from '../Context/AppContext';
 
 const AccessDenied = () => {
+  const { summary } = useContext(AppContext);
   const data = {
     icon: 'close',
     label: '',
@@ -18,7 +20,7 @@ const AccessDenied = () => {
       <Text style={styles.label}>Access{'\n'}Denied</Text>
       </View>
       <View style={styles.iconContainer_second_text}>
-      <Text style={styles.value}>{data.value}</Text>
+      <Text style={styles.value}>{summary?.Access_Denied}</Text>
       </View>
     </View>
   );

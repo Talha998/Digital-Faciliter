@@ -1,24 +1,30 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { WebView } from 'react-native-webview'; // Import WebView for rendering web content
+import { WebView } from 'react-native-webview';
+import { AppContext } from '../Context/AppContext';
+
 const AlarmPerChart = () => {
-  // Data for the pie chart
+  const { summary, alarmData } = useContext(AppContext);
+
+  // Check if alarmData is available and not empty
+  const hasData = alarmData && alarmData.length > 0;
+
   const data = {
-    series: [5, 6, 7, 8, 9, 10, 11, 12, 1, 3, 4],
+    series: alarmData.map(item => item.Values), // Use Values for series data
     options: {
-      labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-      colors: ['#808080', '#448EE4', '#FF6347', '#FFD700', '#8A2BE2', '#7FFF00', '#DC143C', '#00FFFF', '#FF8C00', '#00FA9A', '#1E90FF'], // Define colors for the slices
+      labels: alarmData.map(item => item.Hour), // Use Hour for labels dynamically
+      colors: ['#808080', '#448EE4', '#FF6347', '#FFD700', '#8A2BE2', '#7FFF00', '#DC143C', '#00FFFF', '#FF8C00', '#00FA9A', '#1E90FF', '#FF00FF'],
       legend: {
-        show: false, // Hide legend
+        show: false,
       },
       dataLabels: {
-        enabled: true, // Disable data labels
+        enabled: true,
         style: {
-          fontSize: '5px', // Set font size of data labels
+          fontSize: '5pt', // Adjust font size as needed
         }
       },
       tooltip: {
-        enabled: false, // Disable tooltips
+        enabled: false,
       }
     }
   };
@@ -30,17 +36,17 @@ const AlarmPerChart = () => {
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-          <style>
+        <style>
           body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100%;
             margin: 0;
-            
           }
           #chart {
-            
+            height: 100%;
+            width: 100%;
           }
         </style>
       </head>
@@ -49,7 +55,7 @@ const AlarmPerChart = () => {
         <script>
           var options = ${JSON.stringify(data.options)};
           options.series = ${JSON.stringify(data.series)};
-         options.chart = { type: 'pie', height: 130, width: 130 };
+          options.chart = { type: 'pie', height: '100%', width: '100%' };
           
           var chart = new ApexCharts(document.querySelector("#chart"), options);
           chart.render();
@@ -63,15 +69,19 @@ const AlarmPerChart = () => {
       <View style={styles.greenBackground}>
         <View style={styles.card}>
           <View style={styles.chartContainer}>
-            <WebView
-              originWhitelist={['*']}
-              source={{ html: chartHtml }}
-              style={{ height: 78, width: 100 }} 
-            />
+            {hasData ? (
+              <WebView
+                originWhitelist={['*']}
+                source={{ html: chartHtml }}
+                style={{ height: 120, width: 120 }} // Adjust dimensions as needed
+              />
+            ) : (
+              <Text style={styles.noDataText}>No data available</Text>
+            )}
           </View>
         </View>
         <Text style={styles.chartText_active}>Alarms Per Hour</Text>
-        <Text style={styles.chartText_num}>{data.series.reduce((a, b) => a + b, 0)}</Text>
+        <Text style={styles.chartText_num}>{summary?.Total_Alarm}</Text>
       </View>
     </View>
   );
@@ -102,22 +112,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 3,
     borderWidth: 2,
+    height: 135,
+    width:125,
     marginBottom: 5,
-    
+  },
+  noDataText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginTop:30,
+    // color: '#ff0000', // Red color for no data message
   },
   chartContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  chart: {
-    height: 100,
-    width: 100,
-  },
-  chartText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 5,
   },
   chartText_active: {
     fontSize: 12,

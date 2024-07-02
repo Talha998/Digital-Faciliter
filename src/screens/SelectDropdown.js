@@ -8,12 +8,17 @@ import CustomDropdown from '../container/SelectCustomDropdown';
 import { AppContext } from '../Context/AppContext';
 
 const SelectDropdown = () => {
-  const { getLevel4 } = useContext(AppContext);
+  const { getLevel4 ,  selectedRegion,
+    setSelectedRegion,
+    selectedCity,
+     setSelectedCity,
+     selectedLocation, 
+     setSelectedLocation } = useContext(AppContext);
   const navigation = useNavigation();
   const [isOpen, setOpen] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState(null);
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  // const [selectedRegion, setSelectedRegion] = useState(null);
+  // const [selectedCity, setSelectedCity] = useState(null);
+  // const [selectedLocation, setSelectedLocation] = useState(null);  
   const [regions, setRegions] = useState([]);
   const [cities, setCities] = useState([]);
   const [locations, setLocations] = useState([]);

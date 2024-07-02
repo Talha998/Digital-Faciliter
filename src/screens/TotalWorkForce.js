@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Change the icon library if needed
+import { AppContext } from '../Context/AppContext';
 
-const TotalWorkForce = () => {
+const TotalWorkForce = (props) => {
+  const { summary } = useContext(AppContext);
   const data = {
     icon: 'account-group',
     label: '',
@@ -18,7 +20,7 @@ const TotalWorkForce = () => {
       <Text style={styles.label}>Total {'\n'} Workforce</Text>
       </View>
       <View style={styles.iconContainer_second_text}>
-      <Text style={styles.value}>{data.value}</Text>
+      <Text style={styles.value}>{summary?.Total_Person}</Text>
       </View>
     </View>
   );

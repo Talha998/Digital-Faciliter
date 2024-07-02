@@ -1,8 +1,10 @@
-import React from 'react';
+import React , { useContext }  from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Change the icon library if needed
+import { AppContext } from '../Context/AppContext';
 
 const DeviceAlarm = () => {
+  const { summary } = useContext(AppContext);
   const data = {
     icon: 'alert',
     label: '',
@@ -18,7 +20,7 @@ const DeviceAlarm = () => {
       <Text style={styles.label}>Device{'\n'}Alarm</Text>
       </View>
       <View style={styles.iconContainer_second_text}>
-      <Text style={styles.value}>{data.value}</Text>
+      <Text style={styles.value}>{summary?.Device_Alarm}</Text>
       </View>
     </View>
   );

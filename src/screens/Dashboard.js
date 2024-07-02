@@ -18,7 +18,9 @@ import InOutComponent from './InOutComponent';
 import { AppContext } from '../Context/AppContext';
 
 const Dashboard = () => {
-  const { area, brand, selectedArea, setSelectedArea, selectedBrand, setSelectedBrand } = useContext(AppContext);
+  const { area, brand, selectedArea, setSelectedArea, selectedBrand, setSelectedBrand , summary,
+    loading,
+    getSummary, entryDataSearch } = useContext(AppContext);
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
   const [modalVisible, setModalVisible] = useState(false);
@@ -26,8 +28,19 @@ const Dashboard = () => {
   const scrollViewRef = useRef(null); // Ref for ScrollView
   const [isOpenDropdown4, setIsOpenDropdown4] = useState(false);
   const [isOpenDropdown5, setIsOpenDropdown5] = useState(false);
-
+  const fetchSummaryData = () => {
+    // Replace with actual selected values
+    // getSummary(selectedArea, null, null, selectedBrand, null, null, null, null, null);
+  };
   // Handle refresh action
+  const currentDate = new Date();
+
+  // Set the time to 12:00 AM for the From date
+  const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
+  const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+  useEffect(() =>{
+    getSummary(fromDate, toDate);
+  }, [fromDate , toDate] )
   const handleRefresh = () => {
     // Set background color to indicate refresh
     setRefreshBackgroundColor('#f0f0f0');
@@ -40,11 +53,14 @@ const Dashboard = () => {
 
     // Reset background color after a short delay
     setTimeout(() => {
-      setRefreshBackgroundColor('#ffffff'); // Reset to original background color
+      setRefreshBackgroundColor('#ffffff'); // Reset to original background color4
+      getSummary()
     }, 1000); // Adjust delay as needed
   };
 
+  
   const handleConfirm = () => {
+    getSummary(fromDate, toDate);
     setModalVisible(false);
   };
 
@@ -83,11 +99,11 @@ const Dashboard = () => {
       <View>
         <View style={styles.dateContainer}>
           <Text style={styles.label_from}>From : </Text>
-          <Text style={styles.dateText}>{`${fromDate.toLocaleDateString()} ${fromDate.toLocaleTimeString()}`}</Text>
+          <Text style={styles.dateText}>{`${fromDateTime.toLocaleDateString()} ${fromDateTime.toLocaleTimeString([])}`}</Text>
         </View>
         <View style={styles.dateContainer}>
           <Text style={styles.label_To}>To : </Text>
-          <Text style={styles.dateText}>{`${toDate.toLocaleDateString()} ${toDate.toLocaleTimeString()}`}</Text>
+          <Text style={styles.dateText}>{`${toDateTime.toLocaleDateString()} ${toDateTime.toLocaleTimeString([])}`}</Text>
         </View>
         </View>
           <View style={styles.right_icons}>
@@ -108,53 +124,53 @@ const Dashboard = () => {
       </View>
 
       <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <View style={styles.serverURLContainerf2}>
-              <Text style={styles.modalTitle}>Select Dates</Text>
-            </View>
-            <View style={styles.datePickerContainer}>
-              <Text style={styles.label_dash}>From: </Text>
-              <DatePicker
-                date={fromDate}
-                onDateChange={setFromDate}
-                mode="datetime"
-                style={styles.datePicker}
-                is24hourSource="locale"
-              />
-            </View>
-            <View style={styles.datePickerContainer}>
-              <Text style={styles.label_dash}>To: </Text>
-              <DatePicker
-                date={toDate}
-                onDateChange={setToDate}
-                mode="datetime"
-                style={styles.datePicker}
-                is24hourSource="locale"
-              />
-            </View>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                onPress={handleCancel}
-                style={[styles.modalButton, styles.cancelButton]}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleConfirm}
-                style={[styles.modalButton, styles.confirmButton]}
-              >
-                <Text style={styles.confirmButtonText}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
+      transparent={true}
+      visible={modalVisible}
+      animationType="slide"
+      onRequestClose={() => setModalVisible(false)}
+    >
+      <View style={styles.modalBackground}>
+        <View style={styles.modalContainer}>
+          <View style={styles.serverURLContainerf2}>
+            <Text style={styles.modalTitle}>Select Dates</Text>
+          </View>
+          <View style={styles.datePickerContainer}>
+            <Text style={styles.label_dash}>From: </Text>
+            <DatePicker
+              date={fromDate}
+              onDateChange={setFromDate}
+              mode="datetime" // Allows selection of date and time
+              style={styles.datePicker}
+              is24hourSource="locale"
+            />
+          </View>
+          <View style={styles.datePickerContainer}>
+            <Text style={styles.label_dash}>To: </Text>
+            <DatePicker
+              date={toDate}
+              onDateChange={setToDate}
+              mode="datetime" // Allows selection of date and time
+              style={styles.datePicker}
+              is24hourSource="locale"
+            />
+          </View>
+          <View style={styles.modalButtons}>
+            <TouchableOpacity
+              onPress={handleCancel}
+              style={[styles.modalButton, styles.cancelButton]}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleConfirm}
+              style={[styles.modalButton, styles.confirmButton]}
+            >
+              <Text style={styles.confirmButtonText}>Confirm</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      </View>
+    </Modal>
 
       <View style={[styles.dropdownWrapper, { zIndex: 3000 }]}>
         {/* <Icon name="globe" size={20} color="#fff" style={styles.icon} /> */}
@@ -237,7 +253,7 @@ const Dashboard = () => {
     </View>
     <View style={styles.maindash_firstchart} >
     <View style={styles.GraphDashboard}  >
-    <ActiveWorkforce />
+    <ActiveWorkforce  />
     </View>
     <View style={styles.GraphDashboard}  >
     <AlarmPerChart />
@@ -254,20 +270,20 @@ const Dashboard = () => {
     </View>
     <View style={styles.maindash_thirdchart_second} >
     <View style={styles.GraphDashboard}  >
-    <TotalWorkForce />
+    <TotalWorkForce/>
     </View>
     <View style={styles.GraphDashboard}  >
-    <DeviceAlarm />
+    <DeviceAlarm   />
     </View>
     </View>
     
   {/* ///  second Half /// */}
   <View style={styles.maindash_fourthchart_second} >
     <View style={styles.GraphDashboard}  >
-    <AccessGranted />
+    <AccessGranted   />
     </View>
     <View style={styles.GraphDashboard}  >
-    <AccessDenied />
+    <AccessDenied value={summary?.Access_Denied}   />
     </View>
     
     </View>
