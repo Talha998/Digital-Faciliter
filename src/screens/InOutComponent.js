@@ -23,7 +23,7 @@ const theme = {
 };
 
 const InOutComponent = () => {
-  const { deviceLoc, setDeviceLoc, setDashDeviceData ,  selectedButton , setSelectedButton , getSummary } = useContext(AppContext);
+  const { deviceLoc, setDeviceLoc, setDashDeviceData ,  selectedButton , setSelectedButton  } = useContext(AppContext);
   
   const [loading, setLoading] = useState(false);
   // useEffect(() => {
@@ -32,7 +32,7 @@ const InOutComponent = () => {
 
   const handleRadioButtonPress = (value) => {
     setSelectedButton(value);
-    getSummary(value);
+    // getSummary(value);
   };
 
 
