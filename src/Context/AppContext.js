@@ -5,6 +5,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
+    const currentDate = new Date();
+  
+    const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
+    const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+  
+    const [fromDate, setFromDate] = useState(fromDateTime);
+    const [toDate, setToDate] = useState(toDateTime);
+  
+    const convertToLocalTime = (date) => {
+      const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+      return localDate.toISOString().slice(0, 19).replace('T', ' ');
+    };
+    const startDate = convertToLocalTime(fromDate)
+    const endDate = convertToLocalTime(toDate)
+    const [StartDatefd, setStartDatefd] = useState(startDate);
+    const [EndDatetd, setEndDatetd] = useState(endDate);
     const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
     const [isServerURLModalVisible, setServerURLModalVisible] = useState(false);
     const [isModifyPasswordModalVisible, setModifyPasswordModalVisible] = useState(false);
@@ -19,7 +35,7 @@ const AppProvider = ({ children }) => {
   const [alarmData, setAlarmData] = useState([]);
   const [dashDeviceData, setDashDeviceData] = useState([]);
   const [filter, setFilter] = useState([]);
-  console.log(dashDeviceData , "dashDeviceData")
+  const [selectedButton, setSelectedButton] = useState('FilterByCat');
   const [deviceLoc, setDeviceLoc] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -29,6 +45,9 @@ const AppProvider = ({ children }) => {
 //   useEffect(() =>{
 //     getSummary();
 //   }, [] )
+useEffect(() =>{
+    getSummary();
+  }, [selectedRegion , selectedCity , selectedLocation , selectedArea , selectedBrand] )
     const getLevel4 = async (locationId) => {
        
         try {
@@ -80,7 +99,6 @@ const AppProvider = ({ children }) => {
         }
     };
     const getSummary = async (fromDate, toDate) => {
-        console.log(fromDate , toDate ,"toDate" )
         // fromDate.setHours(0, 0, 0, 0);
 
         // // Set time for toDate to 23:59:59 (end of day)
@@ -105,9 +123,9 @@ const AppProvider = ({ children }) => {
                 language: "p",
                 alarmType: "0",
                 proceName_Device: "DeviceStatus",
-                proceName_FilterBy: "All",
-                startDT: fromDate,
-                endDT: toDate,
+                proceName_FilterBy: selectedButton,
+                startDT: StartDatefd,
+                endDT: EndDatetd,
             };
     
             console.log(data, "Request Data"); // Log the request data for debugging
@@ -173,7 +191,17 @@ const AppProvider = ({ children }) => {
     selectedCity,
      setSelectedCity,
      selectedLocation, 
-     setSelectedLocation
+     setSelectedLocation,
+     selectedButton,
+      setSelectedButton,
+      StartDatefd,
+      setStartDatefd,
+      EndDatetd, 
+      setEndDatetd,
+      setFromDate,
+      setToDate,
+      fromDate,
+      toDate
         }}>
             {children}
         </AppContext.Provider>
