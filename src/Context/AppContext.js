@@ -45,9 +45,7 @@ const AppProvider = ({ children }) => {
 //   useEffect(() =>{
 //     getSummary();
 //   }, [] )
-useEffect(() =>{
-    getSummary();
-  }, [selectedRegion , selectedCity , selectedLocation , selectedArea , selectedBrand] )
+
     const getLevel4 = async (locationId) => {
        
         try {
@@ -157,7 +155,9 @@ useEffect(() =>{
             setLoading(false);
         }
     };
-    
+    useEffect(() =>{
+        getSummary();
+      }, [selectedRegion , selectedCity , selectedLocation , selectedArea , selectedBrand , StartDatefd , EndDatetd ] )
     return (
         <AppContext.Provider value={{
             isLanguageModalVisible,

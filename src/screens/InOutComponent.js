@@ -23,16 +23,16 @@ const theme = {
 };
 
 const InOutComponent = () => {
-  const { deviceLoc, setDeviceLoc, setDashDeviceData ,  selectedButton , setSelectedButton } = useContext(AppContext);
-  // const [selectedButton, setSelectedButton] = useState('FilterByCat');
-  // const [deviceLoc, setdeviceLoc] = useState([]);
+  const { deviceLoc, setDeviceLoc, setDashDeviceData ,  selectedButton , setSelectedButton , getSummary } = useContext(AppContext);
+  
   const [loading, setLoading] = useState(false);
-
+  
 
   const handleRadioButtonPress = (value) => {
     setSelectedButton(value);
-    // getSummary(value);
+    getSummary(value);
   };
+
 
   return (
     <PaperProvider theme={theme}>
