@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
+import { AppContext } from '../Context/AppContext';
 
 const DeviceStatus = () => {
+  const { dashDeviceData } = useContext(AppContext);
+console.log(dashDeviceData , "dashDeviceData")
   return (
     <View style={styles.container_device_status}>
       {/* Table Header */}
@@ -20,21 +22,18 @@ const DeviceStatus = () => {
         </View>
 
         {/* Table Rows */}
-        {/* Example rows (replace with actual data rendering logic) */}
-        <View style={styles.tableRow}>
-          <Text style={styles.tableCell}>Mobile</Text>
-          <Text style={styles.cellText}>iPhone</Text>
-          <Text style={styles.cellText}>Active</Text>
-        </View>
-        <View style={styles.tableRow}>
-          <Text style={styles.tableCell}>Desktop</Text>
-          <Text style={styles.cellText}>Windows </Text>
-          <Text style={styles.cellText}>Inactive</Text>
-        </View>
+        {dashDeviceData?.map(device => (
+          <View style={styles.tableRow} key={device?.Eqpt_ID}>
+            <Text style={styles.tableCell}>{device?.Eqpt_Type_Title}</Text>
+            <Text style={styles.cellText}>{device?.Eqpt_Title}</Text>
+            <Text style={styles.cellText}>{device?.Device_Status}</Text>
+          </View>
+        ))}
       </View>
 
       {/* Search Bar (assuming it's at the bottom of the table) */}
-     
+      {/* Include your search bar component here if applicable */}
+
     </View>
   );
 };
