@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback } from 're
 import Svg, { Rect, Text as SvgText, G } from 'react-native-svg';
 
 const AccessDeniedPerDayHeatMap = ({ device, onClose }) => {
-    // Dummy data to replace data from context
     const name = device ? device.Eqpt_Title : "User";
     const loading = false;
     const dummyData = [
@@ -27,9 +26,7 @@ const AccessDeniedPerDayHeatMap = ({ device, onClose }) => {
         temp.xAis = [];
         temp.yAis = [];
 
-        // Extract unique x-axis and y-axis labels
-        const xLabels = [1, 2, 3, 4, 5, 6, 7,
-            8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+        const xLabels = Array.from({ length: 31 }, (_, i) => i + 1);
         const yLabels = [...new Set(dummyData.map((item) => item.Group))];
 
         for (let y = 0; y < yLabels.length; y++) {
@@ -124,12 +121,9 @@ const AccessDeniedPerDayHeatMap = ({ device, onClose }) => {
                 </View>
             )}
             {renderTooltip()}
-            {/* <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity> */}
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
