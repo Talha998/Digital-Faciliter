@@ -1,121 +1,214 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, ScrollView, TextInput, Button  } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppContext } from '../Context/AppContext';
+
 
 const EmergencyEquationComponent = () => {
-  const headers = ['Person ID', 'Card Number', 'Person Name', 'Department', 'Designation', 'Level 4', 'Entry Time'];
+    const {
+        selectedRegion,
+        selectedCity,
+        selectedLocation,
+        selectedArea,
+        selectedBrand,
+    } = useContext(AppContext);
 
-  const initialData = [
-    { id: '1', cardNumber: '1234', name: 'John', department: 'HR', designation: 'Manager', level4: 'L4-A', entryTime: '09:00 AM' },
-    { id: '2', cardNumber: '1234', name: 'Jane', department: 'Finance', designation: 'Analyst', level4: 'L4-B', entryTime: '09:15 AM' },
-    { id: '3', cardNumber: '1234', name: 'Jake', department: 'Engineering', designation: 'Engineer', level4: 'L4-C', entryTime: '10:00 AM' },
-    // Add more data objects here
-  ];
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
+    const [emergencypageNumber, setEmergencypageNumber] = useState(0);
+    const [emergencypageSize, setEmergencypageSize] = useState(10);
+    const [totalEmergencyRecords, setTotalEmergencyRecords] = useState(0);
+    const [open, setOpen] = useState(false);
+    const [pageSizeItems, setPageSizeItems] = useState([
+        { label: '10', value: 10 },
+        { label: '25', value: 25 },
+        { label: '50', value: 50 },
+        { label: '100', value: 100 }
+    ]);
 
-  const [data, setData] = useState(initialData);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(initialData);
+    useEffect(() => {
+        fetchEmergencyData(emergencypageNumber, emergencypageSize);
+    }, [selectedRegion, selectedCity, selectedLocation, selectedArea, selectedBrand, emergencypageNumber, emergencypageSize]);
 
-  const personIdWidth = 80;
-  const cardNumberWidth = 110;
-  const PersonNameWidth = 110;
-  const DepartmentWidth = 100;
-  const DesignationWidth = 100;
-  const Level4Width = 100;
-  const EntryTimeWidth = 100;
+    const fetchEmergencyData = async (pageNumber, pageSize) => {
+        try {
+          const baseUrl = await AsyncStorage.getItem('baseURL');
+          const token = await AsyncStorage.getItem('userToken');
+          const headers = {
+              Authorization: `Bearer ${token}`,
+          };
+            const response = await axios.get(`${baseUrl}/api/GetEmergencyEquation`, {
+                params: {
+                    'api-version': '1.0',
+                    'Language': 'p',
+                    'Level1_ID': selectedRegion,
+                    'Level2_ID': selectedCity,
+                    'Level3_ID': selectedLocation,
+                    'Level4_ID': selectedArea,
+                    'Eqpt_Group_ID': selectedBrand,
+                    'Page_Number': pageNumber + 1, // API expects 1-based index
+                    'Page_Size': pageSize
+                },
+                headers: headers
+            });
 
-  // Function to handle search input change
-  const handleSearch = (text) => {
-    setSearchQuery(text);
-    if (text.trim() === '') {
-      setFilteredData(data); // Reset to original data if search query is empty
-    } else {
-      const filtered = data.filter(item => item.name.toLowerCase().includes(text.toLowerCase()));
-      setFilteredData(filtered);
-    }
-  };
+            if (response.data.StatusCode === 200) {
+                setFilteredData(response.data.Data.Data);
+                setTotalEmergencyRecords(response.data.Data.TotalCount);
+            } else {
+                console.error('Error fetching data:', response.data.Message);
+                setFilteredData([]);
+                setTotalEmergencyRecords(0);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setFilteredData([]);
+            setTotalEmergencyRecords(0);
+        }
+    };
 
-  return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search by Person Name"
-        onChangeText={handleSearch}
-        value={searchQuery}
-      />
-      <ScrollView horizontal>
-        <View style={styles.table}>
-          <View style={styles.headerRow}>
-            <Text style={[styles.headerCell, { width: personIdWidth, borderRightWidth: 1, borderColor: '#fff' }]}>Person ID</Text>
-            <Text style={[styles.headerCell, { width: cardNumberWidth, borderRightWidth: 1, borderColor: '#fff' }]}>Card Number</Text>
-            <Text style={[styles.headerCell, { width: PersonNameWidth, borderRightWidth: 1, borderColor: '#fff' }]}>Person Name</Text>
-            <Text style={[styles.headerCell, { width: DepartmentWidth, borderRightWidth: 1, borderColor: '#fff' }]}>Department</Text>
-            <Text style={[styles.headerCell, { width: DesignationWidth, borderRightWidth: 1, borderColor: '#fff' }]}>Designation</Text>
-            <Text style={[styles.headerCell, { width: Level4Width, borderRightWidth: 1, borderColor: '#fff' }]}>Level4</Text>
-            <Text style={[styles.headerCell, { width: EntryTimeWidth }]}>Entry Time</Text>
-          </View>
-          {filteredData.length > 0 ? (
-            filteredData.map((item, index) => (
-              <View key={index} style={styles.dataRow}>
-                <Text style={[styles.dataCell, { width: personIdWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.id}</Text>
-                <Text style={[styles.dataCell, { width: cardNumberWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.cardNumber}</Text>
-                <Text style={[styles.dataCell, { width: PersonNameWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.name}</Text>
-                <Text style={[styles.dataCell, { width: DepartmentWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.department}</Text>
-                <Text style={[styles.dataCell, { width: DesignationWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.designation}</Text>
-                <Text style={[styles.dataCell, { width: Level4Width, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.level4}</Text>
-                <Text style={[styles.dataCell, { width: EntryTimeWidth }]}>{item.entryTime}</Text>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.noDataText}>No data found</Text>
-          )}
+    const handleSearch = (text) => {
+        setSearchQuery(text);
+        if (text.trim() === '') {
+            setFilteredData(emergencyDList);
+        } else {
+            const filtered = emergencyDList.filter(item => item.Person_Name.toLowerCase().includes(text.toLowerCase()));
+            setFilteredData(filtered);
+        }
+    };
+
+    const onPageChange = (newPageNumber) => {
+        setEmergencypageNumber(newPageNumber);
+    };
+
+    const onIncomingpageSizeChange = (itemValue) => {
+        setEmergencypageSize(itemValue);
+        setEmergencypageNumber(0); // Reset to first page on page size change
+    };
+
+    return (
+        <View style={styles.container}>
+            <TextInput
+                style={styles.searchInput}
+                placeholder="Search by Person Name"
+                onChangeText={handleSearch}
+                value={searchQuery}
+            />
+            {/* <ScrollView horizontal> */}
+                <View style={styles.table}>
+                    <View style={styles.headerRow}>
+                        <Text style={[styles.headerCell, { width: 80, borderRightWidth: 1, borderColor: '#fff' }]}>Person ID</Text>
+                        <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Card Number</Text>
+                        <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Person Name</Text>
+                        <Text style={[styles.headerCell, { width: 100, borderRightWidth: 1, borderColor: '#fff' }]}>Department</Text>
+                        <Text style={[styles.headerCell, { width: 100, borderRightWidth: 1, borderColor: '#fff' }]}>Designation</Text>
+                        <Text style={[styles.headerCell, { width: 100, borderRightWidth: 1, borderColor: '#fff' }]}>Level4</Text>
+                        <Text style={[styles.headerCell, { width: 100 }]}>Entry Time</Text>
+                    </View>
+                    <ScrollView style={styles.scrollView}>
+            {filteredData.length > 0 ? (
+                filteredData.map((item, index) => (
+                    <View key={index} style={styles.dataRow}>
+                        <Text style={[styles.dataCell, { width: 80, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Person_ID}</Text>
+                        <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Person_Card_No}</Text>
+                        <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Person_Name}</Text>
+                        <Text style={[styles.dataCell, { width: 100, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Department_Title}</Text>
+                        <Text style={[styles.dataCell, { width: 100, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Designation_Title}</Text>
+                        <Text style={[styles.dataCell, { width: 100, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Level4_Title}</Text>
+                        <Text style={[styles.dataCell, { width: 100 }]}>{item.Entry_Time}</Text>
+                    </View>
+                ))
+            ) : (
+                <Text style={styles.noDataText}>No data found</Text>
+            )}
+        </ScrollView>
+                </View>
+            
+            <View style={styles.pagination}>
+                <Button  style={styles.button} title="<<" onPress={() => onPageChange(0)} disabled={emergencypageNumber === 0} />
+                <Button  style={styles.button} title="<" onPress={() => onPageChange(emergencypageNumber - 1)} disabled={emergencypageNumber === 0} />
+                <Text style={styles.pageNumber}>
+                    Page {emergencypageNumber + 1} of {Math.ceil(totalEmergencyRecords / emergencypageSize)}
+                </Text>
+                <Button  style={styles.button} title=">" onPress={() => onPageChange(emergencypageNumber + 1)} disabled={emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1} />
+                <Button  style={styles.button}  title=">>" onPress={() => onPageChange(Math.ceil(totalEmergencyRecords / emergencypageSize) - 1)} disabled={emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1} />
+            </View>
+            <DropDownPicker
+                open={open}
+                value={emergencypageSize}
+                items={pageSizeItems}
+                setOpen={setOpen}
+                setValue={setEmergencypageSize}
+                setItems={setPageSizeItems}
+                containerStyle={styles.dropdownContainer}
+                onChangeValue={onIncomingpageSizeChange}
+            />
         </View>
-      </ScrollView>
-    </View>
-  );
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  searchInput: {
-    height: 40,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  table: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    backgroundColor: '#004d40',
-  },
-  headerCell: {
-    padding: 8,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-  },
-  dataRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-  },
-  dataCell: {
-    padding: 8,
-    textAlign: 'center',
-  },
-  noDataText: {
-    padding: 20,
-    textAlign: 'center',
-    color: '#777',
-    fontStyle: 'italic',
-  },
+  scrollView: {
+    maxHeight: 420, // Adjust the maximum height as per your requirement
+},
+    container: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#fff',
+    },
+    searchInput: {
+        height: 40,
+        borderColor: '#ddd',
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        marginBottom: 10,
+    },
+    table: {
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
+    headerRow: {
+        flexDirection: 'row',
+        backgroundColor: '#004d40',
+    },
+    headerCell: {
+        padding: 8,
+        fontWeight: 'bold',
+        color: '#fff',
+        textAlign: 'center',
+    },
+    dataRow: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderColor: '#ddd',
+    },
+    dataCell: {
+        padding: 8,
+        textAlign: 'center',
+    },
+    noDataText: {
+        padding: 20,
+        textAlign: 'center',
+        color: '#777',
+        fontStyle: 'italic',
+    },
+    pagination: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    pageNumber: {
+        fontSize: 16,
+        marginHorizontal: 10,
+    },
+    dropdownContainer: {
+        width: 150,
+        marginTop: 10,
+    },
+    
 });
 
 export default EmergencyEquationComponent;
