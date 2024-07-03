@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, Button  } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, Button  , TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,86 +7,87 @@ import { AppContext } from '../Context/AppContext';
 
 
 const EmergencyEquationComponent = () => {
-    const {
-        selectedRegion,
-        selectedCity,
-        selectedLocation,
-        selectedArea,
-        selectedBrand,
-    } = useContext(AppContext);
+  const {
+    selectedRegion,
+    selectedCity,
+    selectedLocation,
+    selectedArea,
+    selectedBrand,
+} = useContext(AppContext);
 
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filteredData, setFilteredData] = useState([]);
-    const [emergencypageNumber, setEmergencypageNumber] = useState(0);
-    const [emergencypageSize, setEmergencypageSize] = useState(10);
-    const [totalEmergencyRecords, setTotalEmergencyRecords] = useState(0);
-    const [open, setOpen] = useState(false);
-    const [pageSizeItems, setPageSizeItems] = useState([
-        { label: '10', value: 10 },
-        { label: '25', value: 25 },
-        { label: '50', value: 50 },
-        { label: '100', value: 100 }
-    ]);
+const [searchQuery, setSearchQuery] = useState('');
+const [filteredData, setFilteredData] = useState([]);
+const [emergencypageNumber, setEmergencypageNumber] = useState(0);
+const [emergencypageSize, setEmergencypageSize] = useState(10);
+const [totalEmergencyRecords, setTotalEmergencyRecords] = useState(0);
+const [open, setOpen] = useState(false);
+const [pageSizeItems, setPageSizeItems] = useState([
+    { label: '10', value: 10 },
+    { label: '25', value: 25 },
+    { label: '50', value: 50 },
+    { label: '100', value: 100 }
+]);
 
-    useEffect(() => {
-        fetchEmergencyData(emergencypageNumber, emergencypageSize);
-    }, [selectedRegion, selectedCity, selectedLocation, selectedArea, selectedBrand, emergencypageNumber, emergencypageSize]);
+useEffect(() => {
+    fetchEmergencyData(emergencypageNumber, emergencypageSize);
+}, [selectedRegion, selectedCity, selectedLocation, selectedArea, selectedBrand, emergencypageNumber, emergencypageSize]);
 
-    const fetchEmergencyData = async (pageNumber, pageSize) => {
-        try {
-          const baseUrl = await AsyncStorage.getItem('baseURL');
-          const token = await AsyncStorage.getItem('userToken');
-          const headers = {
-              Authorization: `Bearer ${token}`,
-          };
-            const response = await axios.get(`${baseUrl}/api/GetEmergencyEquation`, {
-                params: {
-                    'api-version': '1.0',
-                    'Language': 'p',
-                    'Level1_ID': selectedRegion,
-                    'Level2_ID': selectedCity,
-                    'Level3_ID': selectedLocation,
-                    'Level4_ID': selectedArea,
-                    'Eqpt_Group_ID': selectedBrand,
-                    'Page_Number': pageNumber + 1, // API expects 1-based index
-                    'Page_Size': pageSize
-                },
-                headers: headers
-            });
+const fetchEmergencyData = async (pageNumber, pageSize) => {
+    try {
+        const baseUrl = await AsyncStorage.getItem('baseURL');
+        const token = await AsyncStorage.getItem('userToken');
+        const headers = {
+            Authorization: `Bearer ${token}`,
+        };
+        const response = await axios.get(`${baseUrl}/api/GetEmergencyEquation`, {
+            params: {
+                'api-version': '1.0',
+                'Language': 'p',
+                'Level1_ID': selectedRegion,
+                'Level2_ID': selectedCity,
+                'Level3_ID': selectedLocation,
+                'Level4_ID': selectedArea,
+                'Eqpt_Group_ID': selectedBrand,
+                'Page_Number': pageNumber + 1, // API expects 1-based index
+                'Page_Size': pageSize
+            },
+            headers: headers
+        });
 
-            if (response.data.StatusCode === 200) {
-                setFilteredData(response.data.Data.Data);
-                setTotalEmergencyRecords(response.data.Data.TotalCount);
-            } else {
-                console.error('Error fetching data:', response.data.Message);
-                setFilteredData([]);
-                setTotalEmergencyRecords(0);
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
+        if (response.data.StatusCode === 200) {
+            setFilteredData(response.data.Data.Data);
+            setTotalEmergencyRecords(response.data.Data.TotalCount);
+        } else {
+            console.error('Error fetching data:', response.data.Message);
             setFilteredData([]);
             setTotalEmergencyRecords(0);
         }
-    };
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        setFilteredData([]);
+        setTotalEmergencyRecords(0);
+    }
+};
 
-    const handleSearch = (text) => {
-        setSearchQuery(text);
-        if (text.trim() === '') {
-            setFilteredData(emergencyDList);
-        } else {
-            const filtered = emergencyDList.filter(item => item.Person_Name.toLowerCase().includes(text.toLowerCase()));
-            setFilteredData(filtered);
-        }
-    };
+const handleSearch = (text) => {
+    setSearchQuery(text);
+    if (text.trim() === '') {
+        setFilteredData(filteredData); // No filter applied, use current filteredData
+    } else {
+        const filtered = filteredData.filter(item => item.Person_Name.toLowerCase().includes(text.toLowerCase()));
+        setFilteredData(filtered);
+    }
+};
 
-    const onPageChange = (newPageNumber) => {
-        setEmergencypageNumber(newPageNumber);
-    };
+const onPageChange = (newPageNumber) => {
+    setEmergencypageNumber(newPageNumber);
+};
 
-    const onIncomingpageSizeChange = (itemValue) => {
-        setEmergencypageSize(itemValue);
-        setEmergencypageNumber(0); // Reset to first page on page size change
-    };
+const onIncomingpageSizeChange = (itemValue) => {
+    setEmergencypageSize(itemValue);
+    setEmergencypageNumber(0); // Reset to first page on page size change
+};
+
 
     return (
         <View style={styles.container}>
@@ -126,14 +127,38 @@ const EmergencyEquationComponent = () => {
         </ScrollView>
                 </View>
             
-            <View style={styles.pagination}>
-                <Button  style={styles.button} title="<<" onPress={() => onPageChange(0)} disabled={emergencypageNumber === 0} />
-                <Button  style={styles.button} title="<" onPress={() => onPageChange(emergencypageNumber - 1)} disabled={emergencypageNumber === 0} />
+                <View style={styles.pagination}>
+                <TouchableOpacity 
+                    onPress={() => onPageChange(0)} 
+                    disabled={emergencypageNumber === 0}
+                    style={[styles.button, emergencypageNumber === 0 && styles.disabledButton]}
+                >
+                    <Text style={styles.buttonText}>{"<<"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={() => onPageChange(emergencypageNumber - 1)} 
+                    disabled={emergencypageNumber === 0}
+                    style={[styles.button, emergencypageNumber === 0 && styles.disabledButton]}
+                >
+                    <Text style={styles.buttonText}>{"<"}</Text>
+                </TouchableOpacity>
                 <Text style={styles.pageNumber}>
                     Page {emergencypageNumber + 1} of {Math.ceil(totalEmergencyRecords / emergencypageSize)}
                 </Text>
-                <Button  style={styles.button} title=">" onPress={() => onPageChange(emergencypageNumber + 1)} disabled={emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1} />
-                <Button  style={styles.button}  title=">>" onPress={() => onPageChange(Math.ceil(totalEmergencyRecords / emergencypageSize) - 1)} disabled={emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1} />
+                <TouchableOpacity 
+                    onPress={() => onPageChange(emergencypageNumber + 1)} 
+                    disabled={emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1}
+                    style={[styles.button, emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1 && styles.disabledButton]}
+                >
+                    <Text style={styles.buttonText}>{">"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={() => onPageChange(Math.ceil(totalEmergencyRecords / emergencypageSize) - 1)} 
+                    disabled={emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1}
+                    style={[styles.button, emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1 && styles.disabledButton]}
+                >
+                    <Text style={styles.buttonText}>{">>"}</Text>
+                </TouchableOpacity>
             </View>
             <DropDownPicker
                 open={open}
@@ -200,10 +225,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 10,
     },
-    pageNumber: {
-        fontSize: 16,
-        marginHorizontal: 10,
-    },
+    button: {
+      padding: 10,
+      backgroundColor: '#004d40',
+      marginHorizontal: 5,
+      borderRadius: 5,
+  },
+  disabledButton: {
+      backgroundColor: '#ccc',
+  },
+  buttonText: {
+      color: '#fff',
+  },
+  pageNumber: {
+      marginHorizontal: 10,
+      fontSize: 16,
+  },
     dropdownContainer: {
         width: 150,
         marginTop: 10,
