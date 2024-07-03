@@ -21,7 +21,7 @@ const DeviceStatus = () => {
     navigation.navigate('DeviceDetails', { deviceId });
   };
 
-  console.log(dashDeviceData, "dashDeviceData");
+
 
   return (
     <View style={styles.container_device_status}>

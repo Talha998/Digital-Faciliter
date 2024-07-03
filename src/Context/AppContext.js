@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
+    const [Device_DeniedHourSum, setDevice_DeniedHourSum] = useState([]);
     const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
     const [isServerURLModalVisible, setServerURLModalVisible] = useState(false);
     const [isModifyPasswordModalVisible, setModifyPasswordModalVisible] = useState(false);
@@ -178,7 +179,8 @@ const AppProvider = ({ children }) => {
      selectedLocation, 
      setSelectedLocation,
      selectedButton,
-      setSelectedButton
+      setSelectedButton,
+      Device_DeniedHourSum, setDevice_DeniedHourSum
         }}>
             {children}
         </AppContext.Provider>

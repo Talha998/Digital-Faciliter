@@ -1,23 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState , useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import Svg, { Rect, Text as SvgText, G } from 'react-native-svg';
+import { AppContext } from '../Context/AppContext';
 
 const CardByCardholderGraph = () => {
     // Dummy data to replace data from context
+    const { Device_DeniedHourSum } = useContext(AppContext);
+    console.log(Device_DeniedHourSum , "setDevice_DeniedHourSum")
     const name = "User";
     const loading = false;
-    const dummyData = [
-        { Group: 'ID card no longer valid', Day: 4, Values: 1 },
-        { Group: 'ID Card Unknown', Day: 4, Values: 1 },
-        { Group: 'Wrong access level', Day: 4, Values: 1 },
-        { Group: 'Wrong time\r\n', Day: 4, Values: 4 },
-        { Group: 'Access not allowed', Day: 4, Values: 22 },
-        { Group: 'Access not allowed', Day: 5, Values: 4 },
-        { Group: 'Wrong time\r\n', Day: 5, Values: 9 },
-        { Group: 'ID card has been blocked', Day: 6, Values: 1 },
-        { Group: 'Access not allowed', Day: 6, Values: 7 },
-        // Add more dummy data as needed
-    ];
 
     const [tooltip, setTooltip] = useState(null);
 
@@ -30,7 +21,7 @@ const CardByCardholderGraph = () => {
         // Extract unique x-axis and y-axis labels
         const xLabels = [1, 2, 3, 4, 5, 6, 7,
             8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
-        const yLabels = [...new Set(dummyData.map((item) => item.Group))];
+        const yLabels = [...new Set(Device_DeniedHourSum.map((item) => item.Group))];
 
         for (let y = 0; y < yLabels.length; y++) {
             temp.dataSource.push([]);
@@ -38,7 +29,7 @@ const CardByCardholderGraph = () => {
             temp.xAis.push(yLabels[y]);
 
             for (let x = 0; x < xLabels.length; x++) {
-                const item = dummyData.find((d) => d.Day === xLabels[x] && d.Group === yLabels[y]);
+                const item = Device_DeniedHourSum.find((d) => d.Day === xLabels[x] && d.Group === yLabels[y]);
                 temp.dataSource[y].push(item ? item : { Values: '' });
             }
         }
@@ -78,7 +69,7 @@ const CardByCardholderGraph = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Access Denied for {name}</Text>
-            {dummyData.length > 0 ? (
+            {Device_DeniedHourSum.length > 0 ? (
                 loading ? (
                     <View style={styles.spinner}><Text>Loading...</Text></View>
                 ) : (
