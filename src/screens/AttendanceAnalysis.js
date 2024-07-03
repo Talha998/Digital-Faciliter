@@ -1,32 +1,126 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef , useContext , useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, RefreshControl , TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DropDownPicker from 'react-native-dropdown-picker';
 import DatePicker from 'react-native-date-picker';
+import { AppContext } from '../Context/AppContext'
+
+
+;
 
 const AttendanceAnalysis = () => {
+  const {
+    selectedRegion,
+    selectedCity,
+    selectedLocation,
+    selectedArea,
+    selectedBrand,
+    
+  } = useContext(AppContext);
   const headers = ['Person ID', 'Card Number', 'Person Name', 'Department', 'Designation', 'Level 4', 'Entry Time'];
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
+    const currentDate = new Date();
+  const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
+  const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+
+  const [fromDate, setFromDate] = useState(fromDateTime);
+  const [toDate, setToDate] = useState(toDateTime);
   const [modalVisible, setModalVisible] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [originalData, setOriginalData] = useState([]);
+const [filteredData, setFilteredData] = useState([]);
+console.log(filteredData , originalData , "originalData" )
+  const [emergencypageNumber, setEmergencypageNumber] = useState(0);
+const [emergencypageSize, setEmergencypageSize] = useState(10);
+const [totalEmergencyRecords, setTotalEmergencyRecords] = useState(0);
+  const [pageSizeItems, setPageSizeItems] = useState([
+    { label: '10', value: 10 },
+    { label: '25', value: 25 },
+    { label: '50', value: 50 },
+    { label: '100', value: 100 }
+]);
   
+  const convertToLocalTime = (date) => {
+    
+    const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    return localDate.toISOString().slice(0, 19).replace('T', ' ');
+  };
+//   useEffect(() => {
+//     fetchEmergencyData(emergencypageNumber, emergencypageSize);
+// }, [selectedRegion, selectedCity, selectedLocation, selectedArea, selectedBrand, emergencypageNumber, emergencypageSize , startDate , endDate]);
+
+const fetchEmergencyData = async (pageNumber, pageSize) => {
+    try {
+        const baseUrl = await AsyncStorage.getItem('baseURL');
+        const token = await AsyncStorage.getItem('userToken');
+        const headers = {
+            Authorization: `Bearer ${token}`,
+        };
+        const response = await axios.get(`${baseUrl}/api/GetAttendEntryExit`, {
+            params: {
+                'api-version': '1.0',
+                'Language': 'p',
+                'Level1_ID': selectedRegion,
+                'Level2_ID': selectedCity,
+                'Level3_ID': selectedLocation,
+                'Level4_ID': selectedArea,
+                'Eqpt_Group_ID': selectedBrand,
+                'Start_Date': startDate,
+                'End_Date': endDate,
+                'Filter_By': "A",
+                'Filter_Text': "None",
+                'Page_Number': pageNumber + 1, // API expects 1-based index
+                'Page_Size': pageSize,
+            },
+            headers: headers
+        });
+
+        if (response.data.StatusCode === 200) {
+            setOriginalData(response.data.Data.Data);
+            setFilteredData(response.data.Data.Data);
+            setTotalEmergencyRecords(response.data.Data.TotalCount);
+        } else {
+            console.error('Error fetching data:', response.data.Message);
+            setOriginalData([]);
+            setFilteredData([]);
+            setTotalEmergencyRecords(0);
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        setOriginalData([]);
+        setFilteredData([]);
+        setTotalEmergencyRecords(0);
+    }
+};
+useEffect(() => {
+  fetchEmergencyData(emergencypageNumber, emergencypageSize);
+}, [selectedRegion, selectedCity, selectedLocation, selectedArea, selectedBrand, emergencypageNumber, emergencypageSize , startDate , endDate]);
+
+  const startDate = convertToLocalTime(fromDate);
+  const endDate = convertToLocalTime(toDate);
   const handleConfirm = () => {
     setModalVisible(false);
+    fetchEmergencyData(emergencypageNumber, emergencypageSize , startDate , endDate);
   };
 
   const handleCancel = () => {
     setModalVisible(false);
   };
+  const onPageChange = (newPageNumber) => {
+    setEmergencypageNumber(newPageNumber);
+};
 
-  const initialData = [
-    { id: '1', cardNumber: '1234', name: 'John', department: 'HR', designation: 'Manager', level4: 'L4-A', entryTime: '09:00 AM' },
-    { id: '2', cardNumber: '1234', name: 'Jane', department: 'Finance', designation: 'Analyst', level4: 'L4-B', entryTime: '09:15 AM' },
-    { id: '3', cardNumber: '1234', name: 'Jake', department: 'Engineering', designation: 'Engineer', level4: 'L4-C', entryTime: '10:00 AM' },
-    // Add more data objects here
-  ];
+const onIncomingpageSizeChange = (itemValue) => {
+    setEmergencypageSize(itemValue);
+    setEmergencypageNumber(0); // Reset to first page on page size change
+};
 
-  const [data, setData] = useState(initialData);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(initialData);
+ 
+
+  
+  
 
   const personIdWidth = 80;
   const cardNumberWidth = 110;
@@ -40,25 +134,26 @@ const AttendanceAnalysis = () => {
   const handleSearch = (text) => {
     setSearchQuery(text);
     if (text.trim() === '') {
-      setFilteredData(data); // Reset to original data if search query is empty
+        setFilteredData(originalData); // Reset to original data when search query is cleared
     } else {
-      const filtered = data.filter(item => item.name.toLowerCase().includes(text.toLowerCase()));
-      setFilteredData(filtered);
+        const filtered = originalData.filter(item => item.Person_Name.toLowerCase().includes(text.toLowerCase()));
+        setFilteredData(filtered);
     }
-  };
+};
+
 
   return (
     <View style={styles.container}>
        <View style={styles.topContainer}>
-      <View>
-        <View style={styles.dateContainer}>
-          <Text style={styles.label_from}>From : </Text>
-          <Text style={styles.dateText}>{`${fromDate.toLocaleDateString()} ${fromDate.toLocaleTimeString()}`}</Text>
-        </View>
-        <View style={styles.dateContainer}>
-          <Text style={styles.label_To}>To : </Text>
-          <Text style={styles.dateText}>{`${toDate.toLocaleDateString()} ${toDate.toLocaleTimeString()}`}</Text>
-        </View>
+       <View>
+          <View style={styles.dateContainer}>
+            <Text style={styles.label_from}>From: </Text>
+            <Text style={styles.dateText}>{startDate}</Text>
+          </View>
+          <View style={styles.dateContainer}>
+            <Text style={styles.label_To}>To: </Text>
+            <Text style={styles.dateText}>{endDate}</Text>
+          </View>
         </View>
           <View style={styles.right_icons}>
         <TouchableOpacity
@@ -92,7 +187,7 @@ const AttendanceAnalysis = () => {
               <Text style={styles.label_dash}>From: </Text>
               <DatePicker
                 date={fromDate}
-                onDateChange={setFromDate}
+                onDateChange={(date) => setFromDate(new Date(date))}
                 mode="datetime"
                 style={styles.datePicker}
                 is24hourSource="locale"
@@ -102,23 +197,17 @@ const AttendanceAnalysis = () => {
               <Text style={styles.label_dash}>To: </Text>
               <DatePicker
                 date={toDate}
-                onDateChange={setToDate}
+                onDateChange={(date) => setToDate(new Date(date))}
                 mode="datetime"
                 style={styles.datePicker}
                 is24hourSource="locale"
               />
             </View>
             <View style={styles.modalButtons}>
-              <TouchableOpacity
-                onPress={handleCancel}
-                style={[styles.modalButton, styles.cancelButton]}
-              >
+              <TouchableOpacity onPress={handleCancel} style={[styles.modalButton, styles.cancelButton]}>
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleConfirm}
-                style={[styles.modalButton, styles.confirmButton]}
-              >
+              <TouchableOpacity onPress={handleConfirm} style={[styles.modalButton, styles.confirmButton]}>
                 <Text style={styles.confirmButtonText}>Confirm</Text>
               </TouchableOpacity>
             </View>
@@ -126,11 +215,11 @@ const AttendanceAnalysis = () => {
         </View>
       </Modal>
       <TextInput
-        style={styles.searchInput}
-        placeholder="Search by Person Name"
-        onChangeText={handleSearch}
-        value={searchQuery}
-      />
+                style={styles.searchInput}
+                placeholder="Search by Person Name"
+                onChangeText={handleSearch}
+                value={searchQuery}
+            />
       <ScrollView horizontal>
         <View style={styles.table}>
           <View style={styles.headerRow}>
@@ -142,23 +231,68 @@ const AttendanceAnalysis = () => {
             <Text style={[styles.headerCell, { width: Level4Width, borderRightWidth: 1, borderColor: '#fff' }]}>Exit Date</Text>
             <Text style={[styles.headerCell, { width: EntryTimeWidth }]}>Exit Time</Text>
           </View>
+          <ScrollView style={styles.scrollView}>
           {filteredData.length > 0 ? (
             filteredData.map((item, index) => (
               <View key={index} style={styles.dataRow}>
-                <Text style={[styles.dataCell, { width: personIdWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.id}</Text>
-                <Text style={[styles.dataCell, { width: cardNumberWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.cardNumber}</Text>
-                <Text style={[styles.dataCell, { width: PersonNameWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.name}</Text>
-                <Text style={[styles.dataCell, { width: DepartmentWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.department}</Text>
-                <Text style={[styles.dataCell, { width: DesignationWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.designation}</Text>
-                <Text style={[styles.dataCell, { width: Level4Width, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.level4}</Text>
-                <Text style={[styles.dataCell, { width: EntryTimeWidth }]}>{item.entryTime}</Text>
+                <Text style={[styles.dataCell, { width: personIdWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Person_ID}</Text>
+                <Text style={[styles.dataCell, { width: cardNumberWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Person_Card_No}</Text>
+                <Text style={[styles.dataCell, { width: PersonNameWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Person_Name}</Text>
+                <Text style={[styles.dataCell, { width: DepartmentWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Entry_Date}</Text>
+                <Text style={[styles.dataCell, { width: DesignationWidth, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Entry_Time}</Text>
+                <Text style={[styles.dataCell, { width: Level4Width, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Exit_Date}</Text>
+                <Text style={[styles.dataCell, { width: EntryTimeWidth }]}>{item.Exit_Time}</Text>
               </View>
             ))
           ) : (
             <Text style={styles.noDataText}>No data found</Text>
           )}
+          </ScrollView>
         </View>
       </ScrollView>
+      <View style={styles.pagination}>
+                <TouchableOpacity 
+                    onPress={() => onPageChange(0)} 
+                    disabled={emergencypageNumber === 0}
+                    style={[styles.button, emergencypageNumber === 0 && styles.disabledButton]}
+                >
+                    <Text style={styles.buttonText}>{"<<"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={() => onPageChange(emergencypageNumber - 1)} 
+                    disabled={emergencypageNumber === 0}
+                    style={[styles.button, emergencypageNumber === 0 && styles.disabledButton]}
+                >
+                    <Text style={styles.buttonText}>{"<"}</Text>
+                </TouchableOpacity>
+                <Text style={styles.pageNumber}>
+                    Page {emergencypageNumber + 1} of {Math.ceil(totalEmergencyRecords / emergencypageSize)}
+                </Text>
+                <TouchableOpacity 
+                    onPress={() => onPageChange(emergencypageNumber + 1)} 
+                    disabled={emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1}
+                    style={[styles.button, emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1 && styles.disabledButton]}
+                >
+                    <Text style={styles.buttonText}>{">"}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={() => onPageChange(Math.ceil(totalEmergencyRecords / emergencypageSize) - 1)} 
+                    disabled={emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1}
+                    style={[styles.button, emergencypageNumber === Math.ceil(totalEmergencyRecords / emergencypageSize) - 1 && styles.disabledButton]}
+                >
+                    <Text style={styles.buttonText}>{">>"}</Text>
+                </TouchableOpacity>
+            </View>
+            <DropDownPicker
+                open={open}
+                value={emergencypageSize}
+                items={pageSizeItems}
+                setOpen={setOpen}
+                setValue={setEmergencypageSize}
+                setItems={setPageSizeItems}
+                containerStyle={styles.dropdownContainer}
+                onChangeValue={onIncomingpageSizeChange}
+            />
     </View>
   );
 };
@@ -170,6 +304,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     backgroundColor: '#fff',
   },
+  scrollView: {
+    maxHeight: 420, // Adjust the maximum height as per your requirement
+},
   searchInput: {
     height: 40,
     borderColor: '#ddd',
@@ -324,6 +461,33 @@ const styles = StyleSheet.create({
     width: 120,
     textAlign: "center",
   },
+  pagination: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
+},
+button: {
+  padding: 10,
+  backgroundColor: '#004d40',
+  marginHorizontal: 5,
+  borderRadius: 5,
+},
+disabledButton: {
+  backgroundColor: '#ccc',
+},
+buttonText: {
+  color: '#fff',
+},
+pageNumber: {
+  marginHorizontal: 10,
+  fontSize: 16,
+},
+dropdownContainer: {
+    width: 150,
+    marginTop: 10,
+},
+
 });
 
 export default AttendanceAnalysis;
