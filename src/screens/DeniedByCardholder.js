@@ -149,7 +149,7 @@ const DeniedByCardholder = () => {
   useEffect(() => {
 
     GetDeniedByHourCardholders();
-  }, []);
+  }, [selectedPersonCardNo]);
 
   return (
     <View style={styles.container}>
