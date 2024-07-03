@@ -13,7 +13,7 @@ const SelectDropdown = () => {
     selectedCity,
      setSelectedCity,
      selectedLocation, 
-     setSelectedLocation } = useContext(AppContext);
+     setSelectedLocation , selectedArea , selectedBrand  , getSummary } = useContext(AppContext);
   const navigation = useNavigation();
   const [isOpen, setOpen] = useState(false);
   // const [selectedRegion, setSelectedRegion] = useState(null);
@@ -125,6 +125,7 @@ const SelectDropdown = () => {
   };
   const handleNext = () => {
     navigation.navigate('DrawerNavigator');
+    getSummary(selectedRegion , selectedCity , selectedLocation , selectedArea , selectedBrand);
   };
 
   return (

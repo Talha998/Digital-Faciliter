@@ -15,7 +15,7 @@ const DeniedByCardholder = () => {
     selectedLocation,
     selectedArea,
     selectedBrand,
-    Device_DeniedHourSum, setDevice_DeniedHourSum,
+    Device_DeniedHourSum, setDevice_DeniedHourSum , setSelectedPersonName , selectedPersonName , setDevice_DeniedDaySum
   } = useContext(AppContext);
 
   const currentDate = new Date();
@@ -33,6 +33,7 @@ const DeniedByCardholder = () => {
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 
   const convertToLocalTime = (date) => {
+    
     const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
     return localDate.toISOString().slice(0, 19).replace('T', ' ');
   };
@@ -63,6 +64,7 @@ const DeniedByCardholder = () => {
         // Set default selection to the first row
         if (response.data.Data.length > 0) {
           setSelectedPersonCardNo(response.data.Data[0].Person_Card_No);
+          setSelectedPersonName(response.data.Data[0].Person_Name);
           setSelectedRowIndex(0);
         }
       } else {
@@ -91,7 +93,7 @@ const DeniedByCardholder = () => {
       };
       const response = await axios({
         method: "get",
-        url: `${baseUrl}/api/GetDeniedByHour?Language=p&Level1_ID=${selectedRegion}&Level2_ID=${selectedCity}&Level3_ID=${selectedLocation}&Level4_ID=${selectedArea}&Eqpt_Group_ID=${selectedBrand}&Event_Date=${startDate}&FilterBy=Cardholder&FilterValue=${selectedPersonCardNo}&api-version=1.0`,
+        url: `${baseUrl}/api/GetDeniedByHour?Language=p&Level1_ID=${selectedRegion}&Level2_ID=${selectedCity}&Level3_ID=${selectedLocation}&Level4_ID=${selectedArea}&Eqpt_Group_ID=${selectedBrand}&Event_Date=${startDate}&FilterBy=Cardholder&FilterValue=${selectedPersonCardNo}`,
         headers: headers,
       });
 
@@ -106,6 +108,38 @@ const DeniedByCardholder = () => {
       }
     } catch (error) {
       setDevice_DeniedHourSum([]);
+      console.error("API Error:", error);
+      if (error.response?.status === 404 || error.response?.status === 500) {
+        // Handle specific error codes if needed
+      }
+    } finally {
+      // Optionally handle loading state here
+    }
+  };
+  const GetDeniedByDayCardholders = async () => {
+    try {
+      const baseUrl = await AsyncStorage.getItem('baseURL');
+      const token = await AsyncStorage.getItem('userToken');
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      const response = await axios({
+        method: "get",
+        url: `${baseUrl}/api/GetDeniedByDay?Language=p&Level1_ID=${selectedRegion}&Level2_ID=${selectedCity}&Level3_ID=${selectedLocation}&Level4_ID=${selectedArea}&Eqpt_Group_ID=${selectedBrand}&Start_Date=${startDate}&End_Date=${endDate}&FilterBy=Cardholder&FilterValue=${selectedPersonCardNo}`,
+        headers: headers,
+      });
+
+      console.log("API Response:", response);
+      console.log("Response Data:", response.data);
+
+      if (response.status === 200 && response.data.Data) {
+        setDevice_DeniedDaySum(response.data.Data);
+      } else {
+        setDevice_DeniedDaySum([]);
+        console.error("No data found or unexpected response format");
+      }
+    } catch (error) {
+      setDevice_DeniedDaySum([]);
       console.error("API Error:", error);
       if (error.response?.status === 404 || error.response?.status === 500) {
         // Handle specific error codes if needed
@@ -136,7 +170,8 @@ const DeniedByCardholder = () => {
     setModalVisible(false);
   };
 
-  const handleRowClick = (index, personCardNo) => {
+  const handleRowClick = (index, personCardNo , personName) => {
+    setSelectedPersonName(personName)
     setSelectedPersonCardNo(personCardNo);
     setSelectedRowIndex(index);
     console.log('Clicked on row with ID:', personCardNo);
@@ -149,8 +184,13 @@ const DeniedByCardholder = () => {
   useEffect(() => {
 
     GetDeniedByHourCardholders();
-  }, [selectedPersonCardNo]);
+    GetDeniedByDayCardholders();
+  }, [selectedPersonCardNo ]);
+  useEffect(() => {
 
+   
+  }, [selectedPersonCardNo]);
+  
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -234,7 +274,7 @@ const DeniedByCardholder = () => {
                 styles.row,
                 selectedRowIndex === index && styles.selectedRow
               ]}
-              onPress={() => handleRowClick(index, item.Person_Card_No)}
+              onPress={() => handleRowClick(index, item.Person_Card_No , item.Person_Name)}
             >
               <Text style={styles.cell}>{item.Person_Name}</Text>
               <Text style={styles.cell}>{item.Access_Denied}</Text>
@@ -382,6 +422,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     overflow: 'hidden',
     width: "100%",
+    marginBottom:10
   },
   headerRow: {
     flexDirection: 'row',

@@ -6,6 +6,8 @@ export const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
     const [Device_DeniedHourSum, setDevice_DeniedHourSum] = useState([]);
+    const [Device_DeniedDaySum, setDevice_DeniedDaySum] = useState([]);
+    console.log(Device_DeniedDaySum , "Device_DeniedDaySum")
     const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
     const [isServerURLModalVisible, setServerURLModalVisible] = useState(false);
     const [isModifyPasswordModalVisible, setModifyPasswordModalVisible] = useState(false);
@@ -13,6 +15,7 @@ const AppProvider = ({ children }) => {
     const [brand, setBrand] = useState([]);
     const [selectedArea, setSelectedArea] = useState(null);
     const [selectedBrand, setSelectedBrand] = useState(null);
+    const [selectedPersonName, setSelectedPersonName] = useState(null);
     const [summary, setSummary] = useState('');
     
   const [entryDataSearch, setEntryDataSearch] = useState([]);
@@ -140,9 +143,7 @@ const AppProvider = ({ children }) => {
             setLoading(false);
         }
     };
-    useEffect(() =>{
-        getSummary();
-      }, [selectedRegion , selectedCity , selectedLocation , selectedArea , selectedBrand] )
+  
     
     return (
         <AppContext.Provider value={{
@@ -180,7 +181,9 @@ const AppProvider = ({ children }) => {
      setSelectedLocation,
      selectedButton,
       setSelectedButton,
-      Device_DeniedHourSum, setDevice_DeniedHourSum
+      selectedPersonName, setSelectedPersonName ,
+      Device_DeniedHourSum, setDevice_DeniedHourSum , 
+      Device_DeniedDaySum, setDevice_DeniedDaySum
         }}>
             {children}
         </AppContext.Provider>

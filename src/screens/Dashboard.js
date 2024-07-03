@@ -32,7 +32,7 @@ const Dashboard = () => {
   const startDate = convertToLocalTime(fromDate);
   const endDate = convertToLocalTime(toDate);
 
-  const { area, brand, selectedArea, setSelectedArea, selectedBrand, setSelectedBrand, summary, getSummary } = useContext(AppContext);
+  const { area, brand, selectedRegion , selectedCity , selectedLocation , selectedArea, setSelectedArea, selectedBrand, setSelectedBrand, summary, getSummary } = useContext(AppContext);
   
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshBackgroundColor, setRefreshBackgroundColor] = useState('#ffffff'); // State for background color
@@ -59,7 +59,9 @@ const Dashboard = () => {
       getSummary(convertToLocalTime(newFromDate), convertToLocalTime(newToDate));
     }, 1000); // Adjust delay as needed
   };
-
+  // useEffect(() =>{
+  //   getSummary();
+  // }, [selectedRegion , selectedCity , selectedLocation , selectedArea , selectedBrand] )
   const handleConfirm = () => {
     getSummary(startDate, endDate);
     setModalVisible(false);
