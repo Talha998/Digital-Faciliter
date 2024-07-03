@@ -16,6 +16,7 @@ const EmergencyEquationComponent = () => {
 } = useContext(AppContext);
 
 const [searchQuery, setSearchQuery] = useState('');
+const [originalData, setOriginalData] = useState([]);
 const [filteredData, setFilteredData] = useState([]);
 const [emergencypageNumber, setEmergencypageNumber] = useState(0);
 const [emergencypageSize, setEmergencypageSize] = useState(10);
@@ -55,15 +56,18 @@ const fetchEmergencyData = async (pageNumber, pageSize) => {
         });
 
         if (response.data.StatusCode === 200) {
+            setOriginalData(response.data.Data.Data);
             setFilteredData(response.data.Data.Data);
             setTotalEmergencyRecords(response.data.Data.TotalCount);
         } else {
             console.error('Error fetching data:', response.data.Message);
+            setOriginalData([]);
             setFilteredData([]);
             setTotalEmergencyRecords(0);
         }
     } catch (error) {
         console.error('Error fetching data:', error);
+        setOriginalData([]);
         setFilteredData([]);
         setTotalEmergencyRecords(0);
     }
@@ -72,9 +76,9 @@ const fetchEmergencyData = async (pageNumber, pageSize) => {
 const handleSearch = (text) => {
     setSearchQuery(text);
     if (text.trim() === '') {
-        setFilteredData(filteredData); // No filter applied, use current filteredData
+        setFilteredData(originalData); // Reset to original data when search query is cleared
     } else {
-        const filtered = filteredData.filter(item => item.Person_Name.toLowerCase().includes(text.toLowerCase()));
+        const filtered = originalData.filter(item => item.Person_Name.toLowerCase().includes(text.toLowerCase()));
         setFilteredData(filtered);
     }
 };
@@ -87,7 +91,6 @@ const onIncomingpageSizeChange = (itemValue) => {
     setEmergencypageSize(itemValue);
     setEmergencypageNumber(0); // Reset to first page on page size change
 };
-
 
     return (
         <View style={styles.container}>
