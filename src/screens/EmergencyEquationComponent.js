@@ -97,7 +97,7 @@ const onIncomingpageSizeChange = (itemValue) => {
                 onChangeText={handleSearch}
                 value={searchQuery}
             />
-            {/* <ScrollView horizontal> */}
+            <ScrollView horizontal>
                 <View style={styles.table}>
                     <View style={styles.headerRow}>
                         <Text style={[styles.headerCell, { width: 80, borderRightWidth: 1, borderColor: '#fff' }]}>Person ID</Text>
@@ -126,7 +126,7 @@ const onIncomingpageSizeChange = (itemValue) => {
             )}
         </ScrollView>
                 </View>
-            
+                </ScrollView>
                 <View style={styles.pagination}>
                 <TouchableOpacity 
                     onPress={() => onPageChange(0)} 
