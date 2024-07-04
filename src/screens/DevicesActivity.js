@@ -106,20 +106,36 @@ const DevicesActivity = () => {
       </View>
       <View style={styles.container_grid}>
         
-      <View style={styles.headerRow}>
-        <Text style={styles.headerText}>Type</Text>
+      {/* <View style={styles.headerRow}>
+        <Text style={styles.headerText}></Text>
+        <Text style={styles.headerText}>Device Name</Text>
+        <Text style={styles.headerText}>Device Activity</Text>
         <Text style={styles.headerText}>Device Name</Text>
        
-      </View>
+      </View> */}
+         <ScrollView horizontal>
+       <View style={styles.table}>
+        <View style={styles.headerRow}>
+                        <Text style={[styles.headerCell, { width: 80, borderRightWidth: 1, borderColor: '#fff' }]}>Type</Text>
+                        <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Device Name</Text>
+                        <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Device Activity</Text>
+                        <Text style={[styles.headerCell, { width: 100, borderRightWidth: 1, borderColor: '#fff' }]}>Department</Text>
+                    </View>
       <ScrollView>
         {data.map((item, index) => (
-         <View key={index} style={styles.row}>
-         <Text style={[styles.cellWidth]}>{item.doorName}</Text>
-         <Text style={[styles.cellWidth]}>{item.doorId}</Text>
-       
-       </View>
+        //  <View key={index} style={styles.row}>
+        //  <Text style={[styles.cellWidth]}>{item.doorName}</Text>
+        //  <Text style={[styles.cellWidth]}>{item.doorId}</Text>
+        <View key={index} style={styles.dataRow}>
+        <Text style={[styles.dataCell, { width: 80, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
+        <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
+        <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
+        <Text style={[styles.dataCell, { width: 100, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
+    </View>
         ))}
       </ScrollView>
+    </View>
+    </ScrollView>
     </View>
 
     {/* // Device with loggn */}
@@ -128,24 +144,36 @@ const DevicesActivity = () => {
       </View>
       <View style={styles.container_grid}>
         
-      <View style={styles.headerRow}>
-        <Text style={styles.headerText}>DeviceName</Text>
-        <Text style={styles.headerText}>Count</Text>
-        <Text style={styles.headerText}>Avearge</Text>
-        <Text style={styles.headerText}>TotalDuration</Text>
+      {/* <View style={styles.headerRow}>
+        <Text style={styles.headerText}></Text>
+        <Text style={styles.headerText}>Device Name</Text>
+        <Text style={styles.headerText}>Device Activity</Text>
+        <Text style={styles.headerText}>Device Name</Text>
        
-      </View>
+      </View> */}
+         <ScrollView horizontal>
+       <View style={styles.table}>
+        <View style={styles.headerRow}>
+                        <Text style={[styles.headerCell, { width: 80, borderRightWidth: 1, borderColor: '#fff' }]}>Device Name</Text>
+                        <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Count</Text>
+                        <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Avearge</Text>
+                        <Text style={[styles.headerCell, { width: 100, borderRightWidth: 1, borderColor: '#fff' }]}>Total Duration</Text>
+                    </View>
       <ScrollView>
         {data.map((item, index) => (
-         <View key={index} style={styles.row}>
-         <Text style={[ styles.cell, styles.cellWidth1]}>{item.doorName}</Text>
-         <Text style={[ styles.cell, styles.cellWidth2]}>{item.doorId}</Text>
-         <Text style={[ styles.cell, styles.cellWidth3]}>{item.doorId}</Text>
-         <Text style={[ styles.cell, styles.cellWidth4]}>{item.doorId}</Text>
-       
-       </View>
+        //  <View key={index} style={styles.row}>
+        //  <Text style={[styles.cellWidth]}>{item.doorName}</Text>
+        //  <Text style={[styles.cellWidth]}>{item.doorId}</Text>
+        <View key={index} style={styles.dataRow}>
+        <Text style={[styles.dataCell, { width: 80, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
+        <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
+        <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
+        <Text style={[styles.dataCell, { width: 100, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
+    </View>
         ))}
       </ScrollView>
+    </View>
+    </ScrollView>
     </View>
    
     </View>
@@ -285,7 +313,7 @@ const styles = StyleSheet.create({
   },
   container_grid: {
     borderColor: '#000',
-    borderWidth: 1,
+    // borderWidth: 1,
     borderRadius: 5,
     overflow: 'hidden',
     width: "100%"
@@ -338,13 +366,47 @@ const styles = StyleSheet.create({
     
      // Adjust as needed for your content
   },
+  table: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+},
+headerRow: {
+    flexDirection: 'row',
+    backgroundColor: '#004d40',
+},
+headerCell: {
+    padding: 8,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+},
+dataRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+},
   
   Summary: {
     color:'#00544d',
     fontWeight:"700",
     fontSize:24,
     marginBottom:4
-  }
+  },
+  dataRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+},
+dataCell: {
+  padding: 8,
+  textAlign: 'center',
+},
+noDataText: {
+  padding: 20,
+  textAlign: 'center',
+  color: '#777',
+  fontStyle: 'italic',
+},
   
 });
 
