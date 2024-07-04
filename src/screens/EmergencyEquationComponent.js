@@ -179,7 +179,8 @@ const onIncomingpageSizeChange = (itemValue) => {
 
 const styles = StyleSheet.create({
   scrollView: {
-    maxHeight: 420, // Adjust the maximum height as per your requirement
+    flexGrow: 1,
+    padding: 10,// Adjust the maximum height as per your requirement
 },
     container: {
         flex: 1,

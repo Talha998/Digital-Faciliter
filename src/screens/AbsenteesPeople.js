@@ -29,8 +29,7 @@ const AbsenteesPeople = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+
   const [totalRecords, setTotalRecords] = useState(0);
   const [open, setOpen] = useState(false);
   const [emergencypageNumber, setEmergencypageNumber] = useState(0);
@@ -42,8 +41,11 @@ const [pageSizeItems, setPageSizeItems] = useState([
   { label: '50', value: 50 },
   { label: '100', value: 100 }
 ]);
+useEffect(() => {
+  fetchAttendanceData(emergencypageNumber, emergencypageSize);
+}, [emergencypageNumber, emergencypageSize, onlyDate, fromDate, toDate , selectedRegion, selectedCity, selectedLocation, selectedArea, selectedBrand]);
 
-  const fetchAttendanceData = async () => {
+  const fetchAttendanceData = async (pageNumber, pageSize) => {
     setLoading(true);
     try {
       const baseUrl = await AsyncStorage.getItem('baseURL');
@@ -53,19 +55,19 @@ const [pageSizeItems, setPageSizeItems] = useState([
       };
       const response = await axios.get(`${baseUrl}/api/GetAttendAbsentees`, {
         params: {
-          Language: "p",
-          Level1_ID: selectedRegion,
-          Level2_ID: selectedCity,
-          Level3_ID: selectedLocation,
-          Level4_ID: selectedArea,
-          Eqpt_Group_ID: selectedBrand,
-          EventDate: convertToLocalTime(onlyDate),
-          StartTime: convertToLocalTime(fromDate),
-          EndTime: convertToLocalTime(toDate),
-          Filter_By: "A",
-          Filter_Text: "None",
-          Page_Number: pageNumber + 1,
-          Page_Size: pageSize,
+          "Language": "p",
+          "Level1_ID": selectedRegion,
+          "Level2_ID": selectedCity,
+          "Level3_ID": selectedLocation,
+          "Level4_ID": selectedArea,
+          "Eqpt_Group_ID": selectedBrand,
+          "EventDate": convertToLocalTime(onlyDate),
+          "StartTime": convertToLocalTime(fromDate),
+          "EndTime": convertToLocalTime(toDate),
+          "Filter_By": "A",
+          "Filter_Text": "None",
+         "Page_Number": pageNumber + 1,
+          "Page_Size": pageSize,
           "api-version": "1.0"
         },
         headers: headers
@@ -91,10 +93,7 @@ const [pageSizeItems, setPageSizeItems] = useState([
 }
   };
 
-  useEffect(() => {
-    fetchAttendanceData();
-  }, [pageNumber, pageSize, onlyDate, fromDate, toDate , selectedRegion, selectedCity, selectedLocation, selectedArea, selectedBrand]);
-
+  
   const handleSearch = (text) => {
     setSearchQuery(text);
     if (text.trim() === '') {
@@ -119,11 +118,7 @@ const [pageSizeItems, setPageSizeItems] = useState([
     return localDate.toISOString().slice(0, 19).replace('T', ' ');
   };
 
-  const handlePageChange = (newPageNumber) => {
-    if (newPageNumber >= 0 && newPageNumber < Math.ceil(totalRecords / pageSize)) {
-      setPageNumber(newPageNumber);
-    }
-  };
+ 
   const onPageChange = (newPageNumber) => {
     setEmergencypageNumber(newPageNumber);
 };
@@ -278,13 +273,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   scrollView: {
-    maxHeight: 420, // Adjust the maximum height as per your requirement
+    flexGrow: 1,
+    padding: 10,
 },
 loadingIndicator: {
   flex: 1,
   justifyContent: 'center',
   alignItems: 'center',
-  marginTop:"30%"
+  // marginTop:"30%"
 }, 
   searchInput: {
     height: 40,
