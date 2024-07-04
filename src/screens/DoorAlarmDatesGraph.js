@@ -1,46 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, StyleSheet, ScrollView, Text, Modal, TouchableOpacity, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import moment from "moment";
+import { AppContext } from '../Context/AppContext';
 
 const screenWidth = Dimensions.get("window").width;
 
-const DoorDayGraph = (props) => {
+const DoorDayGraph = () => {
+  const { Device_DeniedDaySum } = useContext(AppContext);
   const [clickedData, setClickedData] = useState({ date: null, value: null });
   const [modalVisible, setModalVisible] = useState(false);
 
+  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
   const onClickHandler = (label, value) => {
-    const clickedData = dummyData.find((item) => item.Period === label);
-    const clickedDate = moment(clickedData.Period, "ddd DD/MM").format("YYYY-MM-DD");
+    const clickedData = Device_DeniedDaySum.find((item) => item.Period === label);
+    const clickedDate = moment(clickedData?.Period, "ddd DD/MM").format("YYYY-MM-DD");
     setClickedData({ date: clickedDate, value: value });
     setModalVisible(true);
   };
 
-  // Dummy data
-  const dummyData = [
-    { Period: "Mon 01/01", Door_Forced: 10, Door_Held: 5 },
-    { Period: "Tue 02/01", Door_Forced: 8, Door_Held: 3 },
-    { Period: "Wed 03/01", Door_Forced: 12, Door_Held: 7 },
-    { Period: "Thu 04/01", Door_Forced: 6, Door_Held: 2 },
-  ];
+  const formattedData = daysOfWeek.map((day) => {
+    const foundItem = Device_DeniedDaySum.find((item) => item.Period && item.Period.startsWith(day));
+    return {
+      Period: `${day} ${moment().format("DD/MM")}`, // Adjust the format as needed
+      Door_Forced: foundItem ? foundItem.Door_Forced : 0,
+      Door_Held: foundItem ? foundItem.Door_Held : 0
+    };
+  });
 
-  const day = [...new Set(dummyData.map((item) => item.Period))];
+  const dayLabels = formattedData.map((item) => item.Period);
 
   const data = {
-    labels: day,
+    labels: dayLabels,
     datasets: [
       {
-        data: day.map((hour) => {
-          const foundItem = dummyData.find((item) => item.Period === hour);
-          return foundItem ? foundItem.Door_Forced : null;
-        }),
+        data: formattedData.map((item) => item.Door_Forced),
         color: (opacity = 1) => `rgba(32, 142, 121, ${opacity})`, // Bar color
       },
       {
-        data: day.map((hour) => {
-          const foundItem = dummyData.find((item) => item.Period === hour);
-          return foundItem ? foundItem.Door_Held : null;
-        }),
+        data: formattedData.map((item) => item.Door_Held),
         color: (opacity = 1) => `rgba(7, 45, 38, ${opacity})`, // Bar color
       },
     ],
@@ -55,7 +54,7 @@ const DoorDayGraph = (props) => {
   };
 
   const barWidth = 40; // Adjust bar width according to your need
-  const chartWidth = day.length * barWidth * 2; // Calculate total chart width
+  const chartWidth = daysOfWeek.length * barWidth * 2; // Calculate total chart width
 
   return (
     <View style={styles.container}>
@@ -74,7 +73,7 @@ const DoorDayGraph = (props) => {
             style={{ borderRadius: 10 }}
           />
           <View style={[styles.overlay, { width: chartWidth }]}>
-            {day.map((label, index) => (
+            {dayLabels.map((label, index) => (
               <TouchableOpacity
                 key={index}
                 style={[
@@ -174,10 +173,10 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center"
-  }, 
-//   date_m: {
-//     paddingTop:0
-//   }
+  },
+  date_m: {
+    paddingTop: 0
+  }
 });
 
 export default DoorDayGraph;

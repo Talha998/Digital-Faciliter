@@ -5,7 +5,6 @@ import { AppContext } from '../Context/AppContext';
 
 const CardByCardholderGraphDay = () => {
   const { Device_DeniedDaySum } = useContext(AppContext);
-console.log(Device_DeniedDaySum , "Device_DeniedDaySum321")
   // Ensure all days from 1 to 30 are included and aggregate values by day
   const completeData = Array.from({ length: 30 }, (_, i) => {
     const day = i + 1;

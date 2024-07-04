@@ -1,46 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, StyleSheet, ScrollView, Text, Modal, TouchableOpacity, Dimensions } from "react-native";
 import { BarChart } from "react-native-chart-kit";
+import { AppContext } from '../Context/AppContext';
 
 const screenWidth = Dimensions.get("window").width;
 
-const DoorHourGraph = (props) => {
+const DoorHourGraph = () => {
+  const { Device_DeniedHourSum } = useContext(AppContext);
+  
   const [clickedData, setClickedData] = useState({ hour: null, value: null });
   const [modalVisible, setModalVisible] = useState(false);
 
   const onClickHandler = (label, value) => {
-    const clickedData = dummyData.find((item) => item.Period === label);
+    const clickedData = Device_DeniedHourSum.find((item) => item.Period === label);
     setClickedData({ hour: clickedData.Period, value: value });
     setModalVisible(true);
   };
 
-  // Dummy data
-  const dummyData = [
-    { Period: "12 AM", Door_Forced: 10, Door_Held: 5 },
-    { Period: "1 AM", Door_Forced: 8, Door_Held: 3 },
-    { Period: "2 AM", Door_Forced: 12, Door_Held: 7 },
-    { Period: "3 AM", Door_Forced: 6, Door_Held: 2 },
-    { Period: "4 AM", Door_Forced: 15, Door_Held: 10 },
-    { Period: "5 AM", Door_Forced: 9, Door_Held: 4 },
-  ];
+  // Ensure all hours from 1 AM to 12 PM are included and aggregate values by hour
+  const completeData = Array.from({ length: 12 }, (_, i) => {
+    const hour = i + 1;
+    const period = `${hour} ${hour < 12 ? 'AM' : 'PM'}`;
+    const foundData = Device_DeniedHourSum.filter(item => item.Period === period);
+    const totalForced = foundData.reduce((acc, curr) => acc + curr.Door_Forced, 0);
+    const totalHeld = foundData.reduce((acc, curr) => acc + curr.Door_Held, 0);
+    return { Period: period, Door_Forced: totalForced, Door_Held: totalHeld };
+  });
 
-  const hours = dummyData.map((item) => item.Period);
+  const hours = completeData.map(item => item.Period);
 
   const data = {
     labels: hours,
     datasets: [
       {
-        data: hours.map((hour) => {
-          const foundItem = dummyData.find((item) => item.Period === hour);
-          return foundItem ? foundItem.Door_Forced : null;
-        }),
+        data: completeData.map(item => item.Door_Forced),
         color: (opacity = 1) => `rgba(32, 142, 121, ${opacity})`, // Bar color
       },
       {
-        data: hours.map((hour) => {
-          const foundItem = dummyData.find((item) => item.Period === hour);
-          return foundItem ? foundItem.Door_Held : null;
-        }),
+        data: completeData.map(item => item.Door_Held),
         color: (opacity = 1) => `rgba(7, 45, 38, ${opacity})`, // Bar color
       },
     ],
