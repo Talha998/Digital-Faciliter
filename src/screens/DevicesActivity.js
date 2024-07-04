@@ -1,58 +1,198 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, RefreshControl } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, RefreshControl, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DatePicker from 'react-native-date-picker';
-
+import { AppContext } from '../Context/AppContext';
 
 const DevicesActivity = () => {
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
+  const {
+    selectedRegion,
+    selectedCity,
+    selectedLocation,
+    selectedArea,
+    selectedBrand,
+  } = useContext(AppContext);
+
+  const [lastActivity, setLastActivity] = useState([]);
+  const [filteredActivityData, setFilteredActivityData] = useState([]);
+  const [filteredDurationData, setFilteredDurationData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [searchQueryActivity, setSearchQueryActivity] = useState('');
+  const [searchQueryduration, setSearchQueryduration] = useState('');
+  const [lastDuration, setLastDuration] = useState([]);
+  const currentDate = new Date();
+  const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
+  const toDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
+
+  const [fromDate, setFromDate] = useState(fromDateTime);
+  const [toDate, setToDate] = useState(toDateTime);
+
+  const convertToLocalTime = (date) => {
+    const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    return localDate.toISOString().slice(0, 19).replace('T', ' ');
+  };
+
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const startDate = formatDate(fromDate);
+  const endDate = formatDate(toDate);
+
+  useEffect(() => {
+    fetchLastActivity();
+    fetchLastDuration();
+  }, [selectedRegion, selectedCity, selectedLocation, selectedArea, selectedBrand, startDate, endDate]);
+
+  useEffect(() => {
+    fetchLastActivity();
+  }, []);
+  useEffect(() => {
+    fetchLastDuration();
+  }, []);
+
+  const fetchLastDuration = async () => {
+    try {
+      const baseUrl = await AsyncStorage.getItem('baseURL');
+      const token = await AsyncStorage.getItem('userToken');
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      const response = await axios.get(`${baseUrl}/api/GetDeviceOfflineDuration`, {
+        params: {
+          'api-version': '1.0',
+          'Language': 'p',
+          'Level1_ID': selectedRegion,
+          'Level2_ID': selectedCity,
+          'Level3_ID': selectedLocation,
+          'Level4_ID': selectedArea,
+          'Eqpt_Group_ID': selectedBrand,
+          "Start_Date": startDate,
+          "End_Date": endDate,
+        },
+        headers: headers
+      });
+
+      if (response.data.StatusCode === 200) {
+        setLastDuration(response.data.Data.Data);
+        setFilteredDurationData(response.data.Data.Data);            
+      } else {
+        console.error('Error fetching data:', response.data.Message);
+        setLastDuration([]);
+        setFilteredDurationData([]);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLastDuration([]);
+      setFilteredDurationData([]);
+    }
+  };
+
+  const fetchLastActivity = async () => {
+    try {
+      const baseUrl = await AsyncStorage.getItem('baseURL');
+      const token = await AsyncStorage.getItem('userToken');
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await axios.get(`${baseUrl}/api/GetDeviceLastActivity`, {
+        params: {
+          'api-version': '1.0',
+          'Language': 'P',
+          'Level1_ID': selectedRegion,
+          'Level2_ID': selectedCity,
+          'Level3_ID': selectedLocation,
+          'Level4_ID': selectedArea,
+          'Eqpt_Group_ID': selectedBrand,
+          'Start_Date': startDate,
+          'End_Date': endDate,
+        },
+        headers,
+      });
+
+      if (response.data.StatusCode === 200) {
+        setLastActivity(response.data.Data);
+        setFilteredActivityData(response.data.Data);
+      } else {
+        console.error('Error fetching data:', response.data.Message);
+        setLastActivity([]);
+        setFilteredActivityData([]);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLastActivity([]);
+      setFilteredActivityData([]);
+    }
+  };
+
+ 
   
+
   const handleConfirm = () => {
     setModalVisible(false);
+    fetchLastActivity();
   };
 
   const handleCancel = () => {
     setModalVisible(false);
   };
-  const data = [
-    { doorName: 'Main Entrance', doorId: 'D001', forced: 'No', held: 'Yes' },
-    { doorName: 'Back Door', doorId: 'D002', forced: 'Yes', held: 'No' },
-    { doorName: 'Side Gate', doorId: 'D003', forced: 'No', held: 'Yes' },
-    { doorName: 'Garage Door', doorId: 'D004', forced: 'Yes', held: 'Yes' },
-    { doorName: 'Basement Door', doorId: 'D005', forced: 'No', held: 'No' },
-  ];
+  const handleSearch = (query) => {
+    setSearchQueryActivity(query);
+    if (query.trim() === '') {
+      setFilteredActivityData(lastActivity);
+    } else {
+      const filteredItems = lastActivity.filter(item =>
+        item.Eqpt_Title.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredActivityData(filteredItems);
+    }
+  };
+  
+  const handleSearchDuration = (query) => {
+    // setSearchQueryduration(query);
+    // const filteredData = lastDuration.filter(item =>
+    //   item.Eqpt_Title.toLowerCase().includes(query.toLowerCase())
+    // );
+    // setFilteredDurationData(filteredData);
+    setSearchQueryduration(query);
+    if (query.trim() === '') {
+      setFilteredDurationData(lastDuration);
+    } else {
+      const filteredItems = lastDuration.filter(item =>
+        item.Eqpt_Title.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredDurationData(filteredItems);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-      <View>
-        <View style={styles.dateContainer}>
-          <Text style={styles.label_from}>From : </Text>
-          <Text style={styles.dateText}>{`${fromDate.toLocaleDateString()} ${fromDate.toLocaleTimeString()}`}</Text>
+        <View>
+          <View style={styles.dateContainer}>
+            <Text style={styles.label_from}>From: </Text>
+            <Text style={styles.dateText}>{startDate}</Text>
+          </View>
+          <View style={styles.dateContainer}>
+            <Text style={styles.label_To}>To: </Text>
+            <Text style={styles.dateText}>{endDate}</Text>
+          </View>
         </View>
-        <View style={styles.dateContainer}>
-          <Text style={styles.label_To}>To : </Text>
-          <Text style={styles.dateText}>{`${toDate.toLocaleDateString()} ${toDate.toLocaleTimeString()}`}</Text>
-        </View>
-        </View>
-          <View style={styles.right_icons}>
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          style={styles.openModalButton}
-        >
-          <Icon name="calendar" size={28} color="#00544d" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          // onPress={handleRefresh}
-          // style={styles.iconButton}
-        >
-          <Icon name="refresh" size={28} color="#00544d" />
-        </TouchableOpacity>
+        <View style={styles.right_icons}>
+          <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.openModalButton}>
+            <Icon name="calendar" size={28} color="#00544d" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Icon name="refresh" size={28} color="#00544d" onPress={fetchLastActivity} />
+          </TouchableOpacity>
         </View>
       </View>
-     
       <Modal
         transparent={true}
         visible={modalVisible}
@@ -68,7 +208,7 @@ const DevicesActivity = () => {
               <Text style={styles.label_dash}>From: </Text>
               <DatePicker
                 date={fromDate}
-                onDateChange={setFromDate}
+                onDateChange={(date) => setFromDate(new Date(date))}
                 mode="datetime"
                 style={styles.datePicker}
                 is24hourSource="locale"
@@ -78,336 +218,227 @@ const DevicesActivity = () => {
               <Text style={styles.label_dash}>To: </Text>
               <DatePicker
                 date={toDate}
-                onDateChange={setToDate}
+                onDateChange={(date) => setToDate(new Date(date))}
                 mode="datetime"
                 style={styles.datePicker}
                 is24hourSource="locale"
               />
             </View>
             <View style={styles.modalButtons}>
-              <TouchableOpacity
-                onPress={handleCancel}
-                style={[styles.modalButton, styles.cancelButton]}
-              >
+              <TouchableOpacity onPress={handleCancel} style={[styles.modalButton, styles.cancelButton]}>
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleConfirm}
-                style={[styles.modalButton, styles.confirmButton]}
-              >
+              <TouchableOpacity onPress={handleConfirm} style={[styles.modalButton, styles.confirmButton]}>
                 <Text style={styles.confirmButtonText}>Confirm</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
-       <View>
-      <Text style={styles.Summary}>Offline Device</Text>
+      <View>
+        <Text style={styles.Summary}>Offline Device</Text>
       </View>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search by Device Name"
+        onChangeText={handleSearch}
+        value={searchQueryActivity}
+      />
       <View style={styles.container_grid}>
-        
-      {/* <View style={styles.headerRow}>
-        <Text style={styles.headerText}></Text>
-        <Text style={styles.headerText}>Device Name</Text>
-        <Text style={styles.headerText}>Device Activity</Text>
-        <Text style={styles.headerText}>Device Name</Text>
-       
-      </View> */}
-         <ScrollView horizontal>
-       <View style={styles.table}>
-        <View style={styles.headerRow}>
-                        <Text style={[styles.headerCell, { width: 80, borderRightWidth: 1, borderColor: '#fff' }]}>Type</Text>
-                        <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Device Name</Text>
-                        <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Device Activity</Text>
-                        <Text style={[styles.headerCell, { width: 100, borderRightWidth: 1, borderColor: '#fff' }]}>Department</Text>
-                    </View>
-      <ScrollView>
-        {data.map((item, index) => (
-        //  <View key={index} style={styles.row}>
-        //  <Text style={[styles.cellWidth]}>{item.doorName}</Text>
-        //  <Text style={[styles.cellWidth]}>{item.doorId}</Text>
-        <View key={index} style={styles.dataRow}>
-        <Text style={[styles.dataCell, { width: 80, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
-        <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
-        <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
-        <Text style={[styles.dataCell, { width: 100, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
-    </View>
-        ))}
-      </ScrollView>
-    </View>
-    </ScrollView>
-    </View>
-
-    {/* // Device with loggn */}
+        <ScrollView horizontal>
+          <View style={styles.table}>
+            <View style={styles.headerRow}>
+              <Text style={[styles.headerCell, { width: 80, borderRightWidth: 1, borderColor: '#fff' }]}>Type</Text>
+              <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Device Name</Text>
+              <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Last Activity</Text>
+              <Text style={[styles.headerCell, { width: 100, borderRightWidth: 1, borderColor: '#fff' }]}>Total Duration</Text>
+            </View>
+            <ScrollView>
+              {filteredActivityData.length > 0 ? (
+                filteredActivityData.map((item, index) => (
+                  <View key={index} style={styles.dataRow}>
+                    <Text style={[styles.dataCell, { width: 80, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Eqpt_Type_Title}</Text>
+                    <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Eqpt_Title}</Text>
+                    <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Last_Activity}</Text>
+                    <Text style={[styles.dataCell, { width: 100, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Offline_For}</Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.noDataText}>No data found</Text>
+              )}
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </View>
     <View>
       <Text style={[styles.Summary , styles.mt]}>Device with the Longest Total Duration</Text>
       </View>
-      <View style={styles.container_grid}>
-        
-      {/* <View style={styles.headerRow}>
-        <Text style={styles.headerText}></Text>
-        <Text style={styles.headerText}>Device Name</Text>
-        <Text style={styles.headerText}>Device Activity</Text>
-        <Text style={styles.headerText}>Device Name</Text>
-       
-      </View> */}
-         <ScrollView horizontal>
-       <View style={styles.table}>
-        <View style={styles.headerRow}>
-                        <Text style={[styles.headerCell, { width: 80, borderRightWidth: 1, borderColor: '#fff' }]}>Device Name</Text>
-                        <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Count</Text>
-                        <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Avearge</Text>
-                        <Text style={[styles.headerCell, { width: 100, borderRightWidth: 1, borderColor: '#fff' }]}>Total Duration</Text>
-                    </View>
-      <ScrollView>
-        {data.map((item, index) => (
-        //  <View key={index} style={styles.row}>
-        //  <Text style={[styles.cellWidth]}>{item.doorName}</Text>
-        //  <Text style={[styles.cellWidth]}>{item.doorId}</Text>
-        <View key={index} style={styles.dataRow}>
-        <Text style={[styles.dataCell, { width: 80, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
-        <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
-        <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
-        <Text style={[styles.dataCell, { width: 100, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.doorName}</Text>
+      <TextInput
+          style={styles.searchInput}
+          placeholder="Search by Person Name"
+          onChangeText={handleSearchDuration}
+          value={searchQueryduration}
+        />
+     <View style={styles.container_grid}>
+        <ScrollView horizontal>
+          <View style={styles.table}>
+            <View style={styles.headerRow}>
+              <Text style={[styles.headerCell, { width: 80, borderRightWidth: 1, borderColor: '#fff' }]}>Type</Text>
+              <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Device Name</Text>
+              <Text style={[styles.headerCell, { width: 110, borderRightWidth: 1, borderColor: '#fff' }]}>Last Activity</Text>
+              <Text style={[styles.headerCell, { width: 100, borderRightWidth: 1, borderColor: '#fff' }]}>Total Duration</Text>
+            </View>
+            <ScrollView>
+              {filteredDurationData?.length > 0 ? (
+                filteredDurationData.map((item, index) => (
+                  <View key={index} style={styles.dataRow}>
+                    <Text style={[styles.dataCell, { width: 80, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Eqpt_Type_Title}</Text>
+                    <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Eqpt_Title}</Text>
+                    <Text style={[styles.dataCell, { width: 110, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Last_Activity}</Text>
+                    <Text style={[styles.dataCell, { width: 100, borderRightWidth: 1, borderColor: '#ddd' }]}>{item.Offline_For}</Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.noDataText}>No data found</Text>
+              )}
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </View>
     </View>
-        ))}
-      </ScrollView>
-    </View>
-    </ScrollView>
-    </View>
-   
-    </View>
-  )
-}
-
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
+    padding: 16,
+    backgroundColor: '#fff',
     flex: 1,
-    paddingTop: 10,
-    paddingHorizontal: 18,
-  },
-  scrollViewContainer: {
-    flexGrow: 1,
   },
   topContainer: {
-    flexDirection:"row",
-    justifyContent:"space-between",
-    marginBottom: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
   },
-  right_icons: {
-    flexDirection:"row",
-    marginTop:8
-    
-    // justifyContent:"space-between",
-    // marginBottom: 20,
-  },
-  
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-  },
-  label: {
-    fontSize: 16,
-    marginRight: 10,
-     fontWeight: "700"
   },
   dateText: {
-    fontSize: 15,
-    color: '#00544d',
+    fontSize: 16,
+    marginLeft: 8,
+  },
+  label_from: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  label_To: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  right_icons: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   openModalButton: {
-    paddingRight:15
+    marginRight: 16,
   },
   modalBackground: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
-    width: '95%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 0,
-    alignItems: 'center',
-  },
-  serverURLContainerf2: {
-    width: '100%',
-    backgroundColor: '#00544d',
-    paddingTop: 16,
-    paddingBottom: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    width: '80%',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 8,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 20,
-    color: "#ffff",
+    textAlign: 'center',
   },
   datePickerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    paddingHorizontal: 15,
+    marginBottom: 16,
   },
   label_dash: {
     fontSize: 16,
-    marginRight: 10,
-    fontWeight: "700"
+    fontWeight: 'bold',
+    color: '#333',
   },
-  label_from: {
-    fontSize: 14,
-    marginRight: 5,
-    fontWeight: "700",
-    color:"#00544d"
-  },
-  label_To: {
-    fontSize: 14,
-    marginRight: 22,
-    fontWeight: "700",
-     color:"#00544d"
-  },
-  
-  
   datePicker: {
     flex: 1,
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
-    paddingVertical: 20,
-    
   },
   modalButton: {
     padding: 10,
     borderRadius: 5,
-    marginHorizontal: 10,
   },
   cancelButton: {
-    backgroundColor: '#00544d',
-  },
-  cancelButtonText: {
-    color: 'white',
-    fontSize: 16,
-    width: 120,
-    textAlign: "center",
+    backgroundColor: '#ccc',
   },
   confirmButton: {
     backgroundColor: '#00544d',
   },
-  confirmButtonText: {
-    color: 'white',
-    fontSize: 16,
-    width: 120,
-    textAlign: "center",
+  cancelButtonText: {
+    color: '#333',
   },
-  mt: {
-   marginTop:12
+  confirmButtonText: {
+    color: '#fff',
+  },
+  Summary: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  searchInput: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 16,
+    paddingLeft: 8,
   },
   container_grid: {
-    borderColor: '#000',
-    // borderWidth: 1,
-    borderRadius: 5,
-    overflow: 'hidden',
-    width: "100%"
-  },
-  headerRow: {
-    flexDirection: 'row',
-    backgroundColor: '#00695c',
-    justifyContent: "space-between",
-    padding: 10,
-    paddingHorizontal: 15
-  },
-  headerText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-    // flex: 1,
-    textAlign: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 14,
-    paddingVertical: 5,
-    paddingBottom: 10,
-    // borderBottomWidth:1,
-    // backgroundColor: '#e0e0e0',
-    borderRadius: 5,
-  },
-  cell: {
     flex: 1,
-    // textAlign: 'center',
-  },
-  cellWidth1: {
-    minWidth: 50,
-    
-     // Adjust as needed for your content
-  },
- 
-  cellWidth2: {
-    minWidth: 20,
-    
-     // Adjust as needed for your content
-  },
-  cellWidth3: {
-    minWidth: 20,
-    
-     // Adjust as needed for your content
-  },
-  cellWidth4: {
-    minWidth: 20,
-    
-     // Adjust as needed for your content
   },
   table: {
     borderWidth: 1,
     borderColor: '#ddd',
-},
-headerRow: {
+  },
+  headerRow: {
     flexDirection: 'row',
-    backgroundColor: '#004d40',
-},
-headerCell: {
-    padding: 8,
-    fontWeight: 'bold',
+    backgroundColor: '#00544d',
+  },
+  headerCell: {
+    padding: 10,
     color: '#fff',
-    textAlign: 'center',
-},
-dataRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-},
-  
-  Summary: {
-    color:'#00544d',
-    fontWeight:"700",
-    fontSize:24,
-    marginBottom:4
+    fontWeight: 'bold',
   },
   dataRow: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-},
-dataCell: {
-  padding: 8,
-  textAlign: 'center',
-},
-noDataText: {
-  padding: 20,
-  textAlign: 'center',
-  color: '#777',
-  fontStyle: 'italic',
-},
-  
+    backgroundColor: '#f9f9f9',
+  },
+  dataCell: {
+    padding: 10,
+    color: '#333',
+  },
+  noDataText: {
+    textAlign: 'center',
+    padding: 20,
+    color: '#333',
+  },
 });
 
-export default DevicesActivity
+export default DevicesActivity;
