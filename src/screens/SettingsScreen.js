@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet , Alert  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LanguageModal from './LanguageModal'; // Adjust the import path as necessary
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModifyPasswordModal from './ModifyPasswordModal'; // Adjust the import path as necessary
 import ServerURLModal from './ServerURLModal';
 
@@ -20,20 +22,55 @@ const SettingsScreen = () => {
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
-  const handleSavePassword = async (currentPassword, newPassword, confirmPassword) => {
-    const userData = await AsyncStorage.getItem('userData');
-    console.log('userData:', userData);
-    
-    if (userData) {
-      const parsedData = JSON.parse(userData);
-      const { User_ID, User_Password } = parsedData?.userInfo || {};
-    
-      console.log('User_ID:', User_ID);
-      console.log('User_Password:', User_Password);
-    } else {
-      console.log('No user data found in AsyncStorage');
+
+  const handleSavePassword = async (currentPassword, newPassword, confirmPassword , onClose , reset) => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        const { User_Auto_ID, User_Password } = parsedData?.userInfo || {};
+  
+        console.log('User_Auto_ID:', User_Auto_ID);
+        console.log('User_Password:', User_Password);
+  
+        if (User_Password !== currentPassword) {
+          Alert.alert('Error', 'Current password is incorrect');
+          return;
+        }
+  
+        if (newPassword !== confirmPassword) {
+          Alert.alert('Error', 'New password and confirm password do not match');
+          return;
+        }
+  
+        const baseUrl = await AsyncStorage.getItem('baseURL');
+        const url = `${baseUrl}/api/ModifyPassword`;
+        console.log('API URL:', `${url}?UserAutoId=${User_Auto_ID}&UserPwd=${newPassword}`);
+  
+        const response = await axios({
+          method: "post",
+          url: `${url}?UserAutoId=${User_Auto_ID}&UserPwd=${newPassword}`,
+        });
+  
+        const { StatusCode, Message, Data } = response.data; // Assuming your API response structure
+  
+        console.log('Password change response:', response.data);
+  
+        if (StatusCode === 200) {
+          Alert.alert('Success', 'Password changed successfully');
+          onClose();
+          reset();
+        } else {
+          Alert.alert('Error', `Password change failed: ${Message}`);
+        }
+      } else {
+        Alert.alert('Error', 'No user data found in AsyncStorage');
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      Alert.alert('Error', 'An error occurred while changing the password');
     }
-    // Handle password change logic here
   };
 
   return (

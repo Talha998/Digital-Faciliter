@@ -8,16 +8,15 @@ const ModifyPasswordModal = ({ visible, onClose, onSave }) => {
   const [secureTextEntryCurrent, setSecureTextEntryCurrent] = useState(true);
   const [secureTextEntryNew, setSecureTextEntryNew] = useState(true);
   const [secureTextEntryConfirm, setSecureTextEntryConfirm] = useState(true);
-  
 
   const onSubmit = (data) => {
     if (data.newPassword !== data.confirmPassword) {
       alert("New password and confirm password do not match");
       return;
     }
-    onSave(data.currentPassword, data.newPassword, data.confirmPassword);
-    reset();
-    onClose();
+    onSave(data.currentPassword, data.newPassword, data.confirmPassword , onClose , reset);
+    // reset();
+    // onClose();
   };
 
   return (

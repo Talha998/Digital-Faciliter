@@ -7,7 +7,8 @@ import {
   StyleSheet,
   Modal,
   Animated,
-  Image
+  Image,
+  Alert
 } from 'react-native';
 import {
   DrawerContentScrollView,
@@ -16,6 +17,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
 const CustomDrawer = (props) => {
@@ -31,9 +33,20 @@ const CustomDrawer = (props) => {
   const closeModal = () => {
     setModalVisible(false);
   };
-  const handleYes = () => {
+  const handleLogout = async  () => {
     // Handle Yes action here
-    closeModal();
+    try {
+      // Clear AsyncStorage or any other storage where user data/token is stored
+      await AsyncStorage.removeItem('userData');
+      await AsyncStorage.removeItem('userToken');
+      closeModal();
+      // Navigate to login screen (assuming it's named 'LoginScreen')
+      navigation.navigate('HomeScreen');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      Alert.alert('Error', 'An error occurred while logging out');
+    }
+  
   };
 
   const handleNo = () => {
@@ -84,7 +97,7 @@ const CustomDrawer = (props) => {
             <Ionicons name="close-circle" size={24} color="white" style={styles.icon} />
               <Text style={styles.buttonText}>No</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleYes}>
+            <TouchableOpacity style={styles.button} onPress={handleLogout}>
             <Ionicons name="checkmark-circle" size={24} color="white" style={styles.icon} />
               <Text style={styles.buttonText}>Yes</Text>
             </TouchableOpacity>
