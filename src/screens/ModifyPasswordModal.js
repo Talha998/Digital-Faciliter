@@ -105,7 +105,7 @@ const ModifyPasswordModal = ({ visible, onClose, onSave }) => {
             </TouchableOpacity>
           </View>
           {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>}
-
+        <Text style={styles.titleBottom}><Text style={styles.Alert} >Alert:</Text> After saving system will be sign out.</Text>
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
               <Text style={styles.buttonText}>Cancel</Text>
@@ -127,6 +127,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
+  titleBottom: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: "center",
+    marginTop: 0,
+},
+Alert: {
+ color:"red"
+},
+
   modalContent: {
     width: '80%',
     backgroundColor: 'white',
