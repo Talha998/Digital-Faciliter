@@ -86,7 +86,8 @@ const HomeScreen = () => {
         Alert.alert("user name or password is invalid");
       }
     } catch (error) {
-      Alert.alert("Error", "Login failed. Please check your credentials.");
+      // Alert.alert("Error", "Login failed. Please check your credentials.");
+      Alert.alert("Error", "user name or password is invalid.");
       console.error('Error during login:', error);
     } finally {
       setLoading(false); // Stop loading indicator
