@@ -8,6 +8,7 @@ const ModifyPasswordModal = ({ visible, onClose, onSave }) => {
   const [secureTextEntryCurrent, setSecureTextEntryCurrent] = useState(true);
   const [secureTextEntryNew, setSecureTextEntryNew] = useState(true);
   const [secureTextEntryConfirm, setSecureTextEntryConfirm] = useState(true);
+  
 
   const onSubmit = (data) => {
     if (data.newPassword !== data.confirmPassword) {

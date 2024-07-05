@@ -20,7 +20,19 @@ const SettingsScreen = () => {
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
-  const handleSavePassword = (currentPassword, newPassword, confirmPassword) => {
+  const handleSavePassword = async (currentPassword, newPassword, confirmPassword) => {
+    const userData = await AsyncStorage.getItem('userData');
+    console.log('userData:', userData);
+    
+    if (userData) {
+      const parsedData = JSON.parse(userData);
+      const { User_ID, User_Password } = parsedData?.userInfo || {};
+    
+      console.log('User_ID:', User_ID);
+      console.log('User_Password:', User_Password);
+    } else {
+      console.log('No user data found in AsyncStorage');
+    }
     // Handle password change logic here
   };
 

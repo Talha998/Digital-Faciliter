@@ -35,11 +35,11 @@ const RegistrationScreen = () => {
     },
   });
   const [designation, setDesignation] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState([]);
+  const [isOpen, setOpen] = useState(false);
   const [imageUri, setImageUri] = useState(null);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
+  const [items, setItems] = useState([]);
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   
@@ -47,12 +47,18 @@ console.log(image ,"imageimage")
   const getList = async () => {
     try {
       setLoading(true);
-      const baseURL = await AsyncStorage.getItem('baseURL');
-      const response = await axios.get(`http://18.226.185.31:8081/api/GetDesignation`);
+      const baseUrl = await AsyncStorage.getItem('baseURL');
+      const token = await AsyncStorage.getItem('userToken');
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      const response = await axios.get(`${baseUrl}/api/GetDesignation` , headers );
       const responseData = response.data.Data.map(item => ({
         label: item.Desig_Title_P,
         value: item.Desig_ID,
-      }));
+      }
+    
+    ));
       const design = response.data.Data;
       setItems(responseData);
       // if (responseData.length > 0) {
@@ -133,8 +139,11 @@ console.log(image ,"imageimage")
 
     try {
       setLoading(true); // Set loading state to true before API call
-      const baseURL = await AsyncStorage.getItem('baseURL');
-      console.log(baseURL, "baseURL");
+      const baseUrl = await AsyncStorage.getItem('baseURL');
+      const token = await AsyncStorage.getItem('userToken');
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
 
       const base64Image = await convertImageToBase64(data.User_Image);
       if (!base64Image) {
@@ -161,7 +170,7 @@ console.log(image ,"imageimage")
       };
       // const baseURL = await AsyncStorage.getItem('baseURL');
       // console.log(baseURL, "baseURL");
-      const response = await axios.post(`http://18.226.185.31:8081/api/CreateUser`, payload );
+      const response = await axios.post(`${baseUrl}/api/CreateUser`, payload  );
       if (response.data.StatusCode === 201) {
         Alert.alert('Success', 'User created successfully');
         navigation.navigate('HomeScreen');
@@ -276,14 +285,25 @@ console.log(image ,"imageimage")
             )}
             name="User_Email"
           />
-           <CustomDropdown 
+           {/* <CustomDropdown 
             items={items} 
             loading={loading} 
             control={control}
             name="Desig_ID"
            setSelectedDesign={setSelectedDesign}
          selectedDesign={selectedDesign}
-          />
+          /> */}
+           <CustomDropdown
+          items={items}
+          selectedValue={selectedDesign}
+          setSelectedValue={setSelectedDesign}
+          placeholder="Select Region"
+          iconName="globe"
+        
+          style={styles.inputContainer} // Apply additional styles here
+             color="black"
+             style2={styles.input} // Apply additional styles here
+        />
   <Controller
             control={control}
             rules={{ 
@@ -374,6 +394,25 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: 'cover',
       },
+      input: {
+        flex: 1,
+        // height:20,
+        marginLeft: 10,
+        color: 'green',
+      },
+      inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'green',
+        paddingRight: 5,
+        marginBottom:15,
+        paddingVertical: 14,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+        backgroundColor: 'white',
+      },
+      
       scrollView: {
         flexGrow: 1,
         justifyContent: 'center',

@@ -78,6 +78,7 @@ const HomeScreen = () => {
       });
       const token = response.data?.Data?.token;
       if (response.status === 200) {
+        await AsyncStorage.setItem('userData', JSON.stringify(response.data.Data));
         AsyncStorage.setItem('userToken', token);
         Alert.alert("Success", "Login successful!");
         navigation.navigate('SelectDropdown');

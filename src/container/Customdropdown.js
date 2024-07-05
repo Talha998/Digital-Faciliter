@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity, ScrollView, FlatList, TextInput, StyleShe
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
-const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeholder, iconName, isOpen, setOpen, style, style2 }) => {
+const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeholder, iconName, style, style2 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isOpen, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
   // Filter items based on search query
@@ -17,6 +18,10 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeho
     setSelectedValue(value);
     setOpen(false);
   };
+  const handleSelectPress = (value) => {
+    // setSelectedValue(value);
+    setOpen(!isOpen);
+  };
 
   useEffect(() => {
     if (!isOpen) {
@@ -26,7 +31,7 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeho
 
   return (
     <View style={[styles.container, { zIndex: isOpen ? 1 : 0 }]}>
-      <TouchableOpacity style={[style]} onPress={setOpen}>
+      <TouchableOpacity style={[style]} onPress={handleSelectPress}>
         <Icon name={iconName} size={20} color={color} style={styles.icon} />
         <Text style={[style2]}>
           {selectedValue !== null ?
@@ -37,34 +42,36 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeho
         <Icons name="arrow-drop-down" size={24} color={color} />
       </TouchableOpacity>
       {isOpen && (
-        <ScrollView style={styles.dropdownList}>
+        <View style={styles.dropdownList}>
           <TextInput
             placeholder="Type something..."
             value={searchQuery}
             onChangeText={setSearchQuery}
             style={styles.searchInput}
           />
-          <FlatList
-            data={filteredItems}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.dropdownItem}
-                onPress={() => {
-                  setSelectedItem(item);
-                  setOpen(false);
-                  setSearchQuery('');
-                  handleSelect(item.value);
-                }}
-              >
-                <Text style={styles.dropdownItemText}>{item.label}</Text>
-                {selectedItem && selectedItem.value === item.value && (
-                  <Icon name="check" size={24} color="green" />
-                )}
-              </TouchableOpacity>
-            )}
-          />
-        </ScrollView>
+          <ScrollView nestedScrollEnabled={true}>
+            <FlatList
+              data={filteredItems}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    setSelectedItem(item);
+                    setOpen(false);
+                    setSearchQuery('');
+                    handleSelect(item.value);
+                  }}
+                >
+                  <Text style={styles.dropdownItemText}>{item.label}</Text>
+                  {selectedItem && selectedItem.value === item.value && (
+                    <Icon name="check" size={24} color="green" />
+                  )}
+                </TouchableOpacity>
+              )}
+            />
+          </ScrollView>
+        </View>
       )}
     </View>
   );
@@ -88,11 +95,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   dropdownList: {
-    borderWidth: 1,
-    borderColor: 'green',
-    backgroundColor: 'white',
-    borderRadius: 5,
-    maxHeight: 200,
+   // marginTop: 5,
+   borderWidth: 1,
+   borderColor: 'green',
+   color:'green',
+   backgroundColor: 'white',
+   borderRadius: 5,
+   maxHeight: 200,
   },
   dropdownItem: {
     flexDirection: 'row',
