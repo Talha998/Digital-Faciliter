@@ -1,22 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import Svg, { Rect, Text as SvgText, G } from 'react-native-svg';
+import { AppContext } from '../Context/AppContext';
 
-const AccessDeniedPerDayHeatMap = ({ device, onClose }) => {
-    const name = device ? device.Eqpt_Title : "User";
+const AccessDeniedPerDayHeatMap = () => {
+    const { Device_DeniedDaySum, selectedPersonName } = useContext(AppContext);
+    const name = "User";
     const loading = false;
-    const dummyData = [
-        { Group: 'ID card no longer valid', Day: 4, Values: 1 },
-        { Group: 'ID Card Unknown', Day: 4, Values: 1 },
-        { Group: 'Wrong access level', Day: 4, Values: 1 },
-        { Group: 'Wrong time\r\n', Day: 4, Values: 4 },
-        { Group: 'Access not allowed', Day: 4, Values: 22 },
-        { Group: 'Access not allowed', Day: 5, Values: 4 },
-        { Group: 'Wrong time\r\n', Day: 5, Values: 9 },
-        { Group: 'ID card has been blocked', Day: 6, Values: 1 },
-        { Group: 'Access not allowed', Day: 6, Values: 7 },
-        // Add more dummy data as needed
-    ];
 
     const [tooltip, setTooltip] = useState(null);
 
@@ -26,8 +16,9 @@ const AccessDeniedPerDayHeatMap = ({ device, onClose }) => {
         temp.xAis = [];
         temp.yAis = [];
 
-        const xLabels = Array.from({ length: 31 }, (_, i) => i + 1);
-        const yLabels = [...new Set(dummyData.map((item) => item.Group))];
+        // Extract unique x-axis and y-axis labels
+        const xLabels = [...new Set(Device_DeniedDaySum?.map((item) => item.Day))];
+        const yLabels = [...new Set(Device_DeniedDaySum?.map((item) => item.Group))];
 
         for (let y = 0; y < yLabels.length; y++) {
             temp.dataSource.push([]);
@@ -35,18 +26,18 @@ const AccessDeniedPerDayHeatMap = ({ device, onClose }) => {
             temp.xAis.push(yLabels[y]);
 
             for (let x = 0; x < xLabels.length; x++) {
-                const item = dummyData.find((d) => d.Day === xLabels[x] && d.Group === yLabels[y]);
+                const item = Device_DeniedDaySum?.find((d) => d.Day === xLabels[x] && d.Group === yLabels[y]);
                 temp.dataSource[y].push(item ? item : { Values: '' });
             }
         }
 
         return temp;
-    };
+    }
 
     const data = getDatasource();
 
     const getColor = (value) => {
-        if (value === '') return '#ffffff';
+        if (value === '') return '#cccccc';  // Red for no data
         if (value <= 10) return '#6EB5D0';
         if (value <= 20) return '#7EDCA2';
         if (value <= 30) return '#DCD57E';
@@ -61,10 +52,14 @@ const AccessDeniedPerDayHeatMap = ({ device, onClose }) => {
         }
     };
 
+    const handleOutsidePress = () => {
+        setTooltip(null);
+    };
+
     const renderTooltip = () => {
         if (!tooltip) return null;
         return (
-            <View style={[styles.tooltip, { top: tooltip.y * 40 + 50, left: tooltip.x * 40 + 10 }]}>
+            <View style={[styles.tooltip, { top: tooltip.y * 50 + 50, left: tooltip.x * 50 + 10 }]}>
                 <Text>Group: {tooltip.Group}</Text>
                 <Text>Day: {tooltip.Day}</Text>
                 <Text>Values: {tooltip.Values}</Text>
@@ -73,69 +68,113 @@ const AccessDeniedPerDayHeatMap = ({ device, onClose }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Access Denied for {name}</Text>
-            {dummyData.length > 0 ? (
-                loading ? (
-                    <View style={styles.spinner}><Text>Loading...</Text></View>
+        <TouchableWithoutFeedback onPress={handleOutsidePress}>
+            <View style={styles.container}>
+                <Text style={styles.title}>Access Denied for {selectedPersonName ? selectedPersonName : name}</Text>
+                {Device_DeniedDaySum.length > 0 ? (
+                    loading ? (
+                        <View style={styles.spinner}><Text>Loading...</Text></View>
+                    ) : (
+                        <View style={styles.containerv2}>
+                            <View style={styles.groupContainer}>
+                                {data.xAis.map((group, index) => (
+                                    <Text key={index} style={styles.groupLabel}>{group}</Text>
+                                ))}
+                            </View>
+                            <ScrollView horizontal>
+                                <View>
+                                    <View style={styles.height_vt}>
+                                        <Svg height={data.yAis.length * 50} width={data.xAis.length * 50}>
+                                            {data.yAis.map((y, i) => (
+                                                data.xAis.map((x, j) => {
+                                                    const item = data?.dataSource[i][j];
+                                                    return (
+                                                        <TouchableWithoutFeedback key={`${i}-${j}`} onPress={() => handlePress(item, j, i)}>
+                                                            <G>
+                                                                <Rect
+                                                                    y={i * 50}
+                                                                    x={j * 50}
+                                                                    width="50"
+                                                                    height="50"
+                                                                    fill={getColor(item?.Values)}
+                                                                    stroke="lightgreen"
+                                                                    strokeWidth="0.5"
+                                                                />
+                                                                {item?.Values ? (
+                                                                    <SvgText
+                                                                        y={(i * 50) + 25}
+                                                                        x={(j * 50) + 25}
+                                                                        fontSize="12"
+                                                                        fill="#000"
+                                                                        textAnchor="middle"
+                                                                    >
+                                                                        {item?.Values}
+                                                                    </SvgText>
+                                                                ) : null}
+                                                            </G>
+                                                        </TouchableWithoutFeedback>
+                                                    );
+                                                })
+                                            ))}
+                                        </Svg>
+                                    </View>
+                                    <View style={styles.xLabelsBottom}>
+                                        {data.dataSource[0].map((_, index) => (
+                                            <Text key={index} style={styles.dayLabelBottom}>{index + 1}</Text>
+                                        ))}
+                                    </View>
+                                </View>
+                            </ScrollView>
+                        </View>
+                    )
                 ) : (
-                    <ScrollView horizontal>
-                        <Svg height={data.yAis.length * 40} width={data.xAis.length * 40}>
-                            {data.yAis.map((y, i) => (
-                                data.xAis.map((x, j) => {
-                                    const item = data.dataSource[i][j];
-                                    return (
-                                        <TouchableWithoutFeedback key={`${i}-${j}`} onPress={() => handlePress(item, j, i)}>
-                                            <G>
-                                                <Rect
-                                                    x={j * 40}
-                                                    y={i * 40}
-                                                    width="40"
-                                                    height="40"
-                                                    fill={getColor(item.Values)}
-                                                    stroke="lightgreen"
-                                                    strokeWidth="0.5"
-                                                />
-                                                {item.Values ? (
-                                                    <SvgText
-                                                        x={(j * 40) + 20}
-                                                        y={(i * 40) + 25}
-                                                        fontSize="12"
-                                                        fill="#000"
-                                                        textAnchor="middle"
-                                                    >
-                                                        {item.Values}
-                                                    </SvgText>
-                                                ) : null}
-                                            </G>
-                                        </TouchableWithoutFeedback>
-                                    );
-                                })
-                            ))}
-                        </Svg>
-                    </ScrollView>
-                )
-            ) : (
-                <View style={styles.noData}>
-                    <Text>No Data</Text>
-                </View>
-            )}
-            {renderTooltip()}
-        </View>
+                    <View style={styles.noData}>
+                        <Text>No Data</Text>
+                    </View>
+                )}
+                
+                {renderTooltip()}
+                 <View>
+                
+                <Text style={styles.titleBottom}>Days</Text>
+            </View>
+            </View>
+           
+        </TouchableWithoutFeedback>
     );
-};
-
+}
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10,
+        width: "100%",
+    },
+    containerv2: {
+        flexDirection: "row",
+        justifyContent: 'center',
+        width: "100%",
+    },
+    group_v6: {
+        width: 60,
+        paddingTop: "30%",
     },
     title: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: 'bold',
         marginBottom: 10,
+        textAlign: "center",
+        marginBottom: 20,
+    },
+    
+    titleBottom: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        textAlign: "center",
+        marginTop: 10,
+    },
+    height_vt: { 
+        // height: ,
     },
     spinner: {
         marginTop: 20,
@@ -158,16 +197,38 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         elevation: 5,
     },
-    closeButton: {
-        marginTop: 20,
-        backgroundColor: '#00544d',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
+    xLabels: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 10,
+        
     },
-    closeButtonText: {
-        color: 'white',
-        fontSize: 16,
+    dayLabel: {
+        width: 50,
+        textAlign: 'center',
+        fontSize: 10,
+        
+    },
+    xLabelsBottom: {
+        flexDirection: 'row',
+        // justifyContent: 'center',
+        marginTop: 10,
+        
+    },
+    dayLabelBottom: {
+        width: 50,
+        textAlign: 'center',
+        fontSize: 10,
+        
+    },
+    groupLabel: {
+        // width: 50,
+        // paddingHorizontal:20,
+        paddingVertical:16.5,
+        paddingRight: 5,
+        textAlign: 'center',
+        fontSize: 10,
+        // transform: [{ rotate: '-90deg' }],
     },
 });
 
