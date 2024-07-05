@@ -29,20 +29,16 @@ const DevicesActivity = () => {
   const [fromDate, setFromDate] = useState(fromDateTime);
   const [toDate, setToDate] = useState(toDateTime);
 
+ 
+
   const convertToLocalTime = (date) => {
+    
     const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
     return localDate.toISOString().slice(0, 19).replace('T', ' ');
   };
 
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
-  const startDate = formatDate(fromDate);
-  const endDate = formatDate(toDate);
+  const startDate = convertToLocalTime(fromDate);
+  const endDate = convertToLocalTime(toDate);
 
   useEffect(() => {
     fetchLastActivity();
@@ -110,8 +106,8 @@ const DevicesActivity = () => {
           'Level3_ID': selectedLocation,
           'Level4_ID': selectedArea,
           'Eqpt_Group_ID': selectedBrand,
-          'Start_Date': startDate,
-          'End_Date': endDate,
+          "Start_Date": startDate,
+          "End_Date": endDate,
         },
         headers,
       });
