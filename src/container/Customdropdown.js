@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, FlatList, TextInput, StyleShe
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
-const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeholder, iconName, style, style2 }) => {
+const CustomDropdown = ({ items, value, onChange, color, placeholder, iconName, style, style2 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -15,11 +15,11 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeho
 
   // Handle selection of an item
   const handleSelect = (value) => {
-    setSelectedValue(value);
+    onChange(value);
     setOpen(false);
   };
-  const handleSelectPress = (value) => {
-    // setSelectedValue(value);
+
+  const handleSelectPress = () => {
     setOpen(!isOpen);
   };
 
@@ -34,8 +34,8 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeho
       <TouchableOpacity style={[style]} onPress={handleSelectPress}>
         <Icon name={iconName} size={20} color={color} style={styles.icon} />
         <Text style={[style2]}>
-          {selectedValue !== null ?
-            (items.find(item => item.value === selectedValue)?.label || selectedValue) :
+          {value !== null ?
+            (items.find(item => item.value === value)?.label || value) :
             placeholder
           }
         </Text>

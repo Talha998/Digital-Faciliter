@@ -35,11 +35,11 @@ const RegistrationScreen = () => {
     },
   });
   const [designation, setDesignation] = useState(null);
-  const [isOpen, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([]);
   const [imageUri, setImageUri] = useState(null);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
-  const [items, setItems] = useState([]);
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   
@@ -47,18 +47,12 @@ console.log(image ,"imageimage")
   const getList = async () => {
     try {
       setLoading(true);
-      const baseUrl = await AsyncStorage.getItem('baseURL');
-      const token = await AsyncStorage.getItem('userToken');
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-      const response = await axios.get(`${baseUrl}/api/GetDesignation` , headers );
+      const baseURL = await AsyncStorage.getItem('baseURL');
+      const response = await axios.get(`http://43.205.3.49:8081/api/GetDesignation`);
       const responseData = response.data.Data.map(item => ({
         label: item.Desig_Title_P,
         value: item.Desig_ID,
-      }
-    
-    ));
+      }));
       const design = response.data.Data;
       setItems(responseData);
       // if (responseData.length > 0) {
@@ -139,11 +133,8 @@ console.log(image ,"imageimage")
 
     try {
       setLoading(true); // Set loading state to true before API call
-      const baseUrl = await AsyncStorage.getItem('baseURL');
-      const token = await AsyncStorage.getItem('userToken');
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
+      const baseURL = await AsyncStorage.getItem('baseURL');
+      console.log(baseURL, "baseURL");
 
       const base64Image = await convertImageToBase64(data.User_Image);
       if (!base64Image) {
@@ -170,7 +161,7 @@ console.log(image ,"imageimage")
       };
       // const baseURL = await AsyncStorage.getItem('baseURL');
       // console.log(baseURL, "baseURL");
-      const response = await axios.post(`${baseUrl}/api/CreateUser`, payload  );
+      const response = await axios.post(`http://43.205.3.49:8081/api/CreateUser`, payload );
       if (response.data.StatusCode === 201) {
         Alert.alert('Success', 'User created successfully');
         navigation.navigate('HomeScreen');
@@ -293,17 +284,24 @@ console.log(image ,"imageimage")
            setSelectedDesign={setSelectedDesign}
          selectedDesign={selectedDesign}
           /> */}
-           <CustomDropdown
-          items={items}
-          selectedValue={selectedDesign}
-          setSelectedValue={setSelectedDesign}
-          placeholder="Select Region"
-          iconName="globe"
-        
-          style={styles.inputContainer} // Apply additional styles here
-             color="black"
-             style2={styles.input} // Apply additional styles here
-        />
+           <Controller
+        name="Desig_ID"
+        control={control}
+        defaultValue={null}
+        render={({ field: { onChange, value } }) => (
+          <CustomDropdown
+            items={items}
+            value={value}
+            onChange={onChange}
+            placeholder="Select Region"
+            iconName="globe"
+            style={styles.inputContainer} // Apply additional styles here
+            color="black"
+            style2={styles.input} // Apply additional styles here
+          />
+        )}
+      />
+          
   <Controller
             control={control}
             rules={{ 
@@ -394,25 +392,6 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: 'cover',
       },
-      input: {
-        flex: 1,
-        // height:20,
-        marginLeft: 10,
-        color: 'green',
-      },
-      inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'green',
-        paddingRight: 5,
-        marginBottom:15,
-        paddingVertical: 14,
-        paddingHorizontal: 10,
-        borderRadius: 10,
-        backgroundColor: 'white',
-      },
-      
       scrollView: {
         flexGrow: 1,
         justifyContent: 'center',
@@ -429,6 +408,23 @@ const styles = StyleSheet.create({
         width: "90%",
         textAlign: "center",
         marginBottom: 15
+      },
+      inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'green',
+        paddingRight: 5,
+        marginVertical: 10,
+        paddingVertical: 14,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+        backgroundColor: 'white',
+      },
+      input: {
+        flex: 1,
+        marginLeft: 10,
+        color: 'green',
       },
       heading_r1: {
         fontSize: 24,
@@ -517,8 +513,8 @@ const styles = StyleSheet.create({
         // marginTop:
       },
       imagePreview_r1: {
-        width: 150,
-        height: 150,
+        width: 125,
+        height: 125,
         borderRadius: 75,
       },
       iconPlaceholder: {
