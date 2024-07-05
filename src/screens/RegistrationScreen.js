@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'green',
         paddingRight: 5,
-        marginVertical: 10,
+        marginBottom:15,
         paddingVertical: 14,
         paddingHorizontal: 10,
         borderRadius: 10,
@@ -501,8 +501,8 @@ const styles = StyleSheet.create({
         color: '#000',
       },
       imageBox: {
-        width: 125,
-        height: 125,
+        width: 120,
+        height: 120,
         borderRadius: 75,
         justifyContent: 'center',
         alignItems: 'center',
@@ -513,10 +513,25 @@ const styles = StyleSheet.create({
         // marginTop:
       },
       imagePreview_r1: {
-        width: 125,
-        height: 125,
+        width: 120,
+        height: 120,
         borderRadius: 75,
+
       },
+      imagePreview_r1  : {
+        width: 120,
+        height: 120,
+        borderRadius: 75,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor:"#ffff",
+        borderWidth: 1,
+        borderColor: 'green',
+        // marginBottom: 20,
+        
+
+      },
+      
       iconPlaceholder: {
         textAlign: 'center',
       },
