@@ -20,6 +20,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+
 import axios from 'axios';
 
 const CustomDrawer = (props) => {
@@ -55,7 +56,7 @@ const CustomDrawer = (props) => {
       console.log('Menu response:', response);
       if (response.status === 200 && responseData.StatusCode === 200) {
         setMenuItems(responseData.Data); // Store the menu items in state
-        Alert.alert('Success', responseData.Message);
+        // Alert.alert('Success', responseData.Message);
       } else {
         throw new Error('Unexpected response status');
       }
@@ -69,7 +70,7 @@ const CustomDrawer = (props) => {
         errorMessage = 'Network error. Please check your internet connection.';
       }
   
-      Alert.alert('Error', errorMessage);
+      // Alert.alert('Error', errorMessage);
     }
   };
 
@@ -114,11 +115,11 @@ const CustomDrawer = (props) => {
   const renderIcon = (menuName) => {
     switch (menuName) {
       case 'Access Controls Insights':
-        return <FontAwesome5 name="Home" size={20} color="#333" />;
+        return <FontAwesome5 name="door-closed" size={20} color="#333" />;
         case 'Attendance Insights':
-        return <FontAwesome5 name="Home" size={20} color="#333" />;
+        return <FontAwesome5 name="cogs" size={20} color="#333" />;
       case 'Emergency Equation':
-        return <FontAwesome5 name="times-circle" size={20} color="#333" />;
+        return <FontAwesome5 name="exclamation-triangle" size={20} color="#333" />;
       case 'Denied By Device':
         return <FontAwesome5 name="times-circle" size={20} color="#333" />;
       case 'Denied By Cardholder':
@@ -250,10 +251,12 @@ const CustomDrawer = (props) => {
           </TouchableOpacity>
         </View>
       </DrawerContentScrollView>
-      <View style={{ padding: 20, borderTopWidth: 1, borderTopColor: '#ccc' }}>
+      <View style={{ padding: 20, borderTopWidth: 1, borderTopColor: '#ccc'  }}>
         <TouchableOpacity onPress={() => setHelpDropdown(!helpDropdown)} style={styles.drawerItem_inner}>
           <Ionicons name="help-circle-outline" size={22} color="#333" />
-          <Text style={styles.drawerLabel}>{t('Help')}</Text>
+          <Text  style={{ flexDirection: 'row', flex: 1, alignItems: 'center' , marginLeft:10 ,  fontSize: 15,
+    color: '#333',
+    fontFamily: 'Roboto-Medium', }}>{t('Help')}</Text>
           <Ionicons name={helpDropdown ? 'chevron-up' : 'chevron-down'} size={22} color="#333" />
         </TouchableOpacity>
         {helpDropdown && (
@@ -289,7 +292,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#333',
     fontFamily: 'Roboto-Medium',
-    fontWeight: '800'
+    // fontWeight: '800'
   },
   dropdownItem: {
     flexDirection: 'row',
@@ -365,7 +368,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 5,
     paddingHorizontal: 15,
-    backgroundColor: '#E8E8E8',
+    // backgroundColor: '#E8E8E8',
   },
   dropdownContent: {
     paddingLeft: 20,
