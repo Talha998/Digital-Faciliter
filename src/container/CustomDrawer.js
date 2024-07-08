@@ -252,7 +252,7 @@ const CustomDrawer = (props) => {
         </View>
       </DrawerContentScrollView>
       <View style={{ padding: 20, borderTopWidth: 1, borderTopColor: '#ccc'  }}>
-        <TouchableOpacity onPress={() => setHelpDropdown(!helpDropdown)} style={styles.drawerItem_inner}>
+        {/* <TouchableOpacity onPress={() => setHelpDropdown(!helpDropdown)} style={styles.drawerItem_inner}>
           <Ionicons name="help-circle-outline" size={22} color="#333" />
           <Text  style={{ flexDirection: 'row', flex: 1, alignItems: 'center' , marginLeft:10 ,  fontSize: 15,
     color: '#333',
@@ -270,7 +270,7 @@ const CustomDrawer = (props) => {
               <Text style={styles.dropdownLabel}>{t('HelpSettings')}</Text>
             </TouchableOpacity>
           </View>
-        )}
+        )} */}
         <TouchableOpacity onPress={openModal} style={styles.drawerItem}>
           <Ionicons name="exit-outline" size={22} color="#333" />
           <Text style={styles.drawerLabel}>{t('Logout')}</Text>
