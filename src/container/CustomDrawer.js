@@ -116,7 +116,7 @@ const CustomDrawer = (props) => {
     switch (menuName) {
       case 'Access Controls Insights':
         return <FontAwesome5 name="door-closed" size={20} color="#333" />;
-        case 'Attendance Insights':
+      case 'Attendance Insights':
         return <FontAwesome5 name="cogs" size={20} color="#333" />;
       case 'Emergency Equation':
         return <FontAwesome5 name="exclamation-triangle" size={20} color="#333" />;
@@ -138,9 +138,12 @@ const CustomDrawer = (props) => {
         return <Ionicons name="help-circle-outline" size={20} color="#333" />;
     }
   };
-
+  
   const renderMenuItems = () => {
-    return menuItems.map((item) => {
+    return menuItems.map((item, index) => {
+      // Exclude the "Dashboard" item
+      if (item.Menu_Name === 'Dashboard') return null;
+  
       if (item.Menu_Type === 'C') {
         return (
           <TouchableOpacity
@@ -189,7 +192,6 @@ const CustomDrawer = (props) => {
       return null;
     });
   };
-
   return (
     <View style={{ flex: 1 }}>
       <Modal
