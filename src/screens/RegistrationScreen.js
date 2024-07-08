@@ -48,7 +48,7 @@ console.log(image ,"imageimage")
     try {
       setLoading(true);
       const baseURL = await AsyncStorage.getItem('baseURL');
-      const response = await axios.get(`http://43.205.3.49:8081/api/GetDesignation`);
+      const response = await axios.get(`${baseURL}/api/GetDesignation`);
       const responseData = response.data.Data.map(item => ({
         label: item.Desig_Title_P,
         value: item.Desig_ID,
@@ -161,7 +161,7 @@ console.log(image ,"imageimage")
       };
       // const baseURL = await AsyncStorage.getItem('baseURL');
       // console.log(baseURL, "baseURL");
-      const response = await axios.post(`http://43.205.3.49:8081/api/CreateUser`, payload );
+      const response = await axios.post(`${baseURL}/api/CreateUser`, payload );
       if (response.data.StatusCode === 201) {
         Alert.alert('Success', 'User created successfully');
         navigation.navigate('HomeScreen');
