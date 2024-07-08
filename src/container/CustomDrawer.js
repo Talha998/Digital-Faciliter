@@ -1,4 +1,4 @@
-import React, { useState , useEffect , useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,8 @@ import {
   Modal,
   Animated,
   Image,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native';
 import {
   DrawerContentScrollView,
@@ -19,6 +20,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 const CustomDrawer = (props) => {
   const navigation = useNavigation();
@@ -27,33 +29,71 @@ const CustomDrawer = (props) => {
   const [attendanceDropdown, setAttendanceDropdown] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [helpDropdown, setHelpDropdown] = useState(false);
+  const [menuItems, setMenuItems] = useState([]);
+
   const openModal = () => {
     setModalVisible(true);
   };
   const closeModal = () => {
     setModalVisible(false);
   };
-  const handleLogout = async  () => {
-    // Handle Yes action here
+  const fetchMenuItems = async () => {
     try {
-      // Clear AsyncStorage or any other storage where user data/token is stored
+      const baseURL = await AsyncStorage.getItem('baseURL');
+      const token = await AsyncStorage.getItem('userToken');
+      
+      if (!baseURL || !token) {
+        throw new Error('Base URL or token not found in storage');
+      }
+  
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+  
+      const response = await axios.get(`${baseURL}/api/GetMenuItem?Language=P&Used_By=M&api-version=1.0`, { headers });
+      const responseData = response.data;
+      console.log('Menu response:', response);
+      if (response.status === 200 && responseData.StatusCode === 200) {
+        setMenuItems(responseData.Data); // Store the menu items in state
+        Alert.alert('Success', responseData.Message);
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (error) {
+      console.error(error);
+  
+      let errorMessage = 'An error occurred. Please try again later.';
+      if (error.response) {
+        errorMessage = error.response.data.Message || errorMessage;
+      } else if (error.request) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      }
+  
+      Alert.alert('Error', errorMessage);
+    }
+  };
+
+  useEffect(() => {
+    fetchMenuItems();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
       await AsyncStorage.removeItem('userData');
       await AsyncStorage.removeItem('userToken');
       closeModal();
-      // Navigate to login screen (assuming it's named 'LoginScreen')
       navigation.navigate('HomeScreen');
     } catch (error) {
       console.error('Error logging out:', error);
       Alert.alert('Error', 'An error occurred while logging out');
     }
-  
   };
 
   const handleNo = () => {
     closeModal();
   };
 
-  const slideAnim = useRef(new Animated.Value(-500)).current; // Initial position off-screen
+  const slideAnim = useRef(new Animated.Value(-500)).current;
 
   useEffect(() => {
     if (modalVisible) {
@@ -70,9 +110,83 @@ const CustomDrawer = (props) => {
       }).start();
     }
   }, [modalVisible, slideAnim]);
+  const renderIcon = (menuName) => {
+    switch (menuName) {
+      case 'Emergency Equation':
+        return <FontAwesome5 name="times-circle" size={20} color="#333" />;
+      case 'Denied By Device':
+        return <FontAwesome5 name="times-circle" size={20} color="#333" />;
+      case 'Denied By Cardholder':
+        return <FontAwesome5 name="user-times" size={20} color="#333" />;
+      case 'Door Alarms':
+        return <FontAwesome5 name="bell" size={20} color="#333" />;
+      case 'Devices Activity':
+        return <FontAwesome5 name="clipboard-list" size={20} color="#333" />;
+      case 'Door Management':
+        return <FontAwesome5 name="clipboard-list" size={20} color="#333" />;
+      case 'Attendance Analysis':
+        return <FontAwesome5 name="chart-line" size={20} color="#333" />;
+      case 'Absentees People':
+        return <FontAwesome5 name="user-slash" size={20} color="#333" />;
+      default:
+        return <Ionicons name="help-circle-outline" size={20} color="#333" />;
+    }
+  };
+
+  const renderMenuItems = () => {
+    return menuItems.map((item) => {
+      if (item.Menu_Type === 'C') {
+        return (
+          <TouchableOpacity
+            key={item.Menu_ID}
+            onPress={() =>
+              item.Menu_Name === 'Access Controls Insights'
+                ? setAccessControlsDropdown(!accessControlsDropdown)
+                : setAttendanceDropdown(!attendanceDropdown)
+            }
+            style={styles.drawerItem}
+          >
+            <View style={{ flexDirection: 'row', flex: 1, alignItems: 'center' }}>
+              {renderIcon(item.Menu_Name)}
+              <Text style={styles.drawerLabel}>{item.Menu_Name}</Text>
+            </View>
+            <Ionicons
+              name={(item.Menu_Name === 'Access Controls Insights' && accessControlsDropdown) || (item.Menu_Name === 'Attendance Insights' && attendanceDropdown) ? 'chevron-up' : 'chevron-down'}
+              size={22}
+              color="#333"
+            />
+          </TouchableOpacity>
+        );
+      } else if (item.Menu_Type === 'D' && accessControlsDropdown && item.Parent_Menu_ID === 3) {
+        return (
+          <TouchableOpacity
+            key={item.Menu_ID}
+            onPress={() => navigation.navigate(item.Page_Name)}
+            style={styles.dropdownItem}
+          >
+            {renderIcon(item.Menu_Name)}
+            <Text style={styles.dropdownLabel}>{item.Menu_Name}</Text>
+          </TouchableOpacity>
+        );
+      } else if (item.Menu_Type === 'D' && attendanceDropdown && item.Parent_Menu_ID === 4) {
+        return (
+          <TouchableOpacity
+            key={item.Menu_ID}
+            onPress={() => navigation.navigate(item.Page_Name)}
+            style={styles.dropdownItem}
+          >
+            {renderIcon(item.Menu_Name)}
+            <Text style={styles.dropdownLabel}>{item.Menu_Name}</Text>
+          </TouchableOpacity>
+        );
+      }
+      return null;
+    });
+  };
+
   return (
     <View style={{ flex: 1 }}>
-        <Modal
+      <Modal
         animationType="fade"
         transparent={true}
         visible={modalVisible}
@@ -80,235 +194,79 @@ const CustomDrawer = (props) => {
       >
         <View style={styles.modalOverlay}>
           <Animated.View style={[styles.modalContentf2, { transform: [{ translateY: slideAnim }] }]}>
-
-            {/* Top Header */}
             <View style={styles.serverURLContainerf2}>
               <Text style={styles.serverURLf2}>Log Out</Text>
               <TouchableOpacity onPress={closeModal}>
                 <Image source={require('../../assets/images/cancel-39-39.png')} style={styles.cancelIcon} />
               </TouchableOpacity>
             </View>
-
-            {/* Scrollable Content */}
             <View style={styles.contentContainer}>
-          <Text style={styles.logoutText}>Are you sure you want to logout?</Text>
-          <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleNo}>
-            <Ionicons name="close-circle" size={24} color="white" style={styles.icon} />
-              <Text style={styles.buttonText}>No</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleLogout}>
-            <Ionicons name="checkmark-circle" size={24} color="white" style={styles.icon} />
-              <Text style={styles.buttonText}>Yes</Text>
-            </TouchableOpacity>
-          
-          </View>
-        </View>
+              <Text style={styles.logoutText}>Are you sure you want to logout?</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={handleNo}>
+                  <Ionicons name="close-circle" size={24} color="white" style={styles.icon} />
+                  <Text style={styles.buttonText}>No</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                  <Ionicons name="checkmark-circle" size={24} color="white" style={styles.icon} />
+                  <Text style={styles.buttonText}>Yes</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </Animated.View>
         </View>
       </Modal>
-      <DrawerContentScrollView
-        {...props}
-        contentContainerStyle={{ marginTop: -4 }}
-      >
-        <ImageBackground
-          source={require('../../assets/images/drawer.png')}
-          style={{ padding: 20, height: 200 }}
-        >
-          <Text
-            style={{
-              color: '#fff',
-              fontSize: 30,
-              fontFamily: 'Roboto-Medium',
-              marginBottom: 5,
-              fontWeight: '700',
-              textAlign: 'center',
-            }}
-          >
+      <DrawerContentScrollView {...props} contentContainerStyle={{ marginTop: -4 }}>
+        <ImageBackground source={require('../../assets/images/drawer.png')} style={{ padding: 20, height: 200 }}>
+          <Text style={{ color: '#fff', fontSize: 30, fontFamily: 'Roboto-Medium', marginBottom: 5, fontWeight: '700', textAlign: 'center' }}>
             {t('Digital_Faciliter')}
           </Text>
-          <Text
-            style={{
-              color: '#fff',
-              fontSize: 18,
-              fontFamily: 'Roboto-Medium',
-              marginBottom: 5,
-              fontWeight: '600',
-              textAlign: 'center',
-            }}
-          >
+          <Text style={{ color: '#fff', fontSize: 18, fontFamily: 'Roboto-Medium', marginBottom: 5, fontWeight: '600', textAlign: 'center' }}>
             {t('Seamless_Solutions')}
           </Text>
-          <Text
-            style={{
-              color: '#fff',
-              fontSize: 16,
-              fontFamily: 'Roboto-Medium',
-              marginBottom: 0,
-              fontWeight: '800',
-              marginTop: '20%',
-            }}
-          >
+          <Text style={{ color: '#fff', fontSize: 16, fontFamily: 'Roboto-Medium', marginBottom: 0, fontWeight: '800', marginTop: '20%' }}>
             System Admin
           </Text>
         </ImageBackground>
         <View style={{ flex: 1, backgroundColor: '#fff', paddingTop: 10 }}>
           <DrawerItemList {...props} />
-          <TouchableOpacity
-            onPress={() => setAccessControlsDropdown(!accessControlsDropdown)}
-            style={styles.drawerItem}
-          >
-            <Ionicons name="lock-closed-outline" size={22} color="#333" />
-            <Text style={styles.drawerLabel}>Access Controls Insights</Text>
-            <Ionicons
-              name={accessControlsDropdown ? 'chevron-up' : 'chevron-down'}
-              size={22}
-              color="#333"
-            />
-          </TouchableOpacity>
-          {accessControlsDropdown && (
-            <View style={styles.dropdownContainer}>
-               <TouchableOpacity
-  onPress={() => {
-    navigation.navigate('Emergency Equation'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}
-  style={styles.dropdownItem}
->
-  <FontAwesome5 name="times-circle" size={20} color="#333" />
-  <Text style={styles.dropdownLabel}>Emergency Equation</Text>
-</TouchableOpacity>
-              <TouchableOpacity
-  onPress={() => {
-    navigation.navigate('Denied By Device'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}
-  style={styles.dropdownItem}
->
-  <FontAwesome5 name="times-circle" size={20} color="#333" />
-  <Text style={styles.dropdownLabel}>Denied By Device</Text>
-</TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}  onPress={() => {
-    navigation.navigate('Denied By Cardholder'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}  >
-                <FontAwesome5 name="user-times" size={20} color="#333" />
-                <Text style={styles.dropdownLabel}>Denied By Cardholder</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}  onPress={() => {
-    navigation.navigate('Door Alarm'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }} >
-                <FontAwesome5 name="bell" size={20} color="#333" />
-                <Text style={styles.dropdownLabel}>Door Alarm</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}  onPress={() => {
-    navigation.navigate('Devices Activity'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}  >
-                <FontAwesome5 name="clipboard-list" size={20} color="#333" />
-                <Text style={styles.dropdownLabel}>Devices Activity</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}  onPress={() => {
-    navigation.navigate('Door Management'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}  >
-                <FontAwesome5 name="clipboard-list" size={20} color="#333" />
-                <Text style={styles.dropdownLabel}>Door Management</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          <TouchableOpacity
-            onPress={() => setAttendanceDropdown(!attendanceDropdown)}
-            style={styles.drawerItem}
-          >
-            <Ionicons name="calendar-outline" size={22} color="#333" />
-            <Text style={styles.drawerLabel}>Attendance Analysis</Text>
-            <Ionicons
-              name={attendanceDropdown ? 'chevron-up' : 'chevron-down'}
-              size={22}
-              color="#333"
-            />
-          </TouchableOpacity>
-          {attendanceDropdown && (
-            <View style={styles.dropdownContainer}>
-              <TouchableOpacity style={styles.dropdownItem} onPress={() => {
-    navigation.navigate('Attendance Analysis'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}   >
-                <FontAwesome5 name="chart-line" size={20} color="#333" />
-                <Text style={styles.dropdownLabel}>Attendance Analysis</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}  onPress={() => {
-    navigation.navigate('Absentees People'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }} >
-                <FontAwesome5 name="user-slash" size={20} color="#333" />
-                <Text style={styles.dropdownLabel}>Absentees People</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          <TouchableOpacity style={styles.drawerItem} onPress={() => {
-    navigation.navigate('Settings'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}>
-          <Ionicons name="settings-outline" size={20} color="#333" />
+          {renderMenuItems()}
+          <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('Settings')}>
+            <Ionicons name="settings-outline" size={20} color="#333" />
             <Text style={styles.drawerLabel}>Settings</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.drawerItem}  onPress={() => {
-    navigation.navigate('About Screen'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}>
-          <Ionicons name="information-circle-outline" size={20} color="#333" />
+          <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('About Screen')}>
+            <Ionicons name="information-circle-outline" size={20} color="#333" />
             <Text style={styles.drawerLabel}>About</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.drawerItem} onPress={() => {
-    navigation.navigate('Privacy Statments'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}>
-          <Ionicons name="shield-checkmark-outline" size={20} color="#333" />
+          <TouchableOpacity style={styles.drawerItem} onPress={() => navigation.navigate('Privacy Statments')}>
+            <Ionicons name="shield-checkmark-outline" size={20} color="#333" />
             <Text style={styles.drawerLabel}>Privacy Statement</Text>
           </TouchableOpacity>
         </View>
       </DrawerContentScrollView>
       <View style={{ padding: 20, borderTopWidth: 1, borderTopColor: '#ccc' }}>
-      <TouchableOpacity
-            onPress={() => setHelpDropdown(!helpDropdown)}
-            style={styles.drawerItem_inner}
-          >
-            <Ionicons name="help-circle-outline" size={22} color="#333" />
-            <Text style={styles.drawerLabel}>Help</Text>
-            
-            <Ionicons
-              name={helpDropdown ? 'chevron-up' : 'chevron-down'}
-              size={22}
-              color="#333"
-            />
-          </TouchableOpacity>
-          {helpDropdown && (
-            <View style={styles.dropdownContainer}>
-              <TouchableOpacity style={styles.dropdownItem} onPress={() => {
-    navigation.navigate('User Guide'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}>
-                <FontAwesome5 name="book" size={20} color="#333" />
-                <Text style={styles.dropdownLabel}>User Guide</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem} onPress={() => {
-    navigation.navigate('Feed back'); // Replace 'DeniedByDeviceScreen' with the actual screen name you want to navigate to
-  }}>
-                <FontAwesome5 name="comment-dots" size={20} color="#333" />
-                <Text style={styles.dropdownLabel}>Feedback</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        <TouchableOpacity onPress={() => {}} style={{ paddingVertical: 15 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Ionicons name="log-out-outline" size={22} />
-            <Text style={{ fontSize: 15, fontFamily: 'Roboto-Medium', marginLeft: 5 }} onPress={openModal}  >
-              Log Out
-            </Text>
-          </View>
+        <TouchableOpacity onPress={() => setHelpDropdown(!helpDropdown)} style={styles.drawerItem_inner}>
+          <Ionicons name="help-circle-outline" size={22} color="#333" />
+          <Text style={styles.drawerLabel}>{t('Help')}</Text>
+          <Ionicons name={helpDropdown ? 'chevron-up' : 'chevron-down'} size={22} color="#333" />
         </TouchableOpacity>
-        <Text
-          style={{
-            fontSize: 15,
-            fontFamily: 'Roboto-Medium',
-            textAlign: 'center',
-            marginTop: 10,
-          }}
-        >
-          Version: 2.3.0
-        </Text>
+        {helpDropdown && (
+          <View style={styles.dropdownContent}>
+            <TouchableOpacity onPress={() => navigation.navigate('Help')} style={styles.dropdownItem}>
+              <FontAwesome5 name="clipboard-list" size={20} color="#333" />
+              <Text style={styles.dropdownLabel}>{t('Help')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('HelpSettings')} style={styles.dropdownItem}>
+              <FontAwesome5 name="clipboard-list" size={20} color="#333" />
+              <Text style={styles.dropdownLabel}>{t('HelpSettings')}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        <TouchableOpacity onPress={openModal} style={styles.drawerItem}>
+          <Ionicons name="exit-outline" size={22} color="#333" />
+          <Text style={styles.drawerLabel}>{t('Logout')}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -318,76 +276,63 @@ const styles = StyleSheet.create({
   drawerItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  drawerItem_inner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 0,
-    paddingVertical: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
   drawerLabel: {
+    marginLeft: 10,
     fontSize: 15,
+    color: '#333',
     fontFamily: 'Roboto-Medium',
-    marginLeft: 15,
-    flex: 1,
-  },
-  dropdownContainer: {
-    paddingLeft: 45,
-    paddingBottom: 10,
+    fontWeight: '800'
   },
   dropdownItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
+    paddingHorizontal: 15,
+    paddingLeft: 30,
   },
   dropdownLabel: {
-    fontSize: 14,
-    fontFamily: 'Roboto-Medium',
     marginLeft: 10,
+    fontSize: 15,
+    color: '#333',
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center', // Center the modal vertically
-    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContentf2: {
-    width: '80%',
-    height: 170,
     backgroundColor: 'white',
+    padding: 20,
     borderRadius: 10,
+    width: '80%',
+    height: '30%',
   },
   serverURLContainerf2: {
-    backgroundColor: '#00544d',
-    paddingVertical: 18,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
   },
   serverURLf2: {
-    color: 'white',
-    // textAlign: 'center',
-    fontWeight: "700",
-    fontSize: 16,
-    flex: 1,
-    marginLeft: 0,
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   cancelIcon: {
     width: 24,
     height: 24,
   },
   contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   logoutText: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
     marginBottom: 20,
-    marginTop:10
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -395,22 +340,30 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#00544d',
+    backgroundColor: 'red',
+    padding: 10,
     borderRadius: 10,
-    marginHorizontal: 10,
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   buttonText: {
+    color: 'white',
     fontSize: 16,
-    color:'#fff'
+    fontWeight: 'bold',
+    marginLeft: 5,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  drawerItem_inner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    backgroundColor: '#E8E8E8',
+  },
+  dropdownContent: {
+    paddingLeft: 20,
   },
 });
 

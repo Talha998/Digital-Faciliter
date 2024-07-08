@@ -27,7 +27,7 @@ const DrawerNavigator = () => {
     >
       <Drawer.Screen name="Dashboard" component={Dashboard} />
       {/* <Drawer.Screen name="Access Controls Insights" component={AccessControlsInsights} />
-      <Drawer.Screen name="Attendance Analysis" component={AttendanceAnalysis} /> */}
+      <Drawer.Screen name="AttendanceAnalysis" component={AttendanceAnalysis} /> */}
       {/* <Drawer.Screen name="Settings" component={SettingsScreen} /> */}
       {/* <Drawer.Screen name="About" component={AboutScreen} /> */}
     </Drawer.Navigator>

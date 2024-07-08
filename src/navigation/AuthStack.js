@@ -26,14 +26,14 @@ const AuthStack = () => {
       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="SelectDropdown" component={SelectDropdown} options={{ headerShown: false }} />
       <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="Emergency Equation" component={EmergencyEquationComponent} />
-      <Stack.Screen name="Door Management" component={DoorManagement} />
-      <Stack.Screen name="Denied By Device" component={DeniedByDeviceScreen} />
-      <Stack.Screen name="Denied By Cardholder" component={DeniedByCardholder} />
-      <Stack.Screen name="Door Alarm" component={DoorAlarm} />
-      <Stack.Screen name="Devices Activity" component={DevicesActivity} />
-      <Stack.Screen name="Attendance Analysis" component={AttendanceAnalysis} />
-      <Stack.Screen name="Absentees People" component={AbsenteesPeople} />
+      <Stack.Screen name="EmergencyEquation" component={EmergencyEquationComponent} />
+      <Stack.Screen name="DoorManagement" component={DoorManagement} />
+      <Stack.Screen name="AccessDeniedByDevice" component={DeniedByDeviceScreen} />
+      <Stack.Screen name="AccessDeniedByCardholder" component={DeniedByCardholder} />
+      <Stack.Screen name="DoorAlarms" component={DoorAlarm} />
+      <Stack.Screen name="DevicesActivity" component={DevicesActivity} />
+      <Stack.Screen name="AttendanceAnalysis" component={AttendanceAnalysis} />
+      <Stack.Screen name="AbsenteesPeople" component={AbsenteesPeople} />
       <Stack.Screen name="User Guide" component={UserGuide} />
       <Stack.Screen name="Feed back" component={Feedback} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
