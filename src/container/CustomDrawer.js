@@ -110,8 +110,13 @@ const CustomDrawer = (props) => {
       }).start();
     }
   }, [modalVisible, slideAnim]);
+  
   const renderIcon = (menuName) => {
     switch (menuName) {
+      case 'Access Controls Insights':
+        return <FontAwesome5 name="Home" size={20} color="#333" />;
+        case 'Attendance Insights':
+        return <FontAwesome5 name="Home" size={20} color="#333" />;
       case 'Emergency Equation':
         return <FontAwesome5 name="times-circle" size={20} color="#333" />;
       case 'Denied By Device':
