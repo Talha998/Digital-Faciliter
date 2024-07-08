@@ -211,9 +211,9 @@ const CustomDrawer = (props) => {
             <View style={styles.contentContainer}>
               <Text style={styles.logoutText}>Are you sure you want to logout?</Text>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={handleNo}>
+                <TouchableOpacity style={styles.button_rt} onPress={handleNo}>
                   <Ionicons name="close-circle" size={24} color="white" style={styles.icon} />
-                  <Text style={styles.buttonText}>No</Text>
+                  <Text style={styles.buttonText_rt}>No</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={handleLogout}>
                   <Ionicons name="checkmark-circle" size={24} color="white" style={styles.icon} />
@@ -315,11 +315,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContentf2: {
+    width: '85%',
+    height: 220,
     backgroundColor: 'white',
-    padding: 20,
     borderRadius: 10,
-    width: '80%',
-    height: '30%',
   },
   serverURLContainerf2: {
     flexDirection: 'row',
@@ -329,32 +328,51 @@ const styles = StyleSheet.create({
   serverURLf2: {
     fontSize: 24,
     fontWeight: 'bold',
+    color:"white"
   },
   cancelIcon: {
     width: 24,
     height: 24,
   },
   contentContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    
+    // flex: 1,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // marginTop:20,
+    // textAlign:"center"
   },
   logoutText: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginTop: 25,
+    textAlign:"center"
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
+    marginTop:30
   },
   button: {
-    backgroundColor: 'red',
+    backgroundColor: '#00544d',
     padding: 10,
     borderRadius: 10,
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  button_rt: {
+    backgroundColor: '#6e6e6e',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  buttonText_rt : {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 5,
   },
   buttonText: {
     color: 'white',
@@ -374,6 +392,16 @@ const styles = StyleSheet.create({
   },
   dropdownContent: {
     paddingLeft: 20,
+  },
+  serverURLContainerf2: {
+    backgroundColor: '#00544d',
+    paddingVertical: 18,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
 });
 
