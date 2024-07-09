@@ -87,8 +87,14 @@ const HomeScreen = () => {
         Alert.alert("user name or password is invalid");
       }
     } catch (error) {
-      // Alert.alert("Error", "Login failed. Please check your credentials.");
-      Alert.alert(`Error ${JSON.stringify(error)} "user name   or password is invalid.`);
+      if (error.response && error.response?.status === 401) {
+        // If status code is 401, show a specific message
+        Alert.alert("Error", "User name or password is invalid.");
+      } else {
+        // For other errors, show a generic login failed message
+        const apiMessage = error?.message || "Login failed. Please check your credentials.";
+        Alert.alert("Error", apiMessage);
+      }
       console.error('Error during login:', error);
     } finally {
       setLoading(false); // Stop loading indicator
