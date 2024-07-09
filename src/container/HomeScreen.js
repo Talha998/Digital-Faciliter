@@ -72,6 +72,7 @@ const HomeScreen = () => {
 
   const onSubmit = async (data) => {
     try {
+      const baseURL = await AsyncStorage.getItem('baseURL');
       setLoading(true); // Start loading indicator
       const response = await axios.get(`${baseURL}/api/LoginUser`, {
         params: { UserId: data.username, UserPwd: data.password }
@@ -87,7 +88,7 @@ const HomeScreen = () => {
       }
     } catch (error) {
       // Alert.alert("Error", "Login failed. Please check your credentials.");
-      Alert.alert("Error", "user name or password is invalid.");
+      Alert.alert(`Error ${JSON.stringify(error)} "user name   or password is invalid.`);
       console.error('Error during login:', error);
     } finally {
       setLoading(false); // Stop loading indicator
