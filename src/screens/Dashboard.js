@@ -70,7 +70,9 @@ const Dashboard = () => {
   const handleCancel = () => {
     setModalVisible(false);
   };
-
+  useEffect(() => {
+    getSummary(startDate, endDate);
+  }, [selectedArea , selectedBrand]);
   useEffect(() => {
     getSummary(startDate, endDate);
   }, []);
@@ -479,6 +481,7 @@ const styles = StyleSheet.create({
   GraphDashboard: {
 // paddingTop:7,
     width:"48%",
+    
     // marginVertical:20,
     marginHorizontal:5,
   },

@@ -42,12 +42,10 @@ const AlarmPerChart = () => {
             justify-content: center;
             align-items: center;
             height: 100%;
-            margin: 0;
+            text-align: center;
+            background-color: transparent;
           }
-          #chart {
-            height: 100%;
-            width: 100%;
-          }
+        
         </style>
       </head>
       <body>
@@ -55,7 +53,7 @@ const AlarmPerChart = () => {
         <script>
           var options = ${JSON.stringify(data.options)};
           options.series = ${JSON.stringify(data.series)};
-          options.chart = { type: 'pie', height: '100%', width: '100%' };
+          options.chart = { type: 'pie', height: 160, width: 160 };
           
           var chart = new ApexCharts(document.querySelector("#chart"), options);
           chart.render();
@@ -73,7 +71,7 @@ const AlarmPerChart = () => {
               <WebView
                 originWhitelist={['*']}
                 source={{ html: chartHtml }}
-                style={{ height: 120, width: 120 }} // Adjust dimensions as needed
+                style={styles.webView} // Adjust dimensions as needed
               />
             ) : (
               <Text style={styles.noDataText}>No data available</Text>
@@ -102,8 +100,8 @@ const styles = StyleSheet.create({
   greenBackground: {
     alignItems: 'center',
     borderRadius: 20,
-    position: "absolute",
-    top: -50
+    position: 'absolute',
+    top: -50,
   },
   card: {
     backgroundColor: '#ffffff', // White background color for the card
@@ -113,18 +111,24 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 2,
     height: 135,
-    width:125,
+    width: 125,
     marginBottom: 5,
   },
   noDataText: {
     fontSize: 14,
     fontWeight: 'bold',
-    marginTop:30,
+    marginTop: 30,
     // color: '#ff0000', // Red color for no data message
   },
   chartContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  webView: {
+    marginTop:-10,
+    height: 120,
+    width: 120, // Adjust dimensions as needed
   },
   chartText_active: {
     fontSize: 12,
