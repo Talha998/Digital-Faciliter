@@ -203,10 +203,12 @@ const HomeScreen = () => {
 
   const closeModalImage = () => {
     setModalVisibleImage(false);
+ 
   };
 
   const handleImageSelectedImage = (index) => {
     setBackgroundImage(backgroundImages[index]);
+    closeModal();
   };
 
   return (

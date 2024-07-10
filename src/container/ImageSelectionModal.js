@@ -1,45 +1,35 @@
-import React, { useState } from 'react';
-import { Modal, View, TouchableOpacity, Image, StyleSheet, Text } from 'react-native';
+import React from 'react';
+import { Modal, View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 
 const ImageSelectionModal = ({ isVisible, onClose, onImageSelected }) => {
-  const modalImages = [
-    require('../../assets/images/ComponentPurple.png'),
-    require('../../assets/images/ComponentDarkGreen.png'),
-    require('../../assets/images/Componentgreen.png'),
-    require('../../assets/images/ComponentBlue.png')
+  const images = [
+    { src: require('../../assets/images/ComponentPurple.png'), name: 'SAM Green' },
+    { src: require('../../assets/images/ComponentDarkGreen.png'), name: 'Pigment Indigo' },
+    { src: require('../../assets/images/Componentgreen.png'), name: 'Neptune Blue' },
+    { src: require('../../assets/images/ComponentBlue.png'), name: 'Neptune Blue' }
   ];
-
-  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
-
-  const handleDone = () => {
-    if (selectedImageIndex !== null) {
-      onImageSelected(selectedImageIndex);
-      onClose();
-    }
-  };
 
   return (
     <Modal
       visible={isVisible}
-      transparent={true}
       animationType="slide"
+      transparent={true}
       onRequestClose={onClose}
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          {modalImages.map((image, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => setSelectedImageIndex(index)}
-              style={[
-                styles.imageWrapper,
-                selectedImageIndex === index && styles.selectedImage
-              ]}
-            >
-              <Image source={image} style={styles.image} />
-            </TouchableOpacity>
-          ))}
-          <TouchableOpacity style={styles.doneButton} onPress={handleDone}>
+          <Text style={styles.modalTitle}>Choose Theme</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
+            {images.map((image, index) => (
+              <TouchableOpacity key={index} onPress={() => onImageSelected(index)}>
+                <View style={styles.imageContainer}>
+                  <Image source={image.src} style={styles.image} />
+                  <Text style={styles.imageName}>{image.name}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <TouchableOpacity style={styles.doneButton} onPress={onClose}>
             <Text style={styles.doneButtonText}>Done</Text>
           </TouchableOpacity>
         </View>
@@ -48,42 +38,56 @@ const ImageSelectionModal = ({ isVisible, onClose, onImageSelected }) => {
   );
 };
 
+const { width } = Dimensions.get('window');
+const imageWidth = width / 3;
+
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: '80%',
     backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 20,
-    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  scrollView: {
     alignItems: 'center',
   },
-  imageWrapper: {
-    margin: 10,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  selectedImage: {
-    borderColor: 'blue',
+  imageContainer: {
+    alignItems: 'center',
+    marginHorizontal: 10,
   },
   image: {
-    width: 100,
-    height: 100,
+    width: imageWidth,
+    height: imageWidth * 2,
     resizeMode: 'contain',
   },
+  imageName: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   doneButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: 'blue',
+    backgroundColor: '#006400',
     borderRadius: 5,
+    padding: 10,
+    alignItems: 'center',
+    marginTop: 20,
   },
   doneButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
