@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { Modal, View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, Dimensions , TouchableWithoutFeedback } from 'react-native';
 
 const ImageSelectionModal = ({ isVisible, onClose, onImageSelected }) => {
   const images = [
@@ -16,6 +16,7 @@ const ImageSelectionModal = ({ isVisible, onClose, onImageSelected }) => {
       transparent={true}
       onRequestClose={onClose}
     >
+          <TouchableWithoutFeedback onPress={onClose}>
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Choose Theme</Text>
@@ -34,6 +35,7 @@ const ImageSelectionModal = ({ isVisible, onClose, onImageSelected }) => {
           </TouchableOpacity>
         </View>
       </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };

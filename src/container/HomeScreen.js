@@ -65,6 +65,7 @@ const HomeScreen = () => {
     require('../../assets/images/DarKGreen.png'),
     require('../../assets/images/abstract1.png'),
     require('../../assets/images/neptunneBlue.png')
+   
   ];
   const handleSelectLanguage = (language) => {
     setSelectedLanguage(language);
