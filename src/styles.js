@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     textAlign:"center",
-    color: '#00544d',
+    // color: '#00544d',
     fontSize: 16,
      fontWeight: '700',
     fontFamily: 'YourCustomFontFamily',

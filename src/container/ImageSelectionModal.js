@@ -1,13 +1,16 @@
-import React from 'react';
+import React, {useContext } from 'react';
 import { Modal, View, Text, Image, ScrollView, TouchableOpacity, StyleSheet, Dimensions , TouchableWithoutFeedback } from 'react-native';
+import { AppContext } from '../Context/AppContext';
 
 const ImageSelectionModal = ({ isVisible, onClose, onImageSelected }) => {
-  const images = [
-    { src: require('../../assets/images/ComponentPurple.png'), name: 'SAM Green' },
-    { src: require('../../assets/images/ComponentDarkGreen.png'), name: 'Pigment Indigo' },
-    { src: require('../../assets/images/Componentgreen.png'), name: 'Neptune Blue' },
-    { src: require('../../assets/images/ComponentBlue.png'), name: 'Neptune Blue' }
-  ];
+    const { themeColor } = useContext(AppContext);
+    const images = [
+        { src: require('../../assets/images/ComponentPurple.png'), name: 'Pigment Indigo' }, // Purple
+        { src: require('../../assets/images/ComponentDarkGreen.png'), name: 'SAM Green'  },  // Dark Green
+        { src: require('../../assets/images/Componentgreen.png'), name: 'Greenish Black' }, // Green
+        { src: require('../../assets/images/ComponentBlue.png'), name: 'Neptune' } // Sky Blue
+      ];
+    
 
   return (
     <Modal
@@ -30,7 +33,7 @@ const ImageSelectionModal = ({ isVisible, onClose, onImageSelected }) => {
               </TouchableOpacity>
             ))}
           </ScrollView>
-          <TouchableOpacity style={styles.doneButton} onPress={onClose}>
+          <TouchableOpacity style={[styles.doneButton, { backgroundColor: themeColor }]} onPress={onClose}>
             <Text style={styles.doneButtonText}>Done</Text>
           </TouchableOpacity>
         </View>
@@ -80,7 +83,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   doneButton: {
-    backgroundColor: '#006400',
+    // backgroundColor: '#006400',
     borderRadius: 5,
     padding: 10,
     alignItems: 'center',

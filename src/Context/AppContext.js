@@ -5,9 +5,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
+    const defaultIconColor = '#00544d';
     const [Device_DeniedHourSum, setDevice_DeniedHourSum] = useState([]);
     const [Device_DeniedDaySum, setDevice_DeniedDaySum] = useState([]);
-    console.log(Device_DeniedDaySum , "Device_DeniedDaySum")
+    const [themeColor, setThemeColor] = useState(defaultIconColor);
     const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
     const [isServerURLModalVisible, setServerURLModalVisible] = useState(false);
     const [isModifyPasswordModalVisible, setModifyPasswordModalVisible] = useState(false);
@@ -183,7 +184,8 @@ const AppProvider = ({ children }) => {
       setSelectedButton,
       selectedPersonName, setSelectedPersonName ,
       Device_DeniedHourSum, setDevice_DeniedHourSum , 
-      Device_DeniedDaySum, setDevice_DeniedDaySum
+      Device_DeniedDaySum, setDevice_DeniedDaySum , 
+      themeColor, setThemeColor
         }}>
             {children}
         </AppContext.Provider>

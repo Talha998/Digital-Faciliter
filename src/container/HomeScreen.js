@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef , useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, ImageBackground, StyleSheet, Modal, Animated, Alert, ActivityIndicator } from 'react-native';
 import styles from '../styles';
 import axios from "axios";
@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import ServerURLModal from '../screens/ServerURLModal';
 import LanguageModal from '../screens/LanguageModal';
 import ImageSelectionModal from './ImageSelectionModal';
+import { AppContext } from '../Context/AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
@@ -18,7 +19,9 @@ const HomeScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalVisibleImage, setModalVisibleImage] = useState(false);
   const defaultImage = require('../../assets/images/abstract1.png');
+  const defaultIconImage = require('../../assets/images/SAMGREEN.png');
   const [backgroundImage, setBackgroundImage] = useState(defaultImage);
+  const [iconImage, setIconImage] = useState(defaultIconImage);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [isModalVisible_forget, setIsModalVisible_forget] = useState(false);
@@ -31,7 +34,7 @@ const HomeScreen = () => {
   const [email, setEmail] = useState('');
   const [emailErr, setEmailErr] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
-
+  const { themeColor, setThemeColor } = useContext(AppContext);
   useEffect(() => {
     checkBaseURL();
   }, []);
@@ -66,6 +69,19 @@ const HomeScreen = () => {
     require('../../assets/images/abstract1.png'),
     require('../../assets/images/neptunneBlue.png')
    
+  ];
+  const Icons = [
+    require('../../assets/images/IconneptunnePurple.png'),
+    require('../../assets/images/Iconabstract1.png'),
+    require('../../assets/images/SAMGREEN.png'),
+    require('../../assets/images/IconneptunneBlue.png'),
+   
+  ];
+  const ColorsEffect = [
+    '#541091',
+    '#00544d',
+    '#00544d',
+    '#0074b0'
   ];
   const handleSelectLanguage = (language) => {
     setSelectedLanguage(language);
@@ -209,6 +225,8 @@ const HomeScreen = () => {
 
   const handleImageSelectedImage = (index) => {
     setBackgroundImage(backgroundImages[index]);
+    setIconImage(Icons[index])
+    setThemeColor(ColorsEffect[index])
     closeModal();
   };
 
@@ -377,7 +395,7 @@ const HomeScreen = () => {
           <View>
             <View style={styles.logoContainer}>
               <Image
-                source={require('../../assets/images/SAMGREEN.png')} // apne logo ka path lagaye
+                source={iconImage} // apne logo ka path lagaye
                 resizeMode="contain"
                 style={styles.logo}
               />
@@ -388,13 +406,13 @@ const HomeScreen = () => {
             <View style={styles.btn1}>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={toggleLoginForm}>
-                  <Text style={styles.buttonText}>Login / Register</Text>
+                  <Text style={[styles.buttonText, { color: themeColor }]}>Login / Register</Text>
                 </TouchableOpacity>
               </View>
 
               <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={openModalImage} >
-                  <Text style={styles.buttonText}>Theme Setting</Text>
+                  <Text style={[styles.buttonText, { color: themeColor }]}>Theme Setting</Text>
                 </TouchableOpacity>
               </View>
             </View>
