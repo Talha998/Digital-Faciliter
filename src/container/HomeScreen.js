@@ -10,11 +10,15 @@ import PasswordOpen from "../SVG/PasswordOpen";
 import { useNavigation } from '@react-navigation/native';
 import ServerURLModal from '../screens/ServerURLModal';
 import LanguageModal from '../screens/LanguageModal';
+import ImageSelectionModal from './ImageSelectionModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalVisibleImage, setModalVisibleImage] = useState(false);
+  const defaultImage = require('../../assets/images/abstract1.png');
+  const [backgroundImage, setBackgroundImage] = useState(defaultImage);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [isModalVisible_forget, setIsModalVisible_forget] = useState(false);
@@ -56,7 +60,12 @@ const HomeScreen = () => {
       setBaseURL(storedBaseURL);
     }
   };
-
+  const backgroundImages = [
+    require('../../assets/images/PigmentPurple.png'),
+    require('../../assets/images/DarKGreen.png'),
+    require('../../assets/images/abstract1.png'),
+    require('../../assets/images/neptunneBlue.png')
+  ];
   const handleSelectLanguage = (language) => {
     setSelectedLanguage(language);
   };
@@ -187,10 +196,26 @@ const HomeScreen = () => {
     setBaseURL(url);
     setIsModalVisible(false);
   };
+ 
+  const openModalImage = () => {
+    setModalVisibleImage(true);
+  };
 
+  const closeModalImage = () => {
+    setModalVisibleImage(false);
+  };
+
+  const handleImageSelectedImage = (index) => {
+    setBackgroundImage(backgroundImages[index]);
+  };
 
   return (
     <>
+    <ImageSelectionModal
+        isVisible={modalVisibleImage}
+        onClose={closeModalImage}
+        onImageSelected={handleImageSelectedImage}
+      />
       <Modal
         animationType="fade"
         transparent={true}
@@ -342,7 +367,8 @@ const HomeScreen = () => {
       </Modal>
       {/* ///  Forget Password // */}
       {loading ? <ActivityIndicator style={styles.loadingIndicator} size="large" color="#00544d" /> : 
-      <ImageBackground source={require('../../assets/images/abstract1.png')} style={styles.background}>
+      <ImageBackground source={backgroundImage} style={styles.background}>
+        
         <View style={styles.container}>
           {/* Logo */}
           <View>
@@ -364,7 +390,7 @@ const HomeScreen = () => {
               </View>
 
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={openModalImage} >
                   <Text style={styles.buttonText}>Theme Setting</Text>
                 </TouchableOpacity>
               </View>
