@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AppContext } from '../Context/AppContext';
 
 const DeviceStatus = () => {
-  const { dashDeviceData } = useContext(AppContext);
+  const { dashDeviceData , themeColor } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRow, setSelectedRow] = useState(null);
   const navigation = useNavigation();
@@ -24,19 +24,19 @@ const DeviceStatus = () => {
 
 
   return (
-    <View style={styles.container_device_status}>
+    <View  style={[styles.container_device_status , { borderColor: themeColor }]} >
       {/* Table Header */}
-      <View style={[styles.tableHeader, styles.headerRow]}>
-        <Text style={[styles.headerText_device]}>Device Status</Text>
+      <View  style={[styles.tableHeader, styles.headerRow, { borderColor: themeColor , backgroundColor:themeColor }]}>
+        <Text  style={[styles.headerText_device]}>Device Status</Text>
       </View>
 
       {/* Main Table Container */}
       <View style={styles.tableContainer}>
         {/* Table Headers */}
         <View style={styles.tableRow}>
-          <Text style={[styles.headerText, styles.tableCellHeader]}>Type</Text>
-          <Text style={[styles.headerText, styles.greenText]}>Device</Text>
-          <Text style={[styles.headerText, styles.greenText]}>Status</Text>
+          <Text style={[styles.headerText, styles.tableCellHeader , { color: themeColor }]}>Type</Text>
+          <Text style={[styles.headerText,  , { color: themeColor }]}>Device</Text>
+          <Text style={[styles.headerText  , { color: themeColor }]}>Status</Text>
         </View>
 
         {/* Search Bar */}
@@ -45,6 +45,7 @@ const DeviceStatus = () => {
             style={styles.searchInput}
             placeholder="Search..."
             value={searchQuery}
+            placeholderTextColor={themeColor}
             onChangeText={setSearchQuery}
           />
         </View>
@@ -64,8 +65,8 @@ const DeviceStatus = () => {
               onPress={() => handleRowPress(device?.Eqpt_ID)}
             >
               <View style={[styles.tableRow, selectedRow === device?.Eqpt_ID && styles.selectedRow]}>
-                <Text style={styles.tableCell}>{device?.Eqpt_Type_Title}</Text>
-                <Text style={styles.cellText}>{device?.Eqpt_Title}</Text>
+                <Text style={[styles.tableCell,  , { color: themeColor }]}>{device?.Eqpt_Type_Title}</Text>
+                <Text  style={[styles.cellText,  , { color: themeColor }]}>{device?.Eqpt_Title}</Text>
                 <Text style={[
                   styles.cellText, 
                   device?.Device_Status === 'ON' ? styles.onStatus : styles.offStatus
@@ -87,14 +88,12 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     backgroundColor: '#ffffff', // Table background color
     borderRadius: 10,
-    borderColor: '#00544d', // Table border color
     maxHeight: '80%', // Adjust the height as needed
   },
   scrollView: {
     maxHeight: '70%', // Adjust the height as needed
   },
   tableHeader: {
-    backgroundColor: '#00544d', // Header background color
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     paddingVertical: 10,
@@ -105,7 +104,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#004d4d',
     marginRight: "20%",
   },
   headerRow: {
@@ -143,20 +141,16 @@ const styles = StyleSheet.create({
   },
   cellText: {
     fontSize: 14,
-    color: '#00544d', // Cell text color
     flex: 1,
     textAlign: 'center',
   },
   tableCell: {
     fontSize: 14,
-    color: '#00544d', // Cell text color
     flex: 1,
     textAlign: 'center',
     marginRight: "20%",
   },
-  greenText: {
-    color: '#00544d', // Adjust the color as needed
-  },
+  
   searchContainer: {
     paddingVertical: 10,
     paddingHorizontal: 10,

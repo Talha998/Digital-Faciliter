@@ -165,7 +165,7 @@ import { Defs, LinearGradient, Stop } from 'react-native-svg';
 import { AppContext } from '../Context/AppContext';
 
 const PeopleExitPerHour = () => {
-  const { summary , exitData } = useContext(AppContext);
+  const { summary , exitData , themeColor } = useContext(AppContext);
   // Data for the bar chart
   const data = [
     { Values: 1, Hour: '5 AM' },
@@ -191,7 +191,7 @@ const PeopleExitPerHour = () => {
   const contentInset = { top: 10, bottom: 10 }; // Adjust content inset as needed
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container , { backgroundColor: themeColor }]}>
       <View style={styles.greenBackground}>
         <View style={styles.card}>
           <View style={styles.chartContainer}>
@@ -231,7 +231,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#00544d', // Green background color
     padding: 20,
     marginTop: 100,
     height: 150, // Adjusted height to accommodate the chart and labels

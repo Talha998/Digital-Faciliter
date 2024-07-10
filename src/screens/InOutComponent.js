@@ -23,7 +23,7 @@ const theme = {
 };
 
 const InOutComponent = () => {
-  const { deviceLoc, setDeviceLoc, setDashDeviceData ,  selectedButton , setSelectedButton  } = useContext(AppContext);
+  const { deviceLoc, selectedButton , setSelectedButton , themeColor  } = useContext(AppContext);
   
   const [loading, setLoading] = useState(false);
   // useEffect(() => {
@@ -39,7 +39,7 @@ const InOutComponent = () => {
   return (
     <PaperProvider theme={theme}>
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
+      <View  style={[styles.header , { backgroundColor: themeColor }]}>
         <Text style={styles.headerText}>IN & OUT</Text>
         <RadioButton.Group onValueChange={handleRadioButtonPress} value={selectedButton}>
           <View style={styles.inner_radio}>
@@ -66,15 +66,15 @@ const InOutComponent = () => {
             {deviceLoc.length > 0 ? (
               <View style={styles.table}>
                 <View style={styles.tableRow}>
-                  <Text style={styles.tableCellHeader}>Description</Text>
-                  <Text style={styles.tableCellHeader}>Entry</Text>
-                  <Text style={styles.tableCellHeader}>Exit</Text>
+                  <Text style={[styles.tableCellHeader , { color: themeColor }]}>Description</Text>
+                  <Text  style={[styles.tableCellHeader , { color: themeColor }]}>Entry</Text>
+                  <Text style={[styles.tableCellHeader , { color: themeColor }]}>Exit</Text>
                 </View>
                 {deviceLoc.map((row, index) => (
                   <View key={index} style={styles.tableRow}>
-                    <Text style={styles.tableCell}>{row.Title}</Text>
-                    <Text style={styles.tableCell}>{row.Entry}</Text>
-                    <Text style={styles.tableCell}>{row.Exit}</Text>
+                    <Text style={[styles.tableCell , { color: themeColor }]}>{row.Title}</Text>
+                    <Text style={[styles.tableCell , { color: themeColor }]}>{row.Entry}</Text>
+                    <Text style={[styles.tableCell , { color: themeColor }]}>{row.Exit}</Text>
                   </View>
                 ))}
               </View>
@@ -143,14 +143,12 @@ tableCell: {
   flex: 1,
   textAlign: 'center',
   fontSize: 16,
-  color: '#000',
 },
 tableCellHeader: {
   flex: 1,
   textAlign: 'center',
   fontSize: 16,
   fontWeight: 'bold',
-  color: '#004d4d',
 },
 inner_radio: {
   flexDirection: 'row',

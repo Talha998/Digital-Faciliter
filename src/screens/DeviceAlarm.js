@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Change t
 import { AppContext } from '../Context/AppContext';
 
 const DeviceAlarm = () => {
-  const { summary } = useContext(AppContext);
+  const { summary , themeColor } = useContext(AppContext);
   const data = {
     icon: 'alert',
     label: '',
@@ -12,15 +12,15 @@ const DeviceAlarm = () => {
   };
 
   return (
-    <View style={styles.card}>
-      <View style={styles.iconContainer}>
+    <View style={[styles.card , { borderColor: themeColor }]}>
+      <View style={[styles.iconContainer , { backgroundColor: themeColor }]}>
         <Icon name={data.icon} size={40} color="#ffffff" style={styles.icon} />
       </View>
       <View style={styles.iconContainer_first_text}>
-      <Text style={styles.label}>Device{'\n'}Alarm</Text>
+      <Text style={[styles.label , { color: themeColor }]}>Device{'\n'}Alarm</Text>
       </View>
       <View style={styles.iconContainer_second_text}>
-      <Text style={styles.value}>{summary?.Device_Alarm}</Text>
+      <Text style={[styles.value , { color: themeColor }]}>{summary?.Device_Alarm}</Text>
       </View>
     </View>
   );
@@ -39,13 +39,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#004d4d',
+   
     flexDirection: 'row', // Ensure the icon and text are in a row
     justifyContent: 'space-between',
     position:"relative"
   },
   iconContainer: {
-    backgroundColor: '#004d4d',
+    
     borderRadius: 10,
     padding: 10,
     position:"absolute",
@@ -74,14 +74,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#004d4d',
     textAlign: 'center',
     flex: 1, // Ensure the label takes up the remaining space
   },
   value: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#004d4d',
     flexDirection:"row",
     justifyContent:"center",
     textAlign: 'center',

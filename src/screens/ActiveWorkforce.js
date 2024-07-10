@@ -6,7 +6,7 @@ import { AppContext } from '../Context/AppContext';
 
 const ActiveWorkforce = () => {
   // Dummy data for the bar chart
-  const { summary , exitData } = useContext(AppContext);
+  const { summary , exitData , themeColor } = useContext(AppContext);
   const data = [
     {  value: summary?.Active_Person }
   ];
@@ -31,7 +31,7 @@ const ActiveWorkforce = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container , { backgroundColor: themeColor }]}>
       <View style={styles.greenBackground}>
         <View style={styles.card}>
           <View style={styles.chartContainer}>

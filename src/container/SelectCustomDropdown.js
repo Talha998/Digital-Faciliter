@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, FlatList, TextInput, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icons from 'react-native-vector-icons/MaterialIcons';
+import { AppContext } from '../Context/AppContext';
 
 const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeholder, iconName, isOpen, setOpen, style, style2 }) => {
+  const {themeColor  } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -60,7 +62,7 @@ const CustomDropdown = ({ items, selectedValue, setSelectedValue, color, placeho
                 >
                   <Text style={styles.dropdownItemText}>{item.label}</Text>
                   {selectedItem && selectedItem.value === item.value && (
-                    <Icon name="check" size={24} color="green" />
+                    <Icon name="check" size={24} color={themeColor} />
                   )}
                 </TouchableOpacity>
               )}

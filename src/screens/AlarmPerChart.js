@@ -4,7 +4,7 @@ import { WebView } from 'react-native-webview';
 import { AppContext } from '../Context/AppContext';
 
 const AlarmPerChart = () => {
-  const { summary, alarmData } = useContext(AppContext);
+  const { summary, alarmData , themeColor } = useContext(AppContext);
 
   // Check if alarmData is available and not empty
   const hasData = alarmData && alarmData.length > 0;
@@ -63,7 +63,7 @@ const AlarmPerChart = () => {
   `;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container , { backgroundColor: themeColor }]}>
       <View style={styles.greenBackground}>
         <View style={styles.card}>
           <View style={styles.chartContainer}>
@@ -90,7 +90,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#00544d', // Green background color
     padding: 20,
     marginTop: 100,
     height: 150, // Set height to 150

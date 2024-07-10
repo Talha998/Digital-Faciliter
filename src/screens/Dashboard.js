@@ -16,6 +16,7 @@ import InOutComponent from './InOutComponent';
 import { AppContext } from '../Context/AppContext';
 
 const Dashboard = () => {
+  const { themeColor , area, brand, selectedArea, setSelectedArea, selectedBrand, setSelectedBrand, summary, getSummary } = useContext(AppContext);
   const currentDate = new Date();
   
   const fromDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
@@ -32,7 +33,7 @@ const Dashboard = () => {
   const startDate = convertToLocalTime(fromDate);
   const endDate = convertToLocalTime(toDate);
 
-  const { area, brand, selectedRegion , selectedCity , selectedLocation , selectedArea, setSelectedArea, selectedBrand, setSelectedBrand, summary, getSummary } = useContext(AppContext);
+
   
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshBackgroundColor, setRefreshBackgroundColor] = useState('#ffffff'); // State for background color
@@ -107,12 +108,12 @@ const Dashboard = () => {
       <View style={styles.topContainer}>
       <View>
         <View style={styles.dateContainer}>
-          <Text style={styles.label_from}>From : </Text>
-          <Text style={styles.dateText}>{startDate}</Text>
+          <Text style={[styles.label_from, { color: themeColor }]} >From : </Text>
+          <Text style={[styles.dateText, { color: themeColor }]} >{startDate}</Text>
         </View>
         <View style={styles.dateContainer}>
-          <Text style={styles.label_To}>To : </Text>
-          <Text style={styles.dateText}>{endDate}</Text>
+          <Text style={[styles.label_To, { color: themeColor }]}>To : </Text>
+          <Text style={[styles.dateText, { color: themeColor }]}>{endDate}</Text>
           
         </View>
         </View>
@@ -121,15 +122,15 @@ const Dashboard = () => {
           onPress={() => setModalVisible(true)}
           style={styles.openModalButton}
         >
-          <Icon name="calendar" size={28} color="#00544d" />
+          <Icon name="calendar" size={28} color={themeColor} />
         </TouchableOpacity>
         
-        <TouchableOpacity
+        {/* <TouchableOpacity
           // onPress={handleRefresh}
           // style={styles.iconButton}
         >
           <Icon name="refresh" size={28} color="#00544d" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         </View>
       </View>
 
@@ -141,11 +142,11 @@ const Dashboard = () => {
         >
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
-              <View style={styles.serverURLContainerf2}>
+              <View style={[styles.serverURLContainerf2, { backgroundColor: themeColor }]}>
                 <Text style={styles.modalTitle}>Select Dates</Text>
               </View>
               <View style={styles.datePickerContainer}>
-                <Text style={styles.label_dash}>From: </Text>
+                <Text style={[styles.label_dash, { color: themeColor }]}>From: </Text>
                 <DatePicker
                   date={fromDate}
                   onDateChange={(date) => setFromDate(new Date(date))}
@@ -155,7 +156,7 @@ const Dashboard = () => {
                 />
               </View>
               <View style={styles.datePickerContainer}>
-                <Text style={styles.label_dash}>To: </Text>
+                <Text style={[styles.label_dash, { color: themeColor }]}>To: </Text>
                 <DatePicker
                   date={toDate}
                   onDateChange={(date) => setToDate(new Date(date))}
@@ -165,10 +166,10 @@ const Dashboard = () => {
                 />
               </View>
               <View style={styles.modalButtons}>
-                <TouchableOpacity onPress={handleCancel} style={[styles.modalButton, styles.cancelButton]}>
+                <TouchableOpacity onPress={handleCancel} style={[styles.modalButton, { backgroundColor: themeColor }]}>
                   <Text style={styles.cancelButtonText}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleConfirm} style={[styles.modalButton, styles.confirmButton]}>
+                <TouchableOpacity onPress={handleConfirm}  style={[styles.modalButton, { backgroundColor: themeColor }]}>
                   <Text style={styles.confirmButtonText}>Confirm</Text>
                 </TouchableOpacity>
               </View>
@@ -208,9 +209,9 @@ const Dashboard = () => {
           iconName="globe"
           isOpen={isOpenDropdown4}
           setOpen={toggleDropdown4}
-          style={styles.dropcontainer} // Apply additional styles here
           color="white"
-          style2={styles.input} // Apply additional styles here
+          style={[styles.dropcontainer, { borderColor: themeColor , backgroundColor:themeColor }]}  // Apply additional styles here
+          style2={[styles.input]}
         />
       </View>
 
@@ -246,9 +247,9 @@ const Dashboard = () => {
           iconName="tags"
           isOpen={isOpenDropdown5}
           setOpen={toggleDropdown5}
-          style={styles.dropcontainer} // Apply additional styles here
           color="white"
-          style2={styles.input} // Apply additional styles here
+          style={[styles.dropcontainer, { borderColor: themeColor , backgroundColor:themeColor }]}  // Apply additional styles here
+          style2={[styles.input]}
           
         />
       </View>
@@ -284,7 +285,7 @@ const Dashboard = () => {
   {/* ///  second Half /// */}
   <View style={styles.maindash_fourthchart_second} >
     <View style={styles.GraphDashboard}  >
-    <AccessGranted   />
+    <AccessGranted />
     </View>
     <View style={styles.GraphDashboard}  >
     <AccessDenied value={summary?.Access_Denied}   />
@@ -307,13 +308,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#00544d',
     paddingRight: 5,
     marginVertical: 8,
     paddingVertical: 14,
     paddingHorizontal: 10,
     borderRadius: 10,
-    backgroundColor: '#00544d',
   },
   topContainer: {
     flexDirection:"row",
@@ -365,7 +364,6 @@ const styles = StyleSheet.create({
   },
   serverURLContainerf2: {
     width: '100%',
-    backgroundColor: '#00544d',
     paddingTop: 16,
     paddingBottom: 0,
     flexDirection: 'row',
@@ -428,9 +426,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: 120,
     textAlign: "center",
-  },
-  confirmButton: {
-    backgroundColor: '#00544d',
   },
   confirmButtonText: {
     color: 'white',
