@@ -6,9 +6,13 @@ export const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
     const defaultIconColor = '#00544d';
+    const defaultImage = require('../../assets/images/abstract1.png');
+    const defaultIconImage = require('../../assets/images/SAMGREEN.png');
     const [Device_DeniedHourSum, setDevice_DeniedHourSum] = useState([]);
     const [Device_DeniedDaySum, setDevice_DeniedDaySum] = useState([]);
     const [themeColor, setThemeColor] = useState(defaultIconColor);
+    const [backgroundImage, setBackgroundImage] = useState(defaultImage);
+    const [iconImage, setIconImage] = useState(defaultIconImage);
     const [isLanguageModalVisible, setLanguageModalVisible] = useState(false);
     const [isServerURLModalVisible, setServerURLModalVisible] = useState(false);
     const [isModifyPasswordModalVisible, setModifyPasswordModalVisible] = useState(false);
@@ -185,7 +189,7 @@ const AppProvider = ({ children }) => {
       selectedPersonName, setSelectedPersonName ,
       Device_DeniedHourSum, setDevice_DeniedHourSum , 
       Device_DeniedDaySum, setDevice_DeniedDaySum , 
-      themeColor, setThemeColor
+      themeColor, setThemeColor , backgroundImage, setBackgroundImage , iconImage, setIconImage
         }}>
             {children}
         </AppContext.Provider>

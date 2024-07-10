@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import styles from '../styles';
+import { AppContext } from '../Context/AppContext';
 
 const ServerURLModal = ({ visible, onClose, onSave }) => {
+  const { themeColor } = useContext(AppContext);
   const [url, setURL] = useState('');
 
   const handleSave = () => {
@@ -23,7 +25,7 @@ const ServerURLModal = ({ visible, onClose, onSave }) => {
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           {/* Server URL Text */}
-          <View style={styles.serverURLContainer}>
+          <View style={[styles.serverURLContainer, { backgroundColor: themeColor }]} >
             <Text style={styles.serverURL}>Server URL</Text>
           </View>
 
@@ -32,8 +34,8 @@ const ServerURLModal = ({ visible, onClose, onSave }) => {
             <View>
               <TextInput
                 placeholder="Server URL"
-                placeholderTextColor="#00544d"
-                style={styles.inputf1}
+                placeholderTextColor={themeColor}
+                style={[styles.inputf1, { borderColor: themeColor }]}
                 value={url}
                 onChangeText={setURL}
               />
@@ -47,12 +49,12 @@ const ServerURLModal = ({ visible, onClose, onSave }) => {
             {/* Buttons */}
             <View style={styles.buttonContainerf1}>
               <View>
-                <TouchableOpacity onPress={onClose} style={styles.buttonf1}>
-                  <Text style={styles.buttonTextf1}>Cancel</Text>
+                <TouchableOpacity onPress={onClose} style={[styles.buttonf1, { backgroundColor: themeColor }]}>
+                  <Text style={styles.buttonTextf1} >Cancel</Text>
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity onPress={handleSave} style={styles.buttonf1}>
+                <TouchableOpacity onPress={handleSave} style={[styles.buttonf1, { backgroundColor: themeColor }]} >
                   <Text style={styles.buttonTextf2}>Submit</Text>
                 </TouchableOpacity>
               </View>

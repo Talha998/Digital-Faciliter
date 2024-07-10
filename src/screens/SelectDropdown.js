@@ -13,7 +13,7 @@ const SelectDropdown = () => {
     selectedCity,
      setSelectedCity,
      selectedLocation, 
-     setSelectedLocation , selectedArea , selectedBrand  , getSummary } = useContext(AppContext);
+     setSelectedLocation , selectedArea , selectedBrand  , getSummary , themeColor, setThemeColor , backgroundImage, setBackgroundImage , iconImage, setIconImage } = useContext(AppContext);
   const navigation = useNavigation();
   const [isOpen, setOpen] = useState(false);
   // const [selectedRegion, setSelectedRegion] = useState(null);
@@ -130,12 +130,12 @@ const SelectDropdown = () => {
 
   return (
     <ImageBackground
-      source={require('../../assets/images/abstract1.png')}
+    source={backgroundImage}
       style={styles.backgroundImage_drop_Rt}
     >
       <View style={styles.logoContainer_drop_Rt}>
         <Image
-          source={require('../../assets/images/SAMGREEN.png')}
+          source={iconImage} // apne logo ka path lagaye
           style={styles.logo_drop_Rt}
         />
       </View>
@@ -148,9 +148,10 @@ const SelectDropdown = () => {
           iconName="globe"
           isOpen={isOpenDropdown1}
           setOpen={toggleDropdown1}
-          style={styles.inputContainer} // Apply additional styles here
+          style={[styles.inputContainer, { borderColor: themeColor , color:themeColor }]}  // Apply additional styles here
              color="black"
-             style2={styles.input} // Apply additional styles here
+             style2={[styles.input, {  color:themeColor }]}
+            //  style2={styles.input} 
         />
         <CustomDropdown
           items={cities}
@@ -160,9 +161,9 @@ const SelectDropdown = () => {
           iconName="building"
           isOpen={isOpenDropdown2}
         setOpen={toggleDropdown2}
-        style={styles.inputContainer} // Apply additional styles here
-           color="black"
-           style2={styles.input} // Apply additional styles here
+        style={[styles.inputContainer, { borderColor: themeColor , color:themeColor }]}  // Apply additional styles here
+        color="black"
+        style2={[styles.input, {  color:themeColor }]}
         />
         <CustomDropdown
           items={locations}
@@ -172,11 +173,11 @@ const SelectDropdown = () => {
           iconName="map-marker"
           isOpen={isOpenDropdown3}
           setOpen={toggleDropdown3}
-          style={styles.inputContainer} // Apply additional styles here
-             color="black"
-             style2={styles.input} // Apply additional styles here
+          style={[styles.inputContainer, { borderColor: themeColor , color:themeColor }]}  // Apply additional styles here
+          color="black"
+          style2={[styles.input, {  color:themeColor }]}
         />
-        <TouchableOpacity style={styles.button__drop_Rt} onPress={handleNext}>
+        <TouchableOpacity  style={[styles.button__drop_Rt, { backgroundColor: themeColor }]}  onPress={handleNext} >
           <Text style={styles.buttonText__drop_Rt}>Next</Text>
           <Icon name="arrow-right" size={20} color="#fff" style={styles.buttonIcon_drop_Rt} />
         </TouchableOpacity>
@@ -199,7 +200,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'green',
     paddingRight: 5,
     marginVertical: 10,
     paddingVertical: 14,
@@ -210,7 +210,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginLeft: 10,
-    color: 'green',
   },
   dropdownWrapper_drop_Rt: {
     flexDirection: 'row',
@@ -239,7 +238,7 @@ const styles = StyleSheet.create({
   button__drop_Rt: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#00544d',
+
     padding: 10,
     borderRadius: 5,
     marginTop: 20,

@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     textAlign:"center",
-    // color: '#00544d',
+    color: '#00544d',
     fontSize: 16,
      fontWeight: '700',
     fontFamily: 'YourCustomFontFamily',
@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '100%',
     borderWidth: 2,
-    borderColor: '#00544d',
     borderRadius: 12,
     padding: 10,
     marginBottom: 10,
@@ -182,7 +181,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   serverURLContainerf2: {
-    backgroundColor: '#00544d',
+    // backgroundColor: '#00544d',
     paddingVertical: 18,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -192,7 +191,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   serverURLContainer_bottom_f2:{
-    backgroundColor: '#00544d',
+    // backgroundColor: '#00544d',
     paddingVertical: 14,
     flexDirection: 'row',
     justifyContent: 'space-between',

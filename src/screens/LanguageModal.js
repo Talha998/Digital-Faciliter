@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { AppContext } from '../Context/AppContext';
 
 const LanguageModal = ({ visible, onClose, onSelectLanguage }) => {
+  const { themeColor, setThemeColor } = useContext(AppContext);
   const [selectedLanguage, setSelectedLanguage] = useState('English'); // Default to English
 
   const languages = [
@@ -27,18 +29,18 @@ const LanguageModal = ({ visible, onClose, onSelectLanguage }) => {
               <Image source={language.icon} style={styles.flagIcon} />
               <Text style={styles.languageText}>{language.name}</Text>
               {selectedLanguage === language.name && (
-                <Icon name="check-circle" size={24} color="green" />
+                <Icon name="check-circle" size={24} color={themeColor} />
               )}
             </TouchableOpacity>
           ))}
           <TouchableOpacity
-            style={styles.saveButton}
+            style={[styles.saveButton, { backgroundColor: themeColor }]}
             onPress={() => {
               onSelectLanguage(selectedLanguage);
               onClose();
             }}
           >
-            <Text style={styles.saveButtonText}>Save</Text>
+            <Text style={styles.saveButtonText} >Save</Text>
           </TouchableOpacity>
         </View>
       </View>

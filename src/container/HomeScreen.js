@@ -18,10 +18,6 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalVisibleImage, setModalVisibleImage] = useState(false);
-  const defaultImage = require('../../assets/images/abstract1.png');
-  const defaultIconImage = require('../../assets/images/SAMGREEN.png');
-  const [backgroundImage, setBackgroundImage] = useState(defaultImage);
-  const [iconImage, setIconImage] = useState(defaultIconImage);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [isModalVisible_forget, setIsModalVisible_forget] = useState(false);
@@ -34,7 +30,7 @@ const HomeScreen = () => {
   const [email, setEmail] = useState('');
   const [emailErr, setEmailErr] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
-  const { themeColor, setThemeColor } = useContext(AppContext);
+  const { themeColor, setThemeColor , backgroundImage, setBackgroundImage , iconImage, setIconImage } = useContext(AppContext);
   useEffect(() => {
     checkBaseURL();
   }, []);
@@ -81,7 +77,7 @@ const HomeScreen = () => {
     '#541091',
     '#00544d',
     '#00544d',
-    '#0074b0'
+    '#006187'
   ];
   const handleSelectLanguage = (language) => {
     setSelectedLanguage(language);
@@ -247,7 +243,7 @@ const HomeScreen = () => {
           <Animated.View style={[styles.modalContentf2, { transform: [{ translateY: slideAnim }] }]}>
 
             {/* Top Header */}
-            <View style={styles.serverURLContainerf2}>
+            <View  style={[styles.serverURLContainerf2, { backgroundColor: themeColor }]} >
               <Text style={styles.serverURLf2}>Privacy Policy</Text>
               <TouchableOpacity onPress={closeModal}>
                 <Image source={require('../../assets/images/cancel-39-39.png')} style={styles.cancelIcon} />
@@ -321,7 +317,7 @@ const HomeScreen = () => {
             </View>
 
             {/* Bottom Footer */}
-            <View style={styles.serverURLContainer_bottom_f2}>
+            <View style={[styles.serverURLContainer_bottom_f2, { backgroundColor: themeColor }]}  >
               <Text style={styles.serverURL_bottom_f2}>SAM Controls 2023. All rights reserved</Text>
 
             </View>
@@ -346,7 +342,7 @@ const HomeScreen = () => {
               
         <View style={styles.modalContent}>
           {/* Server URL Text */}
-          <View style={styles.serverURLContainer}>
+          <View style={[styles.serverURLContainer, { backgroundColor: themeColor }]}>
             <Text style={styles.serverURL}>Forget Password?</Text>
           </View>
 
@@ -355,8 +351,8 @@ const HomeScreen = () => {
             <View>
               <TextInput
                 placeholder="Enter Registered Email"
-                placeholderTextColor="#00544d"
-                style={styles.inputf1}
+                placeholderTextColor={themeColor}
+                style={[styles.inputf1, { borderColor: themeColor }]}
                 value={email}
                 onChangeText={(text) => setEmail(text)}
               />
@@ -371,12 +367,12 @@ const HomeScreen = () => {
             {/* Buttons */}
             <View style={styles.buttonContainerf1}>
               <View>
-                <TouchableOpacity onPress={toggleModal_forget} style={styles.buttonf1}>
+                <TouchableOpacity onPress={toggleModal_forget} style={[styles.buttonf1, { backgroundColor: themeColor }]}>
                   <Text style={styles.buttonTextf1}>Cancel</Text>
                 </TouchableOpacity>
               </View>
               <View>
-                <TouchableOpacity onPress={handleEmail} style={[styles.buttonf1]}>
+                <TouchableOpacity onPress={handleEmail}  style={[styles.buttonf1, { backgroundColor: themeColor }]}>
                   <Text style={[styles.buttonTextf2]}>Submit</Text>
                 </TouchableOpacity>
               </View>
@@ -429,7 +425,7 @@ const HomeScreen = () => {
                         style={[styles.input_login_form, errors.username && styles.errorInput]}
                         onBlur={onBlur}
                         onChangeText={onChange}
-                        placeholderTextColor="green"
+                        placeholderTextColor={themeColor}
                         value={value}
                       />
                       {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
@@ -447,14 +443,14 @@ const HomeScreen = () => {
         style={[styles.input_login_form, errors.password && styles.errorInput]}
         onBlur={onBlur}
         onChangeText={onChange}
-        placeholderTextColor="green"
+        placeholderTextColor={themeColor}
         value={value}
       />
       <TouchableOpacity
         style={styles.passwordIconContainer}
         onPress={() => setPasswordVisible(!isPasswordVisible)}
       >
-        {isPasswordVisible ? <PasswordOpen width="30" height="30" color="#00544d" /> : <PasswordClose width="30" height="30" color="#00544d" />}
+        {isPasswordVisible ? <PasswordOpen width="30" height="30" color={themeColor} /> : <PasswordClose width="30" height="30" color={themeColor} />}
       </TouchableOpacity>
     </View>
   )}
@@ -464,10 +460,10 @@ const HomeScreen = () => {
               <Text style={styles.forgetPasswordText}>Forget Password?</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.button_login}  onPress={handleSubmit(onSubmit)} >
-              <Text style={styles.buttonText_login}>Sign In</Text>
+            <TouchableOpacity style={[styles.button_login, { backgroundColor: themeColor }]}  onPress={handleSubmit(onSubmit)} >
+              <Text  style={[styles.buttonText_login]}  >Sign In</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button_login} onPress={() => {
+            <TouchableOpacity style={[styles.button_login, { backgroundColor: themeColor }]} onPress={() => {
                 navigation.navigate('Request User Registration');
               }}>
               <Text style={styles.buttonText_login}>Registration</Text>
